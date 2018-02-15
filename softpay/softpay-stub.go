@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -43,15 +44,16 @@ func HandleOrder(w http.ResponseWriter, r *http.Request) {
 
 	newRequest.Form.Set("ReturnOid", r.Form.Get("oid"))
 	//newRequest.PostForm.Set("ReturnOid", r.Form.Get("oid"))
-	logger.
-		WithField("form", newRequest.Form).
-		WithField("path", newRequest.URL).
-		WithField("method", newRequest.Method).
-		WithField("headers", newRequest.Header).
-		Info("before end")
+	// logger.
+	// 	WithField("form", newRequest.Form).
+	// 	WithField("path", newRequest.URL).
+	// 	WithField("method", newRequest.Method).
+	// 	WithField("headers", newRequest.Header).
+	// 	Info("before end")
 
-	resp, err := http.PostForm("http://vpc.teamo.work/payment/softpay/success", newRequest.Form)
+	resp, err := http.PostForm("http://94.130.77.97:2442/v1/payment/softpay/success", newRequest.Form)
 	if err != nil {
+		logger.WithError(err).Error("got error")
 		return
 	}
 	defer resp.Body.Close()
@@ -60,8 +62,8 @@ func HandleOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
 	w.Header().Set("Location", resp.Header.Get("Location"))
 	w.WriteHeader(resp.StatusCode)
-	w.Write(nil)
-	//io.Copy(w, resp.Body)
+	// w.Write(nil)
+	io.Copy(w, resp.Body)
 }
 
 var requestFields = []string{
