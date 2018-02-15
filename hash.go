@@ -1,4 +1,4 @@
-package vcg_go_common
+package vcgtools
 
 import (
 	"crypto/sha256"
