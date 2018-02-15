@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/inn4sc/vcg-transaction/common/currency"
 	"github.com/stretchr/testify/assert"
+	"github.com/inn4sc/vcg-go-common/currency"
 )
 
 func TestVerifySignature(t *testing.T) {

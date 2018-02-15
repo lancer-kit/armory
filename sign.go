@@ -2,7 +2,6 @@ package vcgtools
 
 import (
 	"crypto/rand"
-
 	"encoding/json"
 
 	"github.com/pkg/errors"
