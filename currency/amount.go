@@ -7,9 +7,11 @@ import (
 )
 
 const (
-	One      = 100000000
-	CoinPrec = 8
-	FiatPrec = 2
+	One             = 100000000
+	AmountPrecision = 8
+	CoinPrecision   = 8
+	FiatPrecision   = 2
+	PricePrecision  = 4
 )
 
 // Amount is a type for coins or fiats values.
@@ -43,22 +45,32 @@ func FromFloat(val float64) Amount {
 }
 
 // StringFromInt64 returns an "amount string" from the provided raw int64 value `v`.
-func StringFromInt64(v int64, prec int) string {
-	var f, one, r big.Rat
-	f.SetInt64(v)
+func StringFromInt64(val int64, precision int) string {
+	var bigVal, one, result big.Rat
+	bigVal.SetInt64(val)
 	one.SetInt64(One)
-	r.Quo(&f, &one)
-	return r.FloatString(prec)
+	result.Quo(&bigVal, &one)
+
+	return result.FloatString(precision)
 }
 
-// String returns an "amount string" with coin prec.
+func (a Amount) Float64() float64 {
+	var bigVal, one, result big.Rat
+	bigVal.SetInt64(int64(a))
+	one.SetInt64(One)
+	result.Quo(&bigVal, &one)
+	f, _ := result.Float64()
+	return f
+}
+
+// String returns an "amount string" with amount precision.
 func (a Amount) String() string {
-	return StringFromInt64(int64(a), CoinPrec)
+	return StringFromInt64(int64(a), AmountPrecision)
 }
 
 // CurrencyString returns an "amount string" with currency prec.
 func (a Amount) CurrencyString() string {
-	return StringFromInt64(int64(a), FiatPrec)
+	return StringFromInt64(int64(a), FiatPrecision)
 }
 
 // UnmarshalJSON implementation of the `json.Unmarshaller` interface.
