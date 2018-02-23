@@ -1,6 +1,7 @@
 package currency
 
 import (
+	"encoding/json"
 	"math/big"
 )
 
@@ -10,6 +11,19 @@ type Fiat Amount
 func (a Fiat) String() string {
 	val := int64(a.Round())
 	return StringFromInt64(val, FiatPrecision)
+}
+
+// UnmarshalJSON implementation of the `json.Unmarshaller` interface.
+func (a *Fiat) UnmarshalJSON(data []byte) error {
+	var amount Amount
+
+	err := json.Unmarshal(data, &amount)
+	if err != nil {
+		return err
+	}
+
+	*a = Fiat(amount)
+	return nil
 }
 
 // MarshalJSON implementation of the `json.Marshaller` interface.

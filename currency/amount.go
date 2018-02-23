@@ -72,11 +72,6 @@ func (a Amount) String() string {
 	return StringFromInt64(int64(a), AmountPrecision)
 }
 
-// CurrencyString returns an "amount string" with currency prec.
-func (a Amount) CurrencyString() string {
-	return StringFromInt64(int64(a), FiatPrecision)
-}
-
 // UnmarshalJSON implementation of the `json.Unmarshaller` interface.
 func (a *Amount) UnmarshalJSON(data []byte) error {
 	var fVal float64

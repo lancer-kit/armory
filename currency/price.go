@@ -1,6 +1,7 @@
 package currency
 
 import (
+	"encoding/json"
 	"math/big"
 )
 
@@ -11,6 +12,19 @@ func (price Price) String() string {
 	var res big.Rat
 	res.SetFloat64(float64(price))
 	return res.FloatString(PricePrecision)
+}
+
+// UnmarshalJSON implementation of the `json.Unmarshaller` interface.
+func (price *Price) UnmarshalJSON(data []byte) error {
+	var amount float64
+
+	err := json.Unmarshal(data, &amount)
+	if err != nil {
+		return err
+	}
+
+	*price = Price(amount)
+	return nil
 }
 
 // MarshalJSON implementation of the `json.Marshaller` interface.
