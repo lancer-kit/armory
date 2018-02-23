@@ -54,7 +54,11 @@ func StringFromInt64(val int64, precision int) string {
 	return result.FloatString(precision)
 }
 
-func (a Amount) Float64() float64 {
+func (a Amount) Int() int64 {
+	return int64(a)
+}
+
+func (a Amount) Float() float64 {
 	var bigVal, one, result big.Rat
 	bigVal.SetInt64(int64(a))
 	one.SetInt64(One)

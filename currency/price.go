@@ -1,6 +1,8 @@
 package currency
 
-import "math/big"
+import (
+	"math/big"
+)
 
 type Price float64
 
@@ -17,3 +19,12 @@ func (price Price) MarshalJSON() ([]byte, error) {
 	return []byte(str), nil
 }
 
+func (price *Price) Round() Price {
+	f := BankRound(float64(*price), PricePrecision)
+	*price = Price(f)
+	return *price
+}
+
+func (price *Price) Float() float64 {
+	return float64(*price)
+}
