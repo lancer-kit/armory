@@ -24,3 +24,10 @@ func (a Coin) Convert(price Price) ConversionResult {
 
 	return fiat.Convert(price)
 }
+
+// GetPercent calculates the percentage value from the sum and rounds it up.
+func (a Coin) GetPercent(percent int64) Coin {
+	amount := Amount(a)
+	amount = AmountPercent(amount, percent)
+	return Coin(amount)
+}

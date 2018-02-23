@@ -35,3 +35,10 @@ func (a Fiat) Round() Fiat {
 	am := FromFloat(BankRound(f, FiatPrecision))
 	return Fiat(am)
 }
+
+// GetPercent calculates the percentage value from the sum and rounds it up.
+func (a Fiat) GetPercent(percent int64) Fiat {
+	amount := Amount(a)
+	amount = AmountPercent(amount, percent)
+	return Fiat(amount)
+}

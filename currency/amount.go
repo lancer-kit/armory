@@ -103,16 +103,5 @@ func (a Amount) MarshalJSON() ([]byte, error) {
 
 // GetPercent calculates the percentage value from the sum and rounds it up.
 func (a Amount) GetPercent(percent int64) Amount {
-	var amountRat, percentRat, base, result big.Float
-	amountRat.SetInt64(int64(a))
-	percentRat.SetInt64(percent)
-	base.SetInt64(100)
-
-	result.Quo(&amountRat, &base)
-	result.Mul(&result, &percentRat)
-	res, acc := result.Int64()
-	if acc == big.Below {
-		res += 1
-	}
-	return Amount(res)
+	return AmountPercent(a, percent)
 }
