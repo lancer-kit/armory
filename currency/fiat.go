@@ -31,7 +31,7 @@ func (a Fiat) Convert(price Price) ConversionResult {
 	}
 }
 func (a Fiat) Round() Fiat {
-	f := Amount(a).Float64()
+	f := Amount(a).Float()
 	am := FromFloat(BankRound(f, FiatPrecision))
 	return Fiat(am)
 }
