@@ -15,7 +15,8 @@ type Chief struct {
 	logger      *logrus.Entry
 	initialized bool
 
-	pool map[string]Workman
+	enabledWorkers map[string]struct{}
+	pool           map[string]Workman
 }
 
 // AddWorkman register a new `Workman` to the `Chief` worker pool.
@@ -25,6 +26,25 @@ func (chief *Chief) AddWorkman(name string, workman Workman) {
 	}
 
 	chief.pool[name] = workman
+}
+
+// EnableWorkman set the worker by name enabled.
+func (chief *Chief) EnableWorkman(name string) {
+	if chief.enabledWorkers == nil {
+		chief.enabledWorkers = make(map[string]struct{})
+	}
+
+	chief.enabledWorkers[name] = struct{}{}
+}
+
+// EnableWorkman set the worker by name enabled.
+func (chief *Chief) IsEnabled(name string) bool {
+	if chief.enabledWorkers == nil {
+		return true
+	}
+
+	_, ok := chief.enabledWorkers[name]
+	return ok
 }
 
 // InitWorkers initializes all registered workers.
@@ -53,6 +73,12 @@ func (chief *Chief) Start(parentCtx context.Context) {
 
 	wg := sync.WaitGroup{}
 	for name, workman := range chief.pool {
+		if !chief.IsEnabled(name) {
+			chief.logger.WithField("worker", name).
+				Debug("Worker disabled")
+			continue
+		}
+
 		wg.Add(1)
 		go func(name string, workman Workman) {
 			defer wg.Done()
