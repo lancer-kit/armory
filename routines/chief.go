@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/inn4sc/vcg-go-common/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -50,7 +51,7 @@ func (chief *Chief) IsEnabled(name string) bool {
 // InitWorkers initializes all registered workers.
 func (chief *Chief) InitWorkers(logger *logrus.Entry) {
 	if logger == nil {
-		logger = logrus.NewEntry(logrus.New())
+		logger = log.Default
 	}
 
 	chief.ctx, chief.cancel = context.WithCancel(context.Background())
@@ -67,7 +68,7 @@ func (chief *Chief) InitWorkers(logger *logrus.Entry) {
 // and then gracefully stops all workers.
 func (chief *Chief) Start(parentCtx context.Context) {
 	if !chief.initialized {
-		logrus.New().Error("Workers is not initialized! Unable to start.")
+		log.Default.Error("Workers is not initialized! Unable to start.")
 		return
 	}
 
