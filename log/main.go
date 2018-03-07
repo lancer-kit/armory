@@ -20,21 +20,31 @@ func init() {
 }
 
 // Init initializes a default logger configuration.
-func Init(app, logLevel string) (*logrus.Entry, error) {
-	var err error
-	//Default.Default.Formatter = &logrus.TextFormatter{ForceColors: true}
-	Default.Logger.Level, err = logrus.ParseLevel(logLevel)
+func Init(config Config) (*logrus.Entry, error) {
+	level, err := logrus.ParseLevel(config.Level)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse log level - "+logLevel)
+		return nil, errors.Wrap(err, "failed to parse log level - "+config.Level)
+	}
+	Default.Logger.SetLevel(level)
+	Default = Default.WithField("app", config.AppName)
+
+	if config.AddTrace {
+		AddFilenameHook()
 	}
 
-	Default = Default.WithField("app", app)
+	if config.Sentry != "" {
+		AddSentyHook(config.Sentry)
+	}
+
+	if config.JSON {
+		Default.Logger.Formatter = &logrus.JSONFormatter{}
+	}
+
 	return Default, nil
 }
 
 func AddSentyHook(dsn string) {
 	sentryHook := sentry.NewHook(dsn, logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
-	Default.Logger.SetLevel(3)
 	Default.Logger.AddHook(sentryHook)
 }
 
