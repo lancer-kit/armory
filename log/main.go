@@ -19,7 +19,7 @@ func init() {
 	Default = logrus.NewEntry(l).WithField("hostname", host)
 }
 
-// Init initializes a default logger configuration.
+// Init initializes a default logger configuration by passed configuration.
 func Init(config Config) (*logrus.Entry, error) {
 	level, err := logrus.ParseLevel(config.Level)
 	if err != nil {
@@ -33,7 +33,7 @@ func Init(config Config) (*logrus.Entry, error) {
 	}
 
 	if config.Sentry != "" {
-		AddSentyHook(config.Sentry)
+		AddSentryHook(config.Sentry)
 	}
 
 	if config.JSON {
@@ -43,7 +43,7 @@ func Init(config Config) (*logrus.Entry, error) {
 	return Default, nil
 }
 
-func AddSentyHook(dsn string) {
+func AddSentryHook(dsn string) {
 	sentryHook := sentry.NewHook(dsn, logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
 	Default.Logger.AddHook(sentryHook)
 }
