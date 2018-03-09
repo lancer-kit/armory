@@ -15,11 +15,13 @@ type Workman interface {
 	Run()
 }
 
+// DummyWorkman is a simple realization of the Workman interface.
 type DummyWorkman struct {
 	tickDuration time.Duration
 	ctx          context.Context
 }
 
+// New returns new instance of the `DummyWorkman`.
 func (*DummyWorkman) New(parentCtx context.Context) Workman {
 	return &DummyWorkman{
 		ctx:          parentCtx,
@@ -27,6 +29,7 @@ func (*DummyWorkman) New(parentCtx context.Context) Workman {
 	}
 }
 
+// Run start job execution.
 func (s *DummyWorkman) Run() {
 	ticker := time.NewTicker(15 * time.Second)
 	for {

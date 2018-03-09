@@ -32,10 +32,11 @@ func (a Fiat) MarshalJSON() ([]byte, error) {
 	return []byte(str), nil
 }
 
-// MarshalJSON implementation of the `json.Marshaller` interface.
+// Convert converts fiat amount into `Coin` by passed price.
 func (a Fiat) Convert(price Price) ConversionResult {
 	//	fiat / price = coins
-	result, _ := new(big.Float).Quo(big.NewFloat(float64(a)), big.NewFloat(float64(price))).Int64()
+	result, _ := new(big.Float).Quo(big.NewFloat(float64(a)),
+		big.NewFloat(float64(price))).Int64()
 	coins := Coin(result)
 
 	return ConversionResult{

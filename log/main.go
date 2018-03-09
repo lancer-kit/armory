@@ -43,11 +43,15 @@ func Init(config Config) (*logrus.Entry, error) {
 	return Default, nil
 }
 
+// AddSentryHook adds hook that sends errors to sentry service.
 func AddSentryHook(dsn string) {
-	sentryHook := sentry.NewHook(dsn, logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
+	sentryHook := sentry.NewHook(dsn,
+		logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
 	Default.Logger.AddHook(sentryHook)
 }
 
+// AddFilenameHook adds hook that includes
+// filename and line number into the log.
 func AddFilenameHook() {
 	filenameHook := filename.NewHook()
 	filenameHook.Field = "file"

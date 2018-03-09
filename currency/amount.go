@@ -54,10 +54,12 @@ func StringFromInt64(val int64, precision int) string {
 	return result.FloatString(precision)
 }
 
+// Int casts amount to int64.
 func (a Amount) Int() int64 {
 	return int64(a)
 }
 
+// Float casts amount to float64.
 func (a Amount) Float() float64 {
 	var bigVal, one, result big.Rat
 	bigVal.SetInt64(int64(a))

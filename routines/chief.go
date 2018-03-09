@@ -38,7 +38,7 @@ func (chief *Chief) EnableWorkman(name string) {
 	chief.enabledWorkers[name] = struct{}{}
 }
 
-// EnableWorkman set the worker by name enabled.
+// IsEnabled checks is enable worker with passed `name`.
 func (chief *Chief) IsEnabled(name string) bool {
 	if chief.enabledWorkers == nil {
 		return true

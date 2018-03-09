@@ -48,7 +48,7 @@ func AmountPercent(amount Amount, percent int64) Amount {
 	result.Mul(&result, &percentRat)
 	res, acc := result.Int64()
 	if acc == big.Below {
-		res += 1
+		res ++
 	}
 	return Amount(res)
 }

@@ -14,7 +14,3 @@ type Config struct {
 	// JSON enable json formatted output.
 	JSON bool `json:"json" yaml:"json"`
 }
-
-func (cfg Config) Validate() error {
-	return nil
-}
