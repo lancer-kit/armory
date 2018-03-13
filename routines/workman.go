@@ -9,8 +9,8 @@ import (
 // Workman is an interface for async workers
 // which launches and manages by the `Chief`.
 type Workman interface {
-	// New initializes new instance of the `Workman` implementation.
-	New(context.Context) Workman
+	// Init initializes new instance of the `Workman` implementation.
+	Init(context.Context) Workman
 	// Run starts the `Workman` instance execution.
 	Run()
 }
@@ -21,8 +21,8 @@ type DummyWorkman struct {
 	ctx          context.Context
 }
 
-// New returns new instance of the `DummyWorkman`.
-func (*DummyWorkman) New(parentCtx context.Context) Workman {
+// Init returns new instance of the `DummyWorkman`.
+func (*DummyWorkman) Init(parentCtx context.Context) Workman {
 	return &DummyWorkman{
 		ctx:          parentCtx,
 		tickDuration: time.Second,

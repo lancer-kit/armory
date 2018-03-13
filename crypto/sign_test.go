@@ -1,4 +1,4 @@
-package vcgtools
+package crypto
 
 import (
 	"fmt"

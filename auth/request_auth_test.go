@@ -1,14 +1,15 @@
-package vcgtools
+package auth
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/inn4sc/vcg-go-common/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestVerifyRequestSignature(t *testing.T) {
-	privateKey, publicKey := GenKeyPair()
+	privateKey, publicKey := crypto.GenKeyPair()
 
 	testRequest, err := NewSignedGetRequest(privateKey,
 		"https://localhost:8080/test/42?que=ctulhu", "dummy")
