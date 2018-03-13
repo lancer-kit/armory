@@ -2,11 +2,11 @@
 
 This is the package for implementing the worker pool pattern.
 
-## Workman
+## Worker
 
-`Workman` is an interface for async workers which launches and manages by the `Chief`.
+`Worker` is an interface for async workers which launches and manages by the `Chief`.
 
-The main ideas of the `Workman`: 
+The main ideas of the `Worker`: 
 - this is simple and lightweight worker;
 - it can communicate with surroundings through channels, message queues, etc;
 - worker must do one or few small jobs; 
@@ -22,16 +22,16 @@ All this workers are part of one microservice, in one binary and able to run the
 
 #### Method list:
 
-- `Init(context.Context) Workman` - initializes new instance of the `Workman` implementation. 
-- `Run()` - starts the `Workman` instance execution. This should be a blocking call, which in normal mode will be executed in `goroutine`.
+- `Init(context.Context) Worker` - initializes new instance of the `Worker` implementation. 
+- `Run()` - starts the `Worker` instance execution. This should be a blocking call, which in normal mode will be executed in `goroutine`.
 
 ## Chief
 
-Chief is a head of workers, it must be used to register, initialize and correctly start and stop asynchronous executors of the type `Workman`.
+Chief is a head of workers, it must be used to register, initialize and correctly start and stop asynchronous executors of the type `Worker`.
 
 #### Method list:
 
-- `AddWorkman(name string, workman Workman)`- register a new `Workman` to the `Chief` worker pool.
+- `AddWorker(name string, worker Worker)`- register a new `Worker` to the `Chief` worker pool.
 - `EnableWorkers(names ...string)` - enables all worker from the `names` list. By default, all added workers are enabled.
 - `EnableWorker(name string)` - enables the worker with the specified `name`. By default, all added workers are enabled.
 - `IsEnabled(name string) bool` - checks is enable worker with passed `name`.
@@ -42,7 +42,7 @@ In `InitWorkers` **Chief** insert in the context his logger (`*logrus.Entry`), s
 
 ``` go
 // .....
-func (w *MyWorker) New(parentCtx context.Context) routines.Workman {
+func (w *MyWorker) New(parentCtx context.Context) routines.Worker {
     logger, ok := parentCtx.Value(routines.CtxKeyLog).(*logrus.Entry)
     if !ok {
         // process error
@@ -59,7 +59,7 @@ func (w *MyWorker) New(parentCtx context.Context) routines.Workman {
 
 ## Usage 
 
-Just define the `routines.Chief` variable, register your worker using the `AddWorkman` method. 
+Just define the `routines.Chief` variable, register your worker using the `AddWorker` method. 
 Before starting, you must initialize registered workers using the `InitWorkers(*logrus.Entry)` method.
 
 A very simple example:
@@ -76,8 +76,8 @@ var WorkersChief routines.Chief
 
 func init()  {
     WorkersChief = routines.Chief{}
-    WorkersChief.AddWorkman("my-awesome-worker", &MyWorkman{})
-    // `MyWorkman` is a type which implement `Workman` interface.
+    WorkersChief.AddWorker("my-awesome-worker", &MyWorker{})
+    // `MyWorker` is a type which implement `Worker` interface.
 }
 
 func main () {
