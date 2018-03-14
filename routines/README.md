@@ -42,7 +42,7 @@ In `InitWorkers` **Chief** insert in the context his logger (`*logrus.Entry`), s
 
 ``` go
 // .....
-func (w *MyWorker) New(parentCtx context.Context) routines.Worker {
+func (w *MyWorker) Init(parentCtx context.Context) routines.Worker {
     logger, ok := parentCtx.Value(routines.CtxKeyLog).(*logrus.Entry)
     if !ok {
         // process error
