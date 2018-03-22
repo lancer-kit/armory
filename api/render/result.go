@@ -3,8 +3,6 @@ package render
 import (
 	"encoding/json"
 	"net/http"
-
-	"gitlab.inn4science.com/vcg/go-common/log"
 )
 
 // WriteJSON writes some response as WriteJSON to the `http.ResponseWriter`.
@@ -13,7 +11,6 @@ func WriteJSON(w http.ResponseWriter, status int, resp interface{}) {
 	js, err := json.MarshalIndent(resp, "", "  ")
 
 	if err != nil {
-		log.Default.WithError(err).Error("unable to marshal response")
 		http.Error(w, "error while render response", http.StatusInternalServerError)
 		return
 	}

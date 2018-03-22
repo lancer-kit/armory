@@ -8,3 +8,6 @@ Common libraries for go services:
 - [DB](./db/README.md) - connector for the ORMless interaction with the PostgreSQL databases. 
 - [Log](./log/README.md) - simple wrapper for logrus with some useful perks.
 - [Routines](./routines/README.md) - implementation, running and controlling workers.
+- **Api**
+    - [Render](./api/render/README.md) - response helper, base responses
+- [Natswrap](./natswrap/README.md) - simple wrapper for Nats
