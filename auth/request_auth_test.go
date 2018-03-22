@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/inn4sc/vcg-go-common/crypto"
+	"gitlab.inn4science.com/vcg/go-common/crypto"
 	"github.com/stretchr/testify/assert"
 )
 

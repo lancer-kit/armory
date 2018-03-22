@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/inn4sc/vcg-go-common/log"
+	"gitlab.inn4science.com/vcg/go-common/log"
 	"github.com/sirupsen/logrus"
 )
 

@@ -68,7 +68,7 @@ A very simple example:
 package main
 
 import (
-    "github.com/inn4sc/vcg-go-common/routines"
+    "gitlab.inn4science.com/vcg/go-common/routines"
     "context"
 )
 
