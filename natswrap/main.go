@@ -22,7 +22,8 @@ func GetConn() (*nats.Conn, error) {
 	if cfg == nil {
 		return nil, errors.New("Nats config didn't set")
 	}
-	natsConn, err := nats.Connect(
+	var err error
+	natsConn, err = nats.Connect(
 		cfg.ToURL(),
 		nats.UserInfo(
 			cfg.User,
