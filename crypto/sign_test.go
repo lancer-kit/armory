@@ -1,11 +1,11 @@
-package vcgtools
+package crypto
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/inn4sc/vcg-go-common/currency"
+	"gitlab.inn4science.com/vcg/go-common/currency"
 )
 
 func TestVerifySignature(t *testing.T) {

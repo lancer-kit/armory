@@ -8,62 +8,71 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/index-gold", HandleOrder)
+	http.HandleFunc("/index-gold", HandleOrder(false))
+	http.HandleFunc("/index-gold-test", HandleOrder(true))
 	//http.HandlerFunc().ServeHTTP()
 	http.ListenAndServe("localhost:8888", nil)
 }
 
-func HandleOrder(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	err := r.ParseForm()
-	if err != nil {
-		logrus.New().WithError(err).Error("failed to parse form: ")
-		return
+func HandleOrder(isTest bool) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		err := r.ParseForm()
+		if err != nil {
+			logrus.New().WithError(err).Error("failed to parse form: ")
+			return
+		}
+		logger := logrus.New()
+		logger.Level = logrus.DebugLevel
+		logger.
+			WithField("form", r.Form).
+			WithField("path", r.URL).
+			WithField("method", r.Method).
+			WithField("headers", r.Header).
+			Info("got request")
+
+		var newRequest *http.Request
+		newRequest = r
+
+		for key := range r.Form {
+			newRequest.Form.Set(key, r.Form.Get(key))
+			//newRequest.PostForm.Set(key, r.Form.Get(key))
+		}
+
+		for key, val := range success {
+			newRequest.Form.Set(key, val)
+			//newRequest.PostForm.Set(key, val)
+		}
+
+		newRequest.Form.Set("ReturnOid", r.Form.Get("oid"))
+		//newRequest.PostForm.Set("ReturnOid", r.Form.Get("oid"))
+		// logger.
+		// 	WithField("form", newRequest.Form).
+		// 	WithField("path", newRequest.URL).
+		// 	WithField("method", newRequest.Method).
+		// 	WithField("headers", newRequest.Header).
+		// 	Info("before end")
+		var url string
+		if isTest {
+			url = "http://195.201.42.71:2442/v1/payment/softpay/success"
+		} else {
+			url = "http://94.130.77.97:2442/v1/payment/softpay/success"
+		}
+
+		resp, err := http.PostForm(url, newRequest.Form)
+		if err != nil {
+			logger.WithError(err).Error("got error")
+			return
+		}
+		defer resp.Body.Close()
+
+		w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+		w.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
+		w.Header().Set("Location", resp.Header.Get("Location"))
+		w.WriteHeader(resp.StatusCode)
+		// w.Write(nil)
+		io.Copy(w, resp.Body)
 	}
-	logger := logrus.New()
-	logger.Level = logrus.DebugLevel
-	logger.
-		WithField("form", r.Form).
-		WithField("path", r.URL).
-		WithField("method", r.Method).
-		WithField("headers", r.Header).
-		Info("got request")
-
-	var newRequest *http.Request
-	newRequest = r
-
-	for key := range r.Form {
-		newRequest.Form.Set(key, r.Form.Get(key))
-		//newRequest.PostForm.Set(key, r.Form.Get(key))
-	}
-
-	for key, val := range success {
-		newRequest.Form.Set(key, val)
-		//newRequest.PostForm.Set(key, val)
-	}
-
-	newRequest.Form.Set("ReturnOid", r.Form.Get("oid"))
-	//newRequest.PostForm.Set("ReturnOid", r.Form.Get("oid"))
-	// logger.
-	// 	WithField("form", newRequest.Form).
-	// 	WithField("path", newRequest.URL).
-	// 	WithField("method", newRequest.Method).
-	// 	WithField("headers", newRequest.Header).
-	// 	Info("before end")
-
-	resp, err := http.PostForm("http://94.130.77.97:2442/v1/payment/softpay/success", newRequest.Form)
-	if err != nil {
-		logger.WithError(err).Error("got error")
-		return
-	}
-	defer resp.Body.Close()
-
-	w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
-	w.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
-	w.Header().Set("Location", resp.Header.Get("Location"))
-	w.WriteHeader(resp.StatusCode)
-	// w.Write(nil)
-	io.Copy(w, resp.Body)
 }
 
 var requestFields = []string{

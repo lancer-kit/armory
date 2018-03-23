@@ -6,28 +6,31 @@ import (
 	"time"
 )
 
-// Workman is an interface for async workers
+// Worker is an interface for async workers
 // which launches and manages by the `Chief`.
-type Workman interface {
-	// New initializes new instance of the `Workman` implementation.
-	New(context.Context) Workman
-	// Run starts the `Workman` instance execution.
+type Worker interface {
+	// Init initializes new instance of the `Worker` implementation.
+	Init(context.Context) Worker
+	// Run starts the `Worker` instance execution.
 	Run()
 }
 
-type DummyWorkman struct {
+// DummyWorker is a simple realization of the Worker interface.
+type DummyWorker struct {
 	tickDuration time.Duration
 	ctx          context.Context
 }
 
-func (*DummyWorkman) New(parentCtx context.Context) Workman {
-	return &DummyWorkman{
+// Init returns new instance of the `DummyWorker`.
+func (*DummyWorker) Init(parentCtx context.Context) Worker {
+	return &DummyWorker{
 		ctx:          parentCtx,
 		tickDuration: time.Second,
 	}
 }
 
-func (s *DummyWorkman) Run() {
+// Run start job execution.
+func (s *DummyWorker) Run() {
 	ticker := time.NewTicker(15 * time.Second)
 	for {
 		select {
