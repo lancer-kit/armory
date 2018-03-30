@@ -77,7 +77,6 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 			}
 
 			if err != nil {
-				// todo: add ctx logger
 				log.Default.WithError(err).Error("unable to check auth token")
 			}
 
