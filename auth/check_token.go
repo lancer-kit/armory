@@ -8,14 +8,13 @@ import (
 	"github.com/pkg/errors"
 	"encoding/json"
 	"context"
-	"gitlab.inn4science.com/vcg/transaction/workers/api/ctx"
 )
 
 // Header name of the `Authorization` header.
 const Header = "Authorization"
 const JWTHeader = "jwt"
 var userApiLink string
-
+const KeyUID = iota
 func Init(usrApiLink string ) {
 	userApiLink = usrApiLink
 }
@@ -107,7 +106,7 @@ func ExtractUserID() func(http.Handler) http.Handler {
 				return
 			}
 
-			r = r.WithContext(context.WithValue(r.Context(), ctx.KeyUID, jwt.Jti))
+			r = r.WithContext(context.WithValue(r.Context(), KeyUID, jwt.Jti))
 			next.ServeHTTP(w, r)
 			return
 
