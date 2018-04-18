@@ -112,7 +112,12 @@ func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id int64, err error) {
 		RunWith(conn.db.DB).
 		PlaceholderFormat(sq.Dollar).
 		QueryRow().Scan(&id)
-	return
+
+	query, args, _ := sqq.ToSql()
+	start := time.Now()
+	conn.log("insert", start, query, args)
+
+	return id, errors.Wrap(err, "failed to insert")
 }
 
 func (conn *SQLConn) conn() Conn {
