@@ -106,6 +106,15 @@ func (conn *SQLConn) ExecRaw(query string, args ...interface{}) error {
 	return errors.Wrap(err, "failed to exec raw")
 }
 
+// Insert compile `sqq` to SQL and runs query. Return last inserted id
+func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id int64, err error) {
+	err = sqq.Suffix(`RETURNING "id"`).
+		RunWith(conn.db.DB).
+		PlaceholderFormat(sq.Dollar).
+		QueryRow().Scan(&id)
+	return
+}
+
 func (conn *SQLConn) conn() Conn {
 	if conn.tx != nil {
 		return conn.tx
