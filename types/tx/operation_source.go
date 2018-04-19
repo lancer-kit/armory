@@ -11,6 +11,7 @@ type OperationSource struct {
 	Deposit            *Deposit            `json:"deposit,omitempty"`
 	Payment            *Payment            `json:"payment,omitempty"`
 	CommissionClearing *CommissionClearing `json:"commissionClearing,,omitempty"`
+	Repayment          *Repayment          `json:"repayment,,omitempty"`
 }
 
 func (p OperationSource) Value() (driver.Value, error) {

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"math"
+
 	"github.com/pkg/errors"
 )
 
@@ -14,6 +16,7 @@ const (
 	TxTypeDeposit TxType = iota
 	TxTypePayment
 	TxTypeCommissionClearing
+	TxTypeRepayment
 )
 
 var (
@@ -21,12 +24,14 @@ var (
 		TxTypeDeposit:            "deposit",
 		TxTypePayment:            "payment",
 		TxTypeCommissionClearing: "commission_clearing",
+		TxTypeRepayment:          "repayment",
 	}
 
 	txTypeValueFromString = map[string]TxType{
 		"deposit":             TxTypeDeposit,
 		"payment":             TxTypePayment,
 		"commission_clearing": TxTypeCommissionClearing,
+		"repayment":           TxTypeRepayment,
 	}
 )
 
@@ -56,6 +61,12 @@ var TxOperationsDetails = map[TxType]struct {
 		Fixed: true,
 		Types: map[OperationType]int{
 			OpTypeDecreaseBalance: 1, OpTypeSystemTransfer: 1, OpTypeNullification: 1,
+		},
+	},
+	TxTypeRepayment: {
+		Fixed: false,
+		Types: map[OperationType]int{
+			OpTypeDecreaseBalance: 1, OpTypeSystemTransfer: math.MaxInt64,
 		},
 	},
 }
