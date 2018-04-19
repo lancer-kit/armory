@@ -9,7 +9,8 @@ import (
 
 // Deposit is a TODO: fill.
 type Deposit struct {
-	ID             int64          `json:"id"`
+	BaseRow
+
 	DepositID      string         `json:"depositId"`
 	ToWalletID     string         `json:"toWallet"`
 	Amount         currency.Coin  `json:"amount"`

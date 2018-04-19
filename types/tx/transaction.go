@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.inn4science.com/vcg/go-common/crypto"
 	"github.com/pkg/errors"
+	"gitlab.inn4science.com/vcg/go-common/crypto"
 )
 
 type TxState string
@@ -19,12 +19,13 @@ const (
 
 // Transaction is a representation of the `transactions` table.
 type Transaction struct {
-	ID           int64           `db:"id" json:"id"`
+	BaseRow
+
 	TxID         string          `db:"tx_id" json:"txId"`
 	Type         TxType          `db:"type" json:"type"`
 	State        TxState         `db:"state" json:"state"`
 	OpCount      int             `db:"op_count" json:"opCount"`
-	Operations   OperationSet      `db:"operations" json:"operations"`
+	Operations   OperationSet    `db:"operations" json:"operations"`
 	Source       OperationSource `db:"source" json:"source,omitempty"`
 	Signature    string          `db:"signature" json:"signature"`
 	Hash         string          `db:"hash" json:"hash"`

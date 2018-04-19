@@ -39,7 +39,8 @@ func (t WalletType) String() string {
 
 // Wallet is a representation of the `wallets` table.
 type Wallet struct {
-	ID        int64         `db:"id" json:"id"`
+	BaseRow
+
 	WalletID  string        `db:"wallet_id" json:"walletId"`
 	UserID    int64         `db:"user_id" json:"userId"`
 	Balance   currency.Coin `db:"balance" json:"balance"`

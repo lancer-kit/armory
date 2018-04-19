@@ -1,7 +1,8 @@
 package tx
 
 type TxSource struct {
-	ID        int64           `db:"id" json:"id"`
+	BaseRow
+
 	TxID      string          `db:"tx_id" json:"txId"`
 	Reference string          `db:"reference" json:"reference"`
 	Type      TxType          `db:"type" json:"type"`

@@ -13,7 +13,8 @@ const PaymentDefaultPercent int64 = 1
 
 // Payment is a representation of the `payments` table.
 type Payment struct {
-	ID           int64         `db:"id" json:"id"`
+	BaseRow
+
 	PaymentID    string        `db:"payment_id" json:"paymentId"`
 	FromWalletID string        `db:"from_wallet" json:"fromWallet"`
 	ToWalletID   string        `db:"to_wallet" json:"toWallet"`

@@ -8,7 +8,8 @@ import (
 
 // Operation is a representation of the `operations` table.
 type Operation struct {
-	ID           int64         `db:"id" json:"id"`
+	BaseRow
+
 	OperationID  string        `db:"operation_id" json:"operationId"`
 	Type         OperationType `db:"type" json:"type"`
 	TxType       TxType        `db:"tx_type" json:"txType"`
