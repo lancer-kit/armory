@@ -1,4 +1,4 @@
-package tx
+package txtypes
 
 type TxSource struct {
 	BaseRow

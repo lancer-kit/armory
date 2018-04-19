@@ -1,4 +1,4 @@
-package tx
+package txtypes
 
 import (
 	"github.com/pkg/errors"
