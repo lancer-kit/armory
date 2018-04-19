@@ -108,13 +108,13 @@ func (conn *SQLConn) ExecRaw(query string, args ...interface{}) error {
 
 // Insert compile `sqq` to SQL and runs query. Return last inserted id
 func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id int64, err error) {
+	start := time.Now()
 	err = sqq.Suffix(`RETURNING "id"`).
-		RunWith(conn.db.DB).
+		RunWith(conn.baseRunner()).
 		PlaceholderFormat(sq.Dollar).
 		QueryRow().Scan(&id)
 
 	query, args, _ := sqq.ToSql()
-	start := time.Now()
 	conn.log("insert", start, query, args)
 
 	return id, errors.Wrap(err, "failed to insert")
@@ -125,6 +125,13 @@ func (conn *SQLConn) conn() Conn {
 		return conn.tx
 	}
 	return conn.db
+}
+
+func (conn *SQLConn) baseRunner() sq.BaseRunner {
+	if conn.tx != nil {
+		return conn.tx.Tx
+	}
+	return conn.db.DB
 }
 
 func (conn *SQLConn) log(typ string, start time.Time, query string, args []interface{}) {

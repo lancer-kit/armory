@@ -1,21 +1,26 @@
 package auth
 
 import (
+	"context"
+	"encoding/json"
 	"net/http"
 
+	"github.com/pkg/errors"
 	"gitlab.inn4science.com/vcg/go-common/api/render"
 	"gitlab.inn4science.com/vcg/go-common/log"
-	"github.com/pkg/errors"
-	"encoding/json"
-	"context"
 )
 
 // Header name of the `Authorization` header.
-const Header = "Authorization"
-const JWTHeader = "jwt"
+const (
+	Header    = "Authorization"
+	JWTHeader = "jwt"
+
+	KeyUID = iota
+)
+
 var userApiLink string
-const KeyUID = iota
-func Init(usrApiLink string ) {
+
+func Init(usrApiLink string) {
 	userApiLink = usrApiLink
 }
 
