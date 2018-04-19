@@ -38,16 +38,34 @@ var (
 	}
 )
 
+
 // SetError adds error details to response.
 func (r *R) SetError(val interface{}) *R {
-	r.Error = val
-	return r
+	nr := *r
+
+	switch val.(type) {
+	case nil:
+		break
+	case error:
+		nr.Error = val.(error).Error()
+	case string:
+		nr.Error = val
+	case R:
+		nr.Error = val.(R).Error
+	case *R:
+		nr.Error = val.(*R).Error
+	default:
+		nr.Error = val
+	}
+
+	return &nr
 }
 
 // SetData sets response data.
 func (r *R) SetData(val interface{}) *R {
-	r.Data = val
-	return r
+	nr := *r
+	nr.Data = val
+	return &nr
 }
 
 // Render writes current response as WriteJSON to the `http.ResponseWriter`.

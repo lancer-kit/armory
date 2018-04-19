@@ -33,3 +33,13 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 func ServerError(w http.ResponseWriter) {
 	WriteJSON(w, http.StatusInternalServerError, ResultServerError)
 }
+
+// BadRequest renders `ResultBadRequest` with `reason` as an error.
+func BadRequest(w http.ResponseWriter, reason interface{}) {
+	ResultBadRequest.SetError(reason).Render(w)
+}
+
+// Success renders `result` as JSON with `http.StatusOK`.
+func Success(w http.ResponseWriter, result interface{}) {
+	WriteJSON(w, http.StatusOK, result)
+}
