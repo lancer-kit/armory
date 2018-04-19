@@ -16,4 +16,6 @@ const (
 
 	TopicTxCommissionClearingNew     = "tx.commission_clearing.new"
 	TopicTxCommissionClearingResults = "tx.commission_clearing.results"
+
+	TopicTxRepaymentNew = "tx.repayment.new"
 )
