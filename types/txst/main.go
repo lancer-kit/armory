@@ -1,4 +1,4 @@
-package txtypes
+package txst
 
 type Transactional interface {
 	UID() string

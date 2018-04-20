@@ -1,4 +1,4 @@
-package share
+package sharet
 
 import "gitlab.inn4science.com/vcg/go-common/types/currency"
 

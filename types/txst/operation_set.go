@@ -1,4 +1,4 @@
-package txtypes
+package txst
 
 import (
 	"database/sql/driver"

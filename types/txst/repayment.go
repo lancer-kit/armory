@@ -1,21 +1,21 @@
-package txtypes
+package txst
 
 import (
 	"fmt"
 
 	"gitlab.inn4science.com/vcg/go-common/crypto"
 	"gitlab.inn4science.com/vcg/go-common/types/currency"
-	"gitlab.inn4science.com/vcg/go-common/types/share"
+	"gitlab.inn4science.com/vcg/go-common/types/sharet"
 )
 
 // Repayment
 type Repayment struct {
-	ID             int64                   `json:"id"`
-	RID            string                  `json:"uid"`
-	ToWallets      []share.RepaymentWallet `json:"toWallets"`
-	Amount         currency.Coin           `json:"amount"`
-	CreatedAt      int64                   `json:"createdAt"`
-	MerchantWallet string                  `json:"merchantWallet"`
+	ID             int64                    `json:"id"`
+	RID            string                   `json:"uid"`
+	ToWallets      []sharet.RepaymentWallet `json:"toWallets"`
+	Amount         currency.Coin            `json:"amount"`
+	CreatedAt      int64                    `json:"createdAt"`
+	MerchantWallet string                   `json:"merchantWallet"`
 }
 
 func (repayment *Repayment) ToOperations() OperationSet {
