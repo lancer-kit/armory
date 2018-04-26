@@ -26,6 +26,15 @@
   revision = "7562301a6763c9ac631b0a2011b4aa0e064e45d4"
 
 [[projects]]
+  name = "github.com/go-chi/chi"
+  packages = [
+    ".",
+    "middleware"
+  ]
+  revision = "e83ac2304db3c50cf03d96a2fcd39009d458bc35"
+  version = "v3.3.2"
+
+[[projects]]
   name = "github.com/go-ozzo/ozzo-validation"
   packages = ["."]
   revision = "85dcd8368eba387e65a03488b003e233994e87e9"
@@ -132,6 +141,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "44739f0a073346596df14d266b075dd750a56ee65cde9cac11f8c94595345248"
+  inputs-digest = "5e2c29b6e87dd71bf895c8c52bc195c4f5cdccbb55208f178d000103c8e0a22f"
   solver-name = "gps-cdcl"
   solver-version = 1
