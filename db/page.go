@@ -28,17 +28,21 @@ var (
 	}
 )
 
+// PageQuery is the structure for
+// building query with pagination.
 type PageQuery struct {
 	Order    string `json:"order"`
 	Page     uint64 `json:"page"`
 	PageSize uint64 `json:"pageSize"`
 }
 
+// ParsePageQuery extracts `PageQuery` from the url Query Values.
 func ParsePageQuery(values url.Values) (pq PageQuery, err error) {
 	err = pq.FromRQuery(values)
 	return
 }
 
+// FromRQuery extracts `PageQuery` from the url Query Values and validate.
 func (pq *PageQuery) FromRQuery(query url.Values) error {
 	page := query.Get("page")
 	if page == "" {
@@ -63,6 +67,7 @@ func (pq *PageQuery) FromRQuery(query url.Values) error {
 	return pq.Validate()
 }
 
+// Validate checks is correct values and set default values if `PageQuery` empty.
 func (pq *PageQuery) Validate() error {
 	switch strings.ToLower(pq.Order) {
 	case "":
@@ -88,10 +93,12 @@ func (pq *PageQuery) Validate() error {
 	return nil
 }
 
+// Offset calculates select offset.
 func (pq *PageQuery) Offset() uint64 {
 	return (pq.Page - 1) * pq.PageSize
 }
 
+// Apply sets limit and ordering params to SelectBuilder.
 func (pq *PageQuery) Apply(query sq.SelectBuilder, orderColumn string) sq.SelectBuilder {
 	query = query.Limit(pq.PageSize).Offset(pq.Offset())
 	if pq.Order != "" && orderColumn != "" {

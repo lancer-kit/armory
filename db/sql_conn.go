@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SQLConn is a connector for the interaction with the database.
+// SQLConn is a connector for interacting with the database.
 type SQLConn struct {
 	db     *sqlx.DB
 	tx     *sqlx.Tx
@@ -120,7 +120,7 @@ func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id int64, err error) {
 	return id, errors.Wrap(err, "failed to insert")
 }
 
-func (conn *SQLConn) conn() Conn {
+func (conn *SQLConn) conn() сonn {
 	if conn.tx != nil {
 		return conn.tx
 	}
@@ -135,6 +135,10 @@ func (conn *SQLConn) baseRunner() sq.BaseRunner {
 }
 
 func (conn *SQLConn) log(typ string, start time.Time, query string, args []interface{}) {
+	if conn.logger == nil {
+		return
+	}
+
 	dur := time.Since(start)
 	lEntry := conn.logger.
 		WithFields(logrus.Fields{

@@ -4,13 +4,14 @@ import (
 	"context"
 	"time"
 
+	"gitlab.inn4science.com/vcg/go-common/log"
 	"gitlab.inn4science.com/vcg/go-common/routines"
 )
 
 // Keeper is a service that verifies the connection
 // to the database using `ping` at a specified interval.
 type Keeper struct {
-	// Conn is a database connection interface.
+	// сonn is a database connection interface.
 	Conn *SQLConn
 	// Interval is a time duration between ping calls.
 	Interval time.Duration
@@ -23,7 +24,11 @@ type Keeper struct {
 // Init inits worker instance.
 func (s *Keeper) Init(parentCtx context.Context) routines.Worker {
 	if s.Conn == nil {
-		s.Conn = conn
+		s.Conn = GetConnector()
+	}
+
+	if s.Conn.logger == nil {
+		s.Conn.logger = log.Get()
 	}
 
 	if s.Interval == 0 {
