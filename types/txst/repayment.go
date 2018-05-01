@@ -10,12 +10,12 @@ import (
 
 // Repayment
 type Repayment struct {
-	ID             int64                    `json:"id"`
-	RID            string                   `json:"uid"`
-	ToWallets      []sharet.RepaymentWallet `json:"toWallets"`
-	Amount         currency.Coin            `json:"amount"`
-	CreatedAt      int64                    `json:"createdAt"`
-	MerchantWallet string                   `json:"merchantWallet"`
+	ID             int64                  `json:"id"`
+	RID            string                 `json:"uid"`
+	Wallet         sharet.RepaymentWallet `json:"wallet"`
+	Amount         currency.Coin          `json:"amount"`
+	CreatedAt      int64                  `json:"createdAt"`
+	MerchantWallet string                 `json:"merchantWallet"`
 }
 
 func (repayment *Repayment) ToOperations() OperationSet {
@@ -32,23 +32,21 @@ func (repayment *Repayment) ToOperations() OperationSet {
 			TxType:       TxTypeRepayment,
 			CreatedAt:    repayment.CreatedAt,
 		},
-	}
-
-	for _, w := range repayment.ToWallets {
-		result = append(result, &Operation{
+		&Operation{
 			OperationID: crypto.HashStrings(
 				repayment.RID,
-				w.WalletId,
-				w.Amount.String(),
+				repayment.Wallet.WalletId,
+				repayment.Amount.String(),
 				fmt.Sprintf("%d", repayment.CreatedAt)),
-			Counterparty: w.WalletId,
-			Amount:       w.Amount,
+			Counterparty: repayment.Wallet.WalletId,
+			Amount:       repayment.Amount,
 			Type:         OpTypeSystemTransfer,
 			Reference:    repayment.RID,
 			TxType:       TxTypeRepayment,
 			CreatedAt:    repayment.CreatedAt,
-		})
+		},
 	}
+
 	return result
 }
 
