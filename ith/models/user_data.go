@@ -1,4 +1,4 @@
-package ith_models
+package models
 type (
 	/**
 	 Use (countryCode and number) OR fullNumber
