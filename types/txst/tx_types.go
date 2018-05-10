@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"math"
-
 	"github.com/pkg/errors"
 )
 
@@ -64,9 +62,10 @@ var TxOperationsDetails = map[TxType]struct {
 		},
 	},
 	TxTypeRepayment: {
-		Fixed: false,
+		Count: 2,
+		Fixed: true,
 		Types: map[OperationType]int{
-			OpTypeDecreaseBalance: 1, OpTypeSystemTransfer: math.MaxInt64,
+			OpTypeDecreaseBalance: 1, OpTypeSystemTransfer: 1,
 		},
 	},
 }

@@ -3,6 +3,30 @@ package render
 import "net/http"
 
 // R is a default struct for json responses.
+
+//Example:
+//
+//``` go
+//	func MyHandler(w http.ResponseWriter, r *http.Request) {
+//		// some code ...
+//		// ...
+//		res := render.R{
+//			Code: http.StatusOk,
+//			Message: "User created",
+//		}
+//		res.Render(w)
+//		return
+//	}
+//```
+// Usage of predefined response:
+//``` go
+//	func MyHandler(w http.ResponseWriter, r *http.Request) {
+//		// some code ...
+//		// ...
+//		render.ResultBadRequest.SetError("Invalid email").Render(w)
+//		return
+//	}
+//```
 type R struct {
 	Code    int         `json:"errcode"`
 	Message string      `json:"message"`
@@ -33,11 +57,14 @@ var (
 	ResultNotFound = &R{
 		Code:    http.StatusNotFound,
 		Message: "Not Found",
-		Data:    nil,
-		Error:   nil,
+	}
+
+	// ResultUnauthorized predefined response for `http.StatusUnauthorized`.
+	ResultUnauthorized = &R{
+		Code:    http.StatusUnauthorized,
+		Message: "Action Unauthorized",
 	}
 )
-
 
 // SetError adds error details to response.
 func (r *R) SetError(val interface{}) *R {

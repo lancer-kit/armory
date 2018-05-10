@@ -74,7 +74,7 @@ func (conn *SQLConn) Commit() error {
 // Rollback rolls back the current transaction
 func (conn *SQLConn) Rollback() error {
 	if conn.tx == nil {
-		return errors.New("not in transaction")
+		return nil
 	}
 
 	err := conn.tx.Rollback()
