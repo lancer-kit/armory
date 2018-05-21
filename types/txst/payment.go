@@ -7,6 +7,24 @@ import (
 	"gitlab.inn4science.com/vcg/go-common/types/currency"
 )
 
+type PaymentState string
+
+const (
+	PaymentPending       PaymentState = "pending"
+	PaymentSubmitted     PaymentState = "submitted"
+	PaymentApplied       PaymentState = "applied"
+	PaymentFailed        PaymentState = "failed"
+	PaymentPaid4Referrer PaymentState = "paid_for_referrer"
+	PaymentBlocked       PaymentState = "blocked"
+)
+
+type PaymentType string
+
+const (
+	PaymentTDirect  PaymentType = "direct"
+	PaymentTInvoice PaymentType = "invoice"
+)
+
 // PaymentDefaultPercent is the default interest rate
 // that will be charged to the recipient.
 const PaymentDefaultPercent int64 = 1
@@ -20,7 +38,8 @@ type Payment struct {
 	ToWalletID   string        `db:"to_wallet" json:"toWallet"`
 	Amount       currency.Coin `db:"amount" json:"amount"`
 	Fee          currency.Coin `db:"fee" json:"fee"`
-	State        TxState       `db:"state" json:"state"`
+	State        PaymentState  `db:"state" json:"state"`
+	Type         PaymentType   `db:"type" json:"type"`
 	Description  string        `db:"description" json:"description"`
 	Referrer     string        `db:"referrer" json:"referrer"`
 	CreatedAt    int64         `db:"created_at" json:"createdAt"`
@@ -30,14 +49,14 @@ type Payment struct {
 }
 
 func (payment *Payment) ToOperations() OperationSet {
-	referrerPart := payment.Fee.GetPercent(FeeReferrerPart)
+	referrerPart := payment.ReferrerPart()
 
 	result := OperationSet{
 		&Operation{
 			OperationID: crypto.HashStrings(
 				payment.PaymentID,
 				payment.ToWalletID,
-				payment.Amount.String(),
+				(payment.Amount - payment.Fee).String(),
 				fmt.Sprintf("%d", payment.CreatedAt)),
 			Counterparty: payment.ToWalletID,
 			Amount:       payment.Amount - payment.Fee,
@@ -65,7 +84,7 @@ func (payment *Payment) ToOperations() OperationSet {
 			OperationID: crypto.HashStrings(
 				payment.PaymentID,
 				payment.CommissionWallet,
-				payment.Amount.String(),
+				(payment.Fee - referrerPart).String(),
 				fmt.Sprintf("%d", payment.CreatedAt)),
 			Counterparty: payment.CommissionWallet,
 			Amount:       payment.Fee - referrerPart,
@@ -79,7 +98,7 @@ func (payment *Payment) ToOperations() OperationSet {
 			OperationID: crypto.HashStrings(
 				payment.PaymentID,
 				payment.Referrer,
-				payment.Amount.String(),
+				referrerPart.String(),
 				fmt.Sprintf("%d", payment.CreatedAt)),
 			Counterparty: payment.Referrer,
 			Amount:       referrerPart,
@@ -103,4 +122,8 @@ func (payment *Payment) TxType() TxType {
 
 func (payment *Payment) UID() string {
 	return payment.PaymentID
+}
+
+func (payment *Payment) ReferrerPart() currency.Coin {
+	return payment.Fee.GetPercent(FeeReferrerPart)
 }
