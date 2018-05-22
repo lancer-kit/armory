@@ -407,8 +407,12 @@ Address type, item of Addresses list
 
 ```go
 type AddressRequest struct {
-	CountryCode string `json:"countryCode"` //Required, ISO-2 country code, String(2)
-	City        string `json:"city"`        //Required, String(50)
+	CountryCode       string `json:"countryCode"`       //Required, String(2), ISO-2 country code
+	City              string `json:"city"`              //Required, String(50), City
+	FirstAddressLine  string `json:"firstAddressLine"`  //Required, String(60), First address line
+	SecondAddressLine string `json:"secondAddressLine"` //Optional, String(60), Second address line
+	PostalCode        string `json:"postalCode"`        //Required, String(10), Postal code
+	State             string `json:"state"`             //Optional,String(50), State
 }
 ```
 
@@ -429,8 +433,9 @@ Example:
 #### func (*AddressRequest) Validate
 
 ```go
-func (r *AddressRequest) Validate() error
+func (r *AddressRequest) Validate() (err error)
 ```
+Validate verifies that value is predefined for AddressRequest.
 
 #### type AddressType
 
@@ -539,7 +544,8 @@ type AffiliateInfo struct {
 }
 ```
 
-Additional field affiliateInfo
+Additional field affiliateInfo - used in "Create Standard Account" method of
+Account Management Services
 
     "affiliateInfo":
     	{
@@ -549,12 +555,25 @@ Additional field affiliateInfo
     		"customParameters": "tr=24&hd=3"
     	}
 
+#### func (*AffiliateInfo) Validate
+
+```go
+func (r *AffiliateInfo) Validate() (err error)
+```
+Validate verifies that value is predefined for AffiliateInfo.
+
 #### type AmsDate
 
 ```go
 type AmsDate time.Time
 ```
 
+
+#### func (AmsDate) Empty
+
+```go
+func (r AmsDate) Empty() bool
+```
 
 #### func (AmsDate) MarshalJSON
 
@@ -762,19 +781,19 @@ Value is generated so PhoneType satisfies db row driver.Valuer.
 
 ```go
 type UserRegistrationRequest struct {
-	ClientId           string         `json:"clientId"`           //Required, String(50), OAuth client ID
-	ClientSecret       string         `json:"clientSecret"`       //Required, String(32), OAuth client secret
-	ExternalAccountUid string         `json:"externalAccountUid"` //Required, String(50), User API user ID
-	Phone              string         `json:"phone"`              //Required, String(30), Full phone number. Min length 5
-	Email              string         `json:"email"`              //Optional, String(150), Email
-	Password           string         `json:"password"`           //Required, String(50), User account password (plain ?)
-	FirstName          string         `json:"firstName"`          //Required, String(50), Name
-	LastName           string         `json:"lastName"`           //Required, String(50), Surname
-	BirthDate          string         `json:"birthDate"`          //Optional, Date, Format - yyyyMMddHHmmss
-	Country            string         `json:"country"`            //Required, String(2), ISO2 country code
-	Language           string         `json:"language"`           //Optional, String(2), ISO2 language code
-	Address            *Address       //Required, User account address
-	AffiliateInfo      *AffiliateInfo //Optional, Affiliate information
+	ClientId           string          `json:"clientId"`                 //Required, String(50), OAuth client ID
+	ClientSecret       string          `json:"clientSecret"`             //Required, String(32), OAuth client secret
+	ExternalAccountUid string          `json:"externalAccountUid"`       //Required, String(50), User API user ID
+	Phone              string          `json:"phone"`                    //Required, String(30), Full phone number. Min length 5
+	Email              string          `json:"email"`                    //Optional, String(150), Email
+	Password           string          `json:"password"`                 //Required, String(50), User account password (plain ?)
+	FirstName          string          `json:"firstName"`                //Required, String(50), Name
+	LastName           string          `json:"lastName"`                 //Required, String(50), Surname
+	BirthDate          AmsDate         `json:"birthDate"`                //Optional, Date, Format - yyyyMMddHHmmss
+	Country            string          `json:"country"`                  //Required, String(2), ISO2 country code
+	Language           string          `json:"language"`                 //Optional, String(2), ISO2 language code
+	Address            *AddressRequest `json:"address"`                  //Required, User account address
+	AffiliateInfo      *AffiliateInfo  `json:"affiliateInfo,ommitempty"` //Optional, Affiliate information
 }
 ```
 
@@ -809,6 +828,13 @@ Example:
     		"customParameters": "tr=24&hd=3"
     	}
      }
+
+#### func (*UserRegistrationRequest) Validate
+
+```go
+func (r *UserRegistrationRequest) Validate() (err error)
+```
+Validate verifies that value is predefined for AffiliateInfo.
 
 #### type UserRegistrationResponse
 
