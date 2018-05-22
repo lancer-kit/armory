@@ -4,17 +4,16 @@ package ams
 
 type (
 
-	// Use (countryCode and number) OR fullNumber
-	// Example:
-	//```json
+	//Use (countryCode and number) OR fullNumber
+	//
+	//Example:
 	//	...
-	//"phone": {
-	//	"countryCode ": "371",
-	//	"number": "20000000",
-	//	"fullNumber": "37120000000",
-	//}
-	//...
-	//```
+	//  "phone": {
+	//	  "countryCode ": "371",
+	//	  "number": "20000000",
+	//	  "fullNumber": "37120000000",
+	//   }
+	//  ...
 		Phone struct {
 		CountryCode *string `json:"countryCode,omitempty"` //Phone country code (optional, when fullNumber filled)
 		Number      *string `json:"number,omitempty"`      //Phone number (optional, when fullNumber filled)
@@ -46,6 +45,9 @@ type (
 	//	]
 	//  }
 	//
+	Addresses[]*Address
+
+	//Address type, item of Addresses list
 	Address struct {
 		Uid               string      `json:"uid,omitempty"`     //Address UID, Optional for @address
 		Country           *Country    `json:"country,omitempty"` //Country object, Optional for @address
@@ -59,30 +61,15 @@ type (
 	}
 
 
-	//Additional field affiliateInfo
-	//
-	//	"affiliateInfo":
-	//		{
-	//			"affiliateId": "AF4",
-	//			"campaignId": "C539",
-	//			"bannerId": "BRT13",
-	//			"customParameters": "tr=24&hd=3"
-	//		}
-	AffiliateInfo struct {
-		AffiliateId      string `json:"affiliateId"`      //Optional, String(50), Affiliate ID
-		CampaignId       string `json:"campaignId"`       //Optional, String(50), Campaign ID
-		BannerId         string `json:"bannerId"`         //Optional, String(50), Banner ID
-		CustomParameters string `json:"customParameters"` //Optional, String(255), Custom parameters
-	}
 
-	/**
-	Additional field `country`
-	"country": {
-			"code": "LV",
-			"name": "Latvia",
-			"brandedCardsAvailable": true
-		},
-	*/
+
+	//Additional field `country`
+	//
+	//   "country": {
+	//		"code": "LV",
+	//		"name": "Latvia",
+	//		"brandedCardsAvailable": true
+	//	},
 	Country struct {
 		Id                    int64  `json:"id,omitempty"`
 		Code                  string `json:"code"`
@@ -91,13 +78,14 @@ type (
 		RegistrationAllowed   bool   `json:"registrationAllowed,omitempty"`
 	}
 
-	/**
-	Additional field `language`
-	"language": {
-			"code": "ru",
-			"name": "Russian"
-		},
-	 */
+
+	//Additional field `language`
+	//
+	//  "language": {
+	//		"code": "ru",
+	//		"name": "Russian"
+	//	},
+	//
 	Language struct {
 		Uid     string `json:"uid,omitempty"`
 		Code    string `json:"code"` //ISO2 language code
@@ -106,18 +94,22 @@ type (
 		Primary bool   `json:"primary,omitempty"`
 	}
 
-	/**
-	"accountPhones": [
-			{
-				"uid": "3e22eb32b25e7e3b6c7261e3d2d2654c",
-				"countryCode": "371",
-				"number": "20000000",
-				"type": "M",
-				"primary": true,
-				"confirmed": true
-			}
-		],
-	 */
+
+	//AccountPhones, list of AccountPhone
+	//
+	//  "accountPhones": [
+	//		{
+	//			"uid": "3e22eb32b25e7e3b6c7261e3d2d2654c",
+	//			"countryCode": "371",
+	//			"number": "20000000",
+	//			"type": "M",
+	//			"primary": true,
+	//			"confirmed": true
+	//		}
+	//	],
+	AccountPhones []*AccountPhone
+
+	//Item of AccountPhones
 	AccountPhone struct {
 		Uid               string    `json:"uid,omitempty"`         //Phone UID
 		CountryCode       string    `json:"countryCode,omitempty"` //Phone country code
@@ -128,7 +120,9 @@ type (
 		Confirmed         bool      `json:"confirmed,omitempty"`   //Phone is confirmed by account holder
 	}
 
+
 	//List of account settings
+	//
 	//  "accountSettings": [
 	//		{
 	//			"name": "externalAccountUid",
@@ -136,22 +130,28 @@ type (
 	//			"category": "ACC"
 	//		}
 	//	],
+	AccountSettings []*AccountSetting
+
+	//Item of AccountSettings list
 	AccountSetting struct {
 		Name     string `json:"name"`               //Setting name
 		Value    string `json:"value,omitempty"`    //Setting value
 		Category string `json:"category,omitempty"` //Setting category
 	}
 
-	/**
-	"accountEmails": [
-			{
-				"uid": "5340c5dd139528019a01821ba8bc7f09",
-				"email": "john@enauda.com",
-				"confirmed": false,
-				"primary": true
-			}
-		],
-	 */
+	//AccountEmails list of AccountEmail
+	//
+	//  "accountEmails": [
+	//		{
+	//			"uid": "5340c5dd139528019a01821ba8bc7f09",
+	//			"email": "john@enauda.com",
+	//			"confirmed": false,
+	//			"primary": true
+	//		}
+	//	],
+	AccountEmails []*AccountEmail
+
+	//Item of AccountEmails list
 	AccountEmail struct {
 		Uid       string `json:"uid,omitempty"`
 		Email     string `json:"email"`
@@ -160,35 +160,33 @@ type (
 		Type      string `json:"type,omitempty"`
 	}
 
-	/**
-	Person object
-		   "person": {
-			   "name": "John",
-			   "surname": "Doe",
-			   "birthDate": "19810509000000",
-	           "pep": false
-		   },
-
-	*/
+	//Person object
+	//
+	//	   "person": {
+	//		   "name": "John",
+	//		   "surname": "Doe",
+	//		   "birthDate": "19810509000000",
+	//           "pep": false
+	//	   },
 	Person struct {
 		Name      string `json:"name"`      //Name
 		Surname   string `json:"surname"`   //Surname
-		BirthDate string `json:"birthDate"` //Date of birth,Format – yyyyMMddHHmmss
+		BirthDate AmsDate `json:"birthDate"` //Date of birth,Format – yyyyMMddHHmmss
 		Pep       bool   `json:"pep"`       //Person in politically exposed person (PEP)
 	}
 
-	/**
-	{
-		"accountUid": "100-014-275-55",
-		"externalAccountUid": "EX-ACC-UID-1234",
-		"accessToken": "bdad264b7f8b9896d73436b234e4bddd",
-		"account": {....}
-	}
-	*/
+	//UserRegistrationResponse response from ITH Account Management Services (AMS)
+	//
+	//  {
+	//	"accountUid": "100-014-275-55",
+	//	"externalAccountUid": "EX-ACC-UID-1234",
+	//	"accessToken": "bdad264b7f8b9896d73436b234e4bddd",
+	//	"account": {....}
+	//  }
 	UserRegistrationResponse struct {
 		AccountUid         string           `json:"accountUid"`
 		ExternalAccountUid string           `json:"externalAccountUid"`
 		AccessToken        string           `json:"accessToken"`
-		Account            *StandardAccount `json:"account"`
+		Account            *Account `json:"account"`
 	}
 )

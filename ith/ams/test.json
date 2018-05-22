@@ -1,12 +1,3 @@
-package ams
-
-import (
-	"testing"
-	"encoding/json"
-	"github.com/stretchr/testify/assert"
-)
-
-var responseExample = `
 {
   "accountUid": "100-020-425-40",
   "externalAccountUid": "EX-ACC-UID-1234",
@@ -90,18 +81,4 @@ var responseExample = `
     "actionConfirmationEnabled": false,
     "test": false
   }
-}
-`
-
-func TestParseResponse(t *testing.T) {
-	var a UserRegistrationResponse
-	e := json.Unmarshal([]byte(responseExample), &a)
-	assert.Equal(t, nil, e)
-	assert.Equal(t, 1, len(a.Account.AccountEmails))
-	assert.Equal(t, 1, len(a.Account.AccountPhones))
-	assert.Equal(t, 1, len(a.Account.Addresses))
-	assert.Equal(t, "Doe", a.Account.Person.Surname)
-	testCountry(t, a.Account.Country)
-	testLanguage(t, a.Account.Language)
-	testAccountEmails(t, a.Account.AccountEmails)
 }
