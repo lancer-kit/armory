@@ -104,4 +104,7 @@ func TestParseResponse(t *testing.T) {
 	testCountry(t, a.Account.Country)
 	testLanguage(t, a.Account.Language)
 	testAccountEmails(t, a.Account.AccountEmails)
+	testAccountSettings(t, a.Account.AccountSettings)
+	testAddresses(t, a.Account.Addresses)
+	testPerson(t, a.Account.Person)
 }
