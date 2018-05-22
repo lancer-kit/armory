@@ -2,15 +2,9 @@ package payment
 
 import (
 	"net/http"
-	"net/url"
 
 	"gitlab.inn4science.com/vcg/go-common/types/currency"
 )
-
-type Config struct {
-	BaseURL url.URL
-	Path    string
-}
 
 const (
 	APIAuthToken        = "/paymentapi/auth/token"
@@ -56,4 +50,10 @@ type RefundRequest struct {
 	UID     string        `json:"uid"`
 	Amount  currency.Fiat `json:"amount"`
 	Comment string        `json:"comment"`
+}
+
+const AuthHeader = "Authorization"
+
+var AuthHeaderVal = func(accessToken string) (value string) {
+	return "Bearer " + accessToken
 }
