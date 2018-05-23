@@ -13,13 +13,13 @@ import (
 //	* H – Home;
 //	* O – Other;
 //	* C – Communication
-type 	AddressType int
+type AddressType int
 
 const (
-	AddressTypeBusiness      AddressType = iota //B – Business;
-	AddressTypeHome                             //H – Home;
-	AddressTypeOther                            //O – Other;
-	AddressTypeCommunication                    //C – Communication
+	AddressTypeBusiness      AddressType = iota + 1 //B – Business;
+	AddressTypeHome                                 //H – Home;
+	AddressTypeOther                                //O – Other;
+	AddressTypeCommunication                        //C – Communication
 
 )
 

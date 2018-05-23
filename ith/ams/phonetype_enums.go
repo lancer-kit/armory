@@ -18,9 +18,9 @@ import (
 type PhoneType int
 
 const (
-	PhoneTypeMobile PhoneType = iota //Mobile
-	PhoneTypeHome                    //Home
-	PhoneTypeWork                    //Work
+	PhoneTypeMobile PhoneType = iota + 1 //Mobile
+	PhoneTypeHome                        //Home
+	PhoneTypeWork                        //Work
 )
 
 var ErrPhoneTypeInvalid = errors.New("PhoneType is invalid")

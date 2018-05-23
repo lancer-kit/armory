@@ -15,10 +15,11 @@ import (
 type AccountType int
 
 const (
-	AccountTypeStandard AccountType = iota //Standard
-	AccountTypeMerchant                    //Merchant
-	AccountTypeBusiness                    //Business
+	AccountTypeStandard AccountType = iota + 1 //Standard
+	AccountTypeMerchant                        //Merchant
+	AccountTypeBusiness                        //Business
 )
+
 var ErrAccountTypeInvalid = errors.New("AccountType is invalid")
 
 var defAccountTypeNameToValue = map[string]AccountType{

@@ -16,9 +16,9 @@ import (
 type WebResource int
 
 const (
-	WebResourceWeb      WebResource = iota // W – Web;
-	WebResourceFacebook                    //F – Facebook;
-	WebResourceTwitter                     //T – Twitter
+	WebResourceWeb      WebResource = iota + 1 // W – Web;
+	WebResourceFacebook                        //F – Facebook;
+	WebResourceTwitter                         //T – Twitter
 )
 
 var ErrWebResourceInvalid = errors.New("WebResource is invalid")

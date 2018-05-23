@@ -31,24 +31,24 @@ import (
 type AccountStatus int
 
 const (
-	StStandardAutomaticallyRegistered AccountStatus = iota //SA – Standard: Automatically Registered
-	StStandardRegistrationRequested                        //SR – Standard: Registration Requested
-	StStandardRegistrationConfirmed                        //SC – Standard: Registration Confirmed
-	StStandardCustomerIdentified                           //SF – Standard: Customer Identified
-	StStandardBlocked                                      //SB – Standard: Blocked
-	StStandardClosed                                       //SD – Standard: Closed
-	StBusinessRegistrationRequested                        //BR – Business: Registration Requested
-	StBusinessRegistrationConfirmed                        //BC – Business: Registration Confirmed (Read Only)
-	StBusinessRegistrationFinished                         //BF – Business: Registration Finished (Agreement Signed)
-	StBusinessRequiresModeration                           //BM – Business: Requires Moderation
-	StBusinessSuspended                                    //BS – Business: Suspended (Blocked)
-	StBusinessClosed                                       //BD – Business: Closed
-	StMerchantRegistrationRequested                        //MR – Merchant: Registration Requested
-	StMerchantRegistrationConfirmed                        //MC – Merchant: Registration Confirmed (Read Only)
-	StMerchantRegistrationFinished                         //MF – Merchant: Registration Finished (Agreement Signed)
-	StMerchantRequiresModeration                           //MM – Merchant: Requires Moderation
-	StMerchantSuspended                                    //MS – Merchant: Suspended (Blocked)
-	StMerchantClosed                                       //MD – Merchant: Closed
+	StStandardAutomaticallyRegistered AccountStatus = iota + 1 //SA – Standard: Automatically Registered
+	StStandardRegistrationRequested                            //SR – Standard: Registration Requested
+	StStandardRegistrationConfirmed                            //SC – Standard: Registration Confirmed
+	StStandardCustomerIdentified                               //SF – Standard: Customer Identified
+	StStandardBlocked                                          //SB – Standard: Blocked
+	StStandardClosed                                           //SD – Standard: Closed
+	StBusinessRegistrationRequested                            //BR – Business: Registration Requested
+	StBusinessRegistrationConfirmed                            //BC – Business: Registration Confirmed (Read Only)
+	StBusinessRegistrationFinished                             //BF – Business: Registration Finished (Agreement Signed)
+	StBusinessRequiresModeration                               //BM – Business: Requires Moderation
+	StBusinessSuspended                                        //BS – Business: Suspended (Blocked)
+	StBusinessClosed                                           //BD – Business: Closed
+	StMerchantRegistrationRequested                            //MR – Merchant: Registration Requested
+	StMerchantRegistrationConfirmed                            //MC – Merchant: Registration Confirmed (Read Only)
+	StMerchantRegistrationFinished                             //MF – Merchant: Registration Finished (Agreement Signed)
+	StMerchantRequiresModeration                               //MM – Merchant: Requires Moderation
+	StMerchantSuspended                                        //MS – Merchant: Suspended (Blocked)
+	StMerchantClosed                                           //MD – Merchant: Closed
 )
 
 var ErrAccountStatusInvalid = errors.New("AccountStatus is invalid")
