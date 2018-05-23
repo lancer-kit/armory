@@ -5,6 +5,8 @@ import (
 
 	"time"
 
+	"fmt"
+
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/vcg/go-common/api/httpx"
 )
@@ -45,6 +47,7 @@ func (api *API) GetAuthToken(request *AuthRequest) (response *AuthResponse, _ er
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get auth token")
 	}
+
 	response = new(AuthResponse)
 	err = httpx.ParseJSONResult(httpResp, response)
 	if err != nil {
@@ -75,12 +78,72 @@ func (api *API) RefreshAuthToken(refreshToken string) (response *AuthResponse, _
 	return response, err
 }
 
-func (api *API) GetOrderList() ([]OrderShort, error) {
+func (api *API) CreateOrder(order *Order) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderCreate)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&CreateOrderRequest{Order: order},
+		map[string]string{
+			AuthHeader: AuthHeaderVal(api.Credentials.AccessToken),
+		})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) GetOrderDetails(uid, externalOrderId string) (*OrdersListResp, error) {
+	u := api.Config.GetURL(APIOrderData)
+	req := &struct {
+		UID             string `json:"uid,omitempty"`
+		ExternalOrderId string `json:"externalOrderId,omitempty"`
+	}{
+		UID:             uid,
+		ExternalOrderId: externalOrderId,
+	}
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		req,
+		map[string]string{
+			AuthHeader: AuthHeaderVal(api.Credentials.AccessToken),
+		})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(OrdersListResp)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) GetOrderList(since, until int64) (*OrdersListResp, error) {
 	u := api.Config.GetURL(APIOrdersList)
 	request := struct {
-		DateFrom string `json:"dateFrom"`
-		DateTo   string `json:"dateTo"`
-	}{DateFrom: "20160101120000", DateTo: "20180520120000"}
+		DateFrom IthTime `json:"dateFrom"`
+		DateTo   IthTime `json:"dateTo"`
+	}{
+		DateFrom: IthTime("").FromTimestamp(since),
+		DateTo:   IthTime("").FromTimestamp(until),
+	}
 
 	httpResp, err := httpx.PostJSON(
 		u.String(),
@@ -91,15 +154,15 @@ func (api *API) GetOrderList() ([]OrderShort, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to refresh auth token")
 	}
-	print(httpResp.Status)
 
-	response := make([]OrderShort, 0)
-	data := make([]byte, 0)
-	httpResp.Body.Read(data)
-	print(string(data))
-	//err = httpx.ParseJSONResult(httpResp, response)
-	//if err != nil {
-	//
-	//}
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(OrdersListResp)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
 	return response, err
 }

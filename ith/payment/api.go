@@ -57,3 +57,13 @@ const AuthHeader = "Authorization"
 var AuthHeaderVal = func(accessToken string) (value string) {
 	return "Bearer " + accessToken
 }
+
+type OrdersListResp struct {
+	ErrorData *ErrorData   `json:"errorData,omitempty"`
+	OrderList []OrderShort `json:"orderList,omitempty"`
+}
+type CreateOrderRequest struct {
+	ErrorData   *ErrorData `json:"errorData,omitempty"`
+	Order       *Order     `json:"order,omitempty"`
+	RedirectUrl string     `json:"redirectUrl,omitempty"`
+}

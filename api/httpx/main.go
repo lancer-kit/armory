@@ -20,9 +20,9 @@ func ParseJSONBody(r *http.Request, dest interface{}) error {
 	return nil
 }
 
-func ParseJSONResult(r *http.Response, dest interface{}) error {
-	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(dest)
+func ParseJSONResult(httpResp *http.Response, dest interface{}) error {
+	defer httpResp.Body.Close()
+	err := json.NewDecoder(httpResp.Body).Decode(dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal response body")
 	}

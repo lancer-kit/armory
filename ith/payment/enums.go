@@ -4,7 +4,7 @@ package payment
 type OrderStatus int
 
 const (
-	OrderDraft OrderStatus = iota
+	OrderDraft OrderStatus = 1 + iota
 	OrderDeleted
 	OrderSent
 	OrderCancelled
@@ -22,7 +22,7 @@ const (
 type TxAction int
 
 const (
-	TxActionPurchase TxAction = iota
+	TxActionPurchase TxAction = 1 + iota
 	TxActionRefundFull
 	TxActionRefundPartial
 	TxActionChargebackFull
@@ -37,7 +37,7 @@ const (
 type TxType int
 
 const (
-	TxTypeIn TxType = iota
+	TxTypeIn TxType = 1 + iota
 	TxTypeTransfer
 	TxTypeOut
 )
@@ -46,7 +46,7 @@ const (
 type TxStatus int
 
 const (
-	TxStatusSuccessful TxStatus = iota
+	TxStatusSuccessful TxStatus = 1 + iota
 	TxStatusPending
 	TxStatusFailed
 )
@@ -55,6 +55,6 @@ const (
 type OrderIType int
 
 const (
-	OrderITypeItem OrderIType = iota
+	OrderITypeItem OrderIType = 1 + iota
 	OrderITypeShipping
 )
