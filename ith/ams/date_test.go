@@ -8,8 +8,13 @@ import (
 )
 
 func TestAmsDate_MarshalJSON(t *testing.T) {
-	a := AmsDate(time.Now())
+	var a AmsDate
 	b, e := json.Marshal(&a)
+	assert.Equal(t, nil, e)
+	println(string(b))
+
+	a = AmsDate(time.Now())
+	b, e = json.Marshal(&a)
 	assert.Equal(t, nil, e)
 	println(string(b))
 }

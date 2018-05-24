@@ -15,6 +15,9 @@ func (r AmsDate) Empty() bool {
 
 // String is generated so AddressType satisfies fmt.Stringer.
 func (r AmsDate) String() string {
+	if r.Empty(){
+		return ""
+	}
 	y, m, d := time.Time(r).Date()
 	return fmt.Sprintf("%04d%02d%02d", y, m, d) + "000000"
 }
