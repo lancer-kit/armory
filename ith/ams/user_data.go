@@ -3,7 +3,6 @@
 package ams
 
 type (
-
 	//Use (countryCode and number) OR fullNumber
 	//
 	//Example:
@@ -14,7 +13,7 @@ type (
 	//	  "fullNumber": "37120000000",
 	//   }
 	//  ...
-		Phone struct {
+	Phone struct {
 		CountryCode *string `json:"countryCode,omitempty"` //Phone country code (optional, when fullNumber filled)
 		Number      *string `json:"number,omitempty"`      //Phone number (optional, when fullNumber filled)
 		FullNumber  *string `json:"fullNumber,omitempty"`  //Full phone number. Min length 5 (optional, when countryCode+number filled)
@@ -45,7 +44,7 @@ type (
 	//	]
 	//  }
 	//
-	Addresses[]*Address
+	Addresses []*Address
 
 	//Address type, item of Addresses list
 	Address struct {
@@ -59,9 +58,6 @@ type (
 		Type              AddressType `json:"type,omitempty"`    //Optional for @address (see AddressType)
 		Primary           bool        `json:"primary,omitempty"` //Optional for @address
 	}
-
-
-
 
 	//Additional field `country`
 	//
@@ -78,7 +74,6 @@ type (
 		RegistrationAllowed   bool   `json:"registrationAllowed,omitempty"`
 	}
 
-
 	//Additional field `language`
 	//
 	//  "language": {
@@ -93,7 +88,6 @@ type (
 		Type    string `json:"type,omitempty"`
 		Primary bool   `json:"primary,omitempty"`
 	}
-
 
 	//AccountPhones, list of AccountPhone
 	//
@@ -119,7 +113,6 @@ type (
 		Primary           bool      `json:"primary,omitempty"`     //Phone is primary
 		Confirmed         bool      `json:"confirmed,omitempty"`   //Phone is confirmed by account holder
 	}
-
 
 	//List of account settings
 	//
@@ -169,10 +162,10 @@ type (
 	//           "pep": false
 	//	   },
 	Person struct {
-		Name      string `json:"name"`      //Name
-		Surname   string `json:"surname"`   //Surname
+		Name      string  `json:"name"`      //Name
+		Surname   string  `json:"surname"`   //Surname
 		BirthDate AmsDate `json:"birthDate"` //Date of birth,Format – yyyyMMddHHmmss
-		Pep       bool   `json:"pep"`       //Person in politically exposed person (PEP)
+		Pep       bool    `json:"pep"`       //Person in politically exposed person (PEP)
 	}
 
 	//UserRegistrationResponse response from ITH Account Management Services (AMS)
@@ -184,9 +177,17 @@ type (
 	//	"account": {....}
 	//  }
 	UserRegistrationResponse struct {
-		AccountUid         string           `json:"accountUid"`
-		ExternalAccountUid string           `json:"externalAccountUid"`
-		AccessToken        string           `json:"accessToken"`
-		Account            *Account `json:"account"`
+		ErrorData          *ErrorData `json:"errorData,omitempty"` //null if OK
+		AccountUid         string     `json:"accountUid"`
+		ExternalAccountUid string     `json:"externalAccountUid"`
+		AccessToken        string     `json:"accessToken"`
+		Account            *Account   `json:"account"`
+	}
+
+	//ErrorData - any response
+	ErrorData struct {
+		ErrorCode    int    `json:"errorCode"`    //Error code
+		ErrorMessage string `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
+		RequestUid   string `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
 	}
 )
