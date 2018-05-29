@@ -6,25 +6,28 @@ import (
 	"fmt"
 )
 
-type User struct {
-	Id                int64         `json:"id" db:"id"`
-	Phone             string        `json:"phone" db:"phone"`
-	Email             string        `json:"email" db:"email"`
-	Status            UserStatus    `json:"status" db:"status"`
-	FirstName         string        `json:"firstName" db:"first_name"`
-	LastName          string        `json:"lastName" db:"last_name"`
-	BirthDate         UserBirthDate `json:"birthDate" db:"birth_date"`
-	LanguageMarker    string        `json:"languageMarker" db:"language_marker"`
-	CountryMarker     string        `json:"countryMarker" db:"country_marker"`
-	PreferredCurrency string        `json:"preferredCurrency" db:"preferred_currency"`
-	MailVerified      bool          `json:"mailVerified" db:"mail_verified"`
-	UserKey           string        `json:"-" db:"user_key"`
-	CreatedAt         int64         `json:"createdAt" db:"created_at"`
-	UpdatedAt         int64         `json:"updatedAt" db:"updated_at"`
-}
-
-type UserStatus int
-type UserBirthDate int64
+type (
+	User struct {
+		Id                int64          `json:"id" db:"id"`
+		Phone             string         `json:"phone" db:"phone"`
+		Email             string         `json:"email" db:"email"`
+		Status            UserStatus     `json:"status" db:"status"`
+		FirstName         string         `json:"firstName" db:"first_name"`
+		LastName          string         `json:"lastName" db:"last_name"`
+		BirthDate         UserBirthDate  `json:"birthDate" db:"birth_date"`
+		LanguageMarker    string         `json:"languageMarker" db:"language_marker"`
+		CountryMarker     string         `json:"countryMarker" db:"country_marker"`
+		PreferredCurrency string         `json:"preferredCurrency" db:"preferred_currency"`
+		MailVerified      bool           `json:"mailVerified" db:"mail_verified"`
+		UserKey           string         `json:"-" db:"user_key"`
+		CreatedAt         int64          `json:"createdAt" db:"created_at"`
+		UpdatedAt         int64          `json:"updatedAt" db:"updated_at"`
+		Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`
+	}
+	IntegrationMap map[string]interface{}
+	UserStatus int
+	UserBirthDate int64
+)
 
 const (
 	UserStatusBlocked        UserStatus = -10
