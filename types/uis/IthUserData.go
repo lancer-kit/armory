@@ -22,4 +22,5 @@ type IthUserData struct {
 	ConfirmLogin              bool                   `json:"confirmLogin" db:"confirm_login"`
 	ActionConfirmationEnabled bool                   `json:"actionConfirmationEnabled" db:"action_confirmation_enabled"`
 	ActionConfirmationType    ams.ActionConfirmation `json:"actionConfirmationType" db:"action_confirmation_type"`
+	Test                      bool                   `json:"test" db:"test"`
 }
