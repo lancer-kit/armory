@@ -198,24 +198,24 @@ AccountStatus:
 
 ```go
 const (
-	StStandardAutomaticallyRegistered AccountStatus = iota //SA – Standard: Automatically Registered
-	StStandardRegistrationRequested                        //SR – Standard: Registration Requested
-	StStandardRegistrationConfirmed                        //SC – Standard: Registration Confirmed
-	StStandardCustomerIdentified                           //SF – Standard: Customer Identified
-	StStandardBlocked                                      //SB – Standard: Blocked
-	StStandardClosed                                       //SD – Standard: Closed
-	StBusinessRegistrationRequested                        //BR – Business: Registration Requested
-	StBusinessRegistrationConfirmed                        //BC – Business: Registration Confirmed (Read Only)
-	StBusinessRegistrationFinished                         //BF – Business: Registration Finished (Agreement Signed)
-	StBusinessRequiresModeration                           //BM – Business: Requires Moderation
-	StBusinessSuspended                                    //BS – Business: Suspended (Blocked)
-	StBusinessClosed                                       //BD – Business: Closed
-	StMerchantRegistrationRequested                        //MR – Merchant: Registration Requested
-	StMerchantRegistrationConfirmed                        //MC – Merchant: Registration Confirmed (Read Only)
-	StMerchantRegistrationFinished                         //MF – Merchant: Registration Finished (Agreement Signed)
-	StMerchantRequiresModeration                           //MM – Merchant: Requires Moderation
-	StMerchantSuspended                                    //MS – Merchant: Suspended (Blocked)
-	StMerchantClosed                                       //MD – Merchant: Closed
+	StStandardAutomaticallyRegistered AccountStatus = iota + 1 //SA – Standard: Automatically Registered
+	StStandardRegistrationRequested                            //SR – Standard: Registration Requested
+	StStandardRegistrationConfirmed                            //SC – Standard: Registration Confirmed
+	StStandardCustomerIdentified                               //SF – Standard: Customer Identified
+	StStandardBlocked                                          //SB – Standard: Blocked
+	StStandardClosed                                           //SD – Standard: Closed
+	StBusinessRegistrationRequested                            //BR – Business: Registration Requested
+	StBusinessRegistrationConfirmed                            //BC – Business: Registration Confirmed (Read Only)
+	StBusinessRegistrationFinished                             //BF – Business: Registration Finished (Agreement Signed)
+	StBusinessRequiresModeration                               //BM – Business: Requires Moderation
+	StBusinessSuspended                                        //BS – Business: Suspended (Blocked)
+	StBusinessClosed                                           //BD – Business: Closed
+	StMerchantRegistrationRequested                            //MR – Merchant: Registration Requested
+	StMerchantRegistrationConfirmed                            //MC – Merchant: Registration Confirmed (Read Only)
+	StMerchantRegistrationFinished                             //MF – Merchant: Registration Finished (Agreement Signed)
+	StMerchantRequiresModeration                               //MM – Merchant: Requires Moderation
+	StMerchantSuspended                                        //MS – Merchant: Suspended (Blocked)
+	StMerchantClosed                                           //MD – Merchant: Closed
 )
 ```
 
@@ -275,9 +275,9 @@ AccountType:
 
 ```go
 const (
-	AccountTypeStandard AccountType = iota //Standard
-	AccountTypeMerchant                    //Merchant
-	AccountTypeBusiness                    //Business
+	AccountTypeStandard AccountType = iota + 1 //Standard
+	AccountTypeMerchant                        //Merchant
+	AccountTypeBusiness                        //Business
 )
 ```
 
@@ -337,9 +337,9 @@ Field type for Account.ActionConfirmationType
 
 ```go
 const (
-	ActionConfirmationEmail ActionConfirmation = iota //EMAIL – via email;
-	ActionConfirmationSms                             //SMS – via phone
-	ActionConfirmationGAuth                           //GAUTH – via Google Authenticator
+	ActionConfirmationEmail ActionConfirmation = iota + 1 //EMAIL – via email;
+	ActionConfirmationSms                                 //SMS – via phone
+	ActionConfirmationGAuth                               //GAUTH – via Google Authenticator
 )
 ```
 
@@ -389,6 +389,10 @@ Value is generated so ActionConfirmation satisfies db row driver.Valuer.
 
 ```go
 type Address struct {
+	Id        int64 `json:"id,omitempty" db:"id"`          //user-integration data fields
+	UserId    int64 `json:"userId,omitempty" db:"user_id"` //user-integration data fields
+	CountryId int64 `json:"countryId" db:"country_id"`     //user-integration data fields
+	//Ams data structure
 	Uid               string      `json:"uid,omitempty"`     //Address UID, Optional for @address
 	Country           *Country    `json:"country,omitempty"` //Country object, Optional for @address
 	City              string      `json:"city"`              //City, required
@@ -452,10 +456,10 @@ AddressType:
 
 ```go
 const (
-	AddressTypeBusiness      AddressType = iota //B – Business;
-	AddressTypeHome                             //H – Home;
-	AddressTypeOther                            //O – Other;
-	AddressTypeCommunication                    //C – Communication
+	AddressTypeBusiness      AddressType = iota + 1 //B – Business;
+	AddressTypeHome                                 //H – Home;
+	AddressTypeOther                                //O – Other;
+	AddressTypeCommunication                        //C – Communication
 
 )
 ```
@@ -613,20 +617,23 @@ Validate verifies that value is predefined for AddressType.
 
 ```go
 type Company struct {
-	BusinessName                    string  `json:"businessName"`                    //Company name, String(255)
-	CategoryId                      int     `json:"categoryId"`                      //Category ID, Integer
-	BusinessTypeId                  int     `json:"businessTypeId"`                  //Business type ID, Integer
-	CardStatementName               string  `json:"cardStatementName"`               //Card statement name, String(50)
-	CardStatementNameExt            string  `json:"cardStatementNameExt"`            //Extended card statement name, String(50)
-	CallbackUrl                     string  `json:"callbackUrl"`                     //URL for callbacks
-	RollingReservePrc               float64 `json:"rollingReservePrc"`               //Rolling reserve rate (in %), Number
-	RollingReserveHoldDays          int     `json:"rollingReserveHoldDays"`          //Rolling reserve hold days
-	SendCallback                    bool    `json:"sendCallback"`                    //Send callbacks for merchant
-	AcceptUndefinedProvisionChannel bool    `json:"acceptUndefinedProvisionChannel"` //Accept undefined provision channels
-	AllowDuplicateOrderExternalId   bool    `json:"allowDuplicateOrderExternalId"`   //Allow duplicate order external ID
-	AllowNotificationsForSeller     bool    `json:"allowNotificationsForSeller"`     //Send notifications for seller
-	AllowNotificationsForBuyer      bool    `json:"allowNotificationsForBuyer"`      //Send notifications for buyer
-	AllowPartialPayments            bool    `json:"allowPartialPayments"`            //Allow partial payments
+	Id     int64 `json:"id,omitempty" db:"id"` //Internal for user-integration
+	UserId int64 `json:"userId" db:"user_id"`  //Internal for user-integration
+	//ITH.AMS data structure
+	BusinessName                    string  `json:"businessName" db:"business_name"`                                         //Company name, String(255)
+	CategoryId                      int     `json:"categoryId" db:"category_id"`                                             //Category ID, Integer
+	BusinessTypeId                  int     `json:"businessTypeId" db:"business_type_id"`                                    //Business type ID, Integer
+	CardStatementName               string  `json:"cardStatementName" db:"card_statement_name"`                              //Card statement name, String(50)
+	CardStatementNameExt            string  `json:"cardStatementNameExt" db:"card_statement_name_ext"`                       //Extended card statement name, String(50)
+	CallbackUrl                     string  `json:"callbackUrl" db:"callback_url"`                                           //URL for callbacks
+	RollingReservePrc               float64 `json:"rollingReservePrc" db:"rolling_reserve_prc"`                              //Rolling reserve rate (in %), Number
+	RollingReserveHoldDays          int     `json:"rollingReserveHoldDays" db:"rolling_reserve_hold_days"`                   //Rolling reserve hold days
+	SendCallback                    bool    `json:"sendCallback" db:"send_callback"`                                         //Send callbacks for merchant
+	AcceptUndefinedProvisionChannel bool    `json:"acceptUndefinedProvisionChannel" db:"accept_undefined_provision_channel"` //Accept undefined provision channels
+	AllowDuplicateOrderExternalId   bool    `json:"allowDuplicateOrderExternalId" db:"allow_duplicate_order_external_id"`    //Allow duplicate order external ID
+	AllowNotificationsForSeller     bool    `json:"allowNotificationsForSeller" db:"allow_notifications_for_seller"`         //Send notifications for seller
+	AllowNotificationsForBuyer      bool    `json:"allowNotificationsForBuyer" db:"allow_notifications_for_buyer"`           //Send notifications for buyer
+	AllowPartialPayments            bool    `json:"allowPartialPayments" db:"allow_partial_payments"`                        //Allow partial payments
 }
 ```
 
@@ -651,6 +658,18 @@ Additional field `country`
     		"name": "Latvia",
     		"brandedCardsAvailable": true
     	},
+
+#### type ErrorData
+
+```go
+type ErrorData struct {
+	ErrorCode    int    `json:"errorCode"`    //Error code
+	ErrorMessage string `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
+	RequestUid   string `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
+}
+```
+
+ErrorData - any response
 
 #### type Language
 
@@ -729,9 +748,9 @@ PhoneType:
 
 ```go
 const (
-	PhoneTypeMobile PhoneType = iota //Mobile
-	PhoneTypeHome                    //Home
-	PhoneTypeWork                    //Work
+	PhoneTypeMobile PhoneType = iota + 1 //Mobile
+	PhoneTypeHome                        //Home
+	PhoneTypeWork                        //Work
 )
 ```
 
@@ -840,10 +859,11 @@ Validate verifies that value is predefined for AffiliateInfo.
 
 ```go
 type UserRegistrationResponse struct {
-	AccountUid         string   `json:"accountUid"`
-	ExternalAccountUid string   `json:"externalAccountUid"`
-	AccessToken        string   `json:"accessToken"`
-	Account            *Account `json:"account"`
+	ErrorData          *ErrorData `json:"errorData,omitempty"` //null if OK
+	AccountUid         string     `json:"accountUid"`
+	ExternalAccountUid string     `json:"externalAccountUid"`
+	AccessToken        string     `json:"accessToken"`
+	Account            *Account   `json:"account"`
 }
 ```
 
@@ -870,9 +890,9 @@ WebResource:
 
 ```go
 const (
-	WebResourceWeb      WebResource = iota // W – Web;
-	WebResourceFacebook                    //F – Facebook;
-	WebResourceTwitter                     //T – Twitter
+	WebResourceWeb      WebResource = iota + 1 // W – Web;
+	WebResourceFacebook                        //F – Facebook;
+	WebResourceTwitter                         //T – Twitter
 )
 ```
 

@@ -109,13 +109,16 @@ type (
 
 	//Item of AccountPhones
 	AccountPhone struct {
-		Uid               string    `json:"uid,omitempty"`         //Phone UID
-		CountryCode       string    `json:"countryCode,omitempty"` //Phone country code
-		Number            string    `json:"number,omitempty"`      //Phone number
-		Type              PhoneType `json:"type,omitempty"`        //Phone type (see: PhoneType)
-		ContactPreference bool      `json:"contactPreference"`     //Phone is preferred for communication
-		Primary           bool      `json:"primary,omitempty"`     //Phone is primary
-		Confirmed         bool      `json:"confirmed,omitempty"`   //Phone is confirmed by account holder
+		Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+		UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+		//ITH.AMS data structure
+		Uid               string    `json:"uid,omitempty" db:"uid"`                    //Phone UID
+		CountryCode       string    `json:"countryCode,omitempty" db:"country_code"`   //Phone country code
+		Number            string    `json:"number,omitempty" db:"number"`              //Phone number
+		Type              PhoneType `json:"type,omitempty" db:"type"`                  //Phone type (see: PhoneType)
+		ContactPreference bool      `json:"contactPreference" db:"contact_preference"` //Phone is preferred for communication
+		Primary           bool      `json:"primary,omitempty" db:"primary"`            //Phone is primary
+		Confirmed         bool      `json:"confirmed,omitempty" db:"confirmed"`        //Phone is confirmed by account holder
 	}
 
 	//List of account settings
