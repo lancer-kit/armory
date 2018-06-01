@@ -17,7 +17,7 @@ func (api *API) CreateDocument(document *Document) (*CreateDocumentRequest, erro
 
 	httpResp, err := httpx.PostJSON(
 		u.String(),
-		&CreateDocumentRequest{Document: document},
+		document,
 		map[string]string{
 			auth.Header: auth.HeaderVal(api.Credentials.AccessToken),
 		})
