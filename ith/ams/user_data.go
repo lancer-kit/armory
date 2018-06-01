@@ -71,11 +71,12 @@ type (
 	//		"brandedCardsAvailable": true
 	//	},
 	Country struct {
-		Id                    int64  `json:"id,omitempty"`
-		Code                  string `json:"code"`
-		Name                  string `json:"name"`
-		BrandedCardsAvailable bool   `json:"brandedCardsAvailable,omitempty"`
-		RegistrationAllowed   bool   `json:"registrationAllowed,omitempty"`
+		Id                    int64  `json:"id,omitempty" db:"id"`//Internal for user-integration
+		//ITH.AMS data structure
+		Code                  string `json:"code" db:"code"`
+		Name                  string `json:"name" db:"name"`
+		BrandedCardsAvailable bool   `json:"brandedCardsAvailable,omitempty" db:"branded_cards_available"`
+		RegistrationAllowed   bool   `json:"registrationAllowed,omitempty" db:"registration_allowed"`
 	}
 
 	//Additional field `language`
@@ -130,7 +131,7 @@ type (
 	//			"category": "ACC"
 	//		}
 	//	],
-	AccountSettings []*AccountSetting
+	AccountSettings []AccountSetting
 
 	//Item of AccountSettings list
 	AccountSetting struct {
