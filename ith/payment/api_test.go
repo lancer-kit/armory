@@ -1,37 +1,44 @@
 package payment
 
 import (
-	"log"
 	"net/url"
 	"testing"
 	"time"
 
 	"encoding/json"
 
-	"fmt"
-
+	"github.com/stretchr/testify/assert"
+	"gitlab.inn4science.com/vcg/go-common/ith/auth"
 	"gitlab.inn4science.com/vcg/go-common/types/currency"
 )
 
-func TestAPI_GetAuthToken(t *testing.T) {
+func TestAPI_CreateOrder(t *testing.T) {
 	api := API{}
 	api.Config.BaseURL, _ = url.Parse("http://demo-api.enauda.com/")
-	result, err := api.GetAuthToken(&AuthRequest{
+	result, err := api.GetAuthToken(&auth.Request{
 		Username: "RdHMQMZCGZKRyXHf",
 		Password: "UFByqq07dMxe7m0",
 	})
-	log.Print(err)
-	log.Print(result)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Empty(t, result.ErrorData)
+	assert.NotEmpty(t, result.AccessToken)
+	assert.NotEmpty(t, result.RefreshToken)
+	assert.NotEmpty(t, result.ExpiresIn)
 
 	result, err = api.RefreshAuthToken(result.RefreshToken)
-	log.Print(err)
-	log.Print(result.AccessToken)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Empty(t, result.ErrorData)
+	assert.NotEmpty(t, result.AccessToken)
+	assert.NotEmpty(t, result.RefreshToken)
+	assert.NotEmpty(t, result.ExpiresIn)
 
 	order := &Order{
-		Seller: &Account{
+		Seller: &auth.Account{
 			Email: "vipcoin-merchant@coinfide.com",
 		},
-		Buyer: &Account{
+		Buyer: &auth.Account{
 			Email: "vipcoin-standard@coinfide.com",
 		},
 		CurrencyCode:    "EUR",
@@ -46,13 +53,15 @@ func TestAPI_GetAuthToken(t *testing.T) {
 			},
 		},
 	}
-	rawOrder, _ := json.Marshal(order)
-	fmt.Println(string(rawOrder))
+	_, err = json.Marshal(order)
+	assert.NoError(t, err)
 
 	list, err := api.GetOrderList(
 		time.Now().Add(-1*30*24*time.Hour).Unix(),
 		time.Now().Unix())
-	log.Print(err)
-	log.Print(list)
-	api.GetOrderDetails("GetOrderDetails", "8ed61188-a43d-44f2-85b5-563df4bf92b8")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, list)
+	list, err = api.GetOrderDetails("GetOrderDetails", "8ed61188-a43d-44f2-85b5-563df4bf92b8")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, list)
 }

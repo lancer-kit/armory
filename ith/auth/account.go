@@ -1,4 +1,4 @@
-package payment
+package auth
 
 type (
 	Phone struct {
