@@ -88,11 +88,11 @@ type (
 	//	},
 	//
 	Language struct {
-		Uid     string `json:"uid,omitempty"`
-		Code    string `json:"code"` //ISO2 language code
-		Name    string `json:"name,omitempty"`
-		Type    string `json:"type,omitempty"`
-		Primary bool   `json:"primary,omitempty"`
+		Uid     string `json:"uid,omitempty" db:"uid"`
+		Code    string `json:"code" db:"code"` //ISO2 language code
+		Name    string `json:"name,omitempty" db:"name"`
+		Type    string `json:"type,omitempty" db:"type"`
+		Primary bool   `json:"primary,omitempty" db:"primary"`
 	}
 
 	//AccountPhones, list of AccountPhone
