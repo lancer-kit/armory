@@ -137,9 +137,9 @@ type (
 		Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
 		UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
 		//ITH.AMS data structure
-		Name     string `json:"name"`               //Setting name
-		Value    string `json:"value,omitempty"`    //Setting value
-		Category string `json:"category,omitempty"` //Setting category
+		Name     string `json:"name" db:"name"`                   //Setting name
+		Value    string `json:"value,omitempty" db:"value"`       //Setting value
+		Category string `json:"category,omitempty" db:"category"` //Setting category
 	}
 
 	//AccountEmails list of AccountEmail
@@ -159,11 +159,11 @@ type (
 		Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
 		UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
 		//ITH.AMS data structure
-		Uid       string `json:"uid,omitempty"`
-		Email     string `json:"email"`
-		Confirmed bool   `json:"confirmed,omitempty"`
-		Primary   bool   `json:"primary,omitempty"`
-		Type      string `json:"type,omitempty"`
+		Uid       string `json:"uid,omitempty" db:"uid"`
+		Email     string `json:"email" db:"email"`
+		Confirmed bool   `json:"confirmed,omitempty" db:"confirmed"`
+		Primary   bool   `json:"primary,omitempty" db:"primary"`
+		Type      string `json:"type,omitempty" db:"type"`
 	}
 
 	//Person object
