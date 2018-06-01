@@ -134,6 +134,9 @@ type (
 
 	//Item of AccountSettings list
 	AccountSetting struct {
+		Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+		UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+		//ITH.AMS data structure
 		Name     string `json:"name"`               //Setting name
 		Value    string `json:"value,omitempty"`    //Setting value
 		Category string `json:"category,omitempty"` //Setting category
@@ -153,6 +156,9 @@ type (
 
 	//Item of AccountEmails list
 	AccountEmail struct {
+		Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+		UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+		//ITH.AMS data structure
 		Uid       string `json:"uid,omitempty"`
 		Email     string `json:"email"`
 		Confirmed bool   `json:"confirmed,omitempty"`
