@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go/types"
 )
 
 //AddressType:
@@ -92,22 +93,14 @@ func (r AddressType) Value() (driver.Value, error) {
 // Value is generated so AddressType satisfies db row driver.Scanner.
 func (r *AddressType) Scan(src interface{}) error {
 	switch src.(type) {
-	case string:
+	case types.Nil:
+		return nil
+	case string, []byte:
 		val, ok := defAddressTypeNameToValue[src.(string)]
 		if !ok {
-			return errors.New("AddressType: can't unmarshal column data")
+			return errors.New("AddressType: can't unmarshal column data:"+src.(string))
 		}
 		*r = val
-		return nil
-	case []byte:
-		source := src.([]byte)
-		var i AddressType
-		err := json.Unmarshal(source, &i)
-		if err != nil {
-			return errors.New("AddressType: can't unmarshal column data")
-		}
-
-		*r = i
 		return nil
 	case int, int8, int32, int64, uint, uint8, uint32, uint64:
 		ni := sql.NullInt64{}
