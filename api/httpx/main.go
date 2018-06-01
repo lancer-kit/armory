@@ -6,6 +6,8 @@ import (
 
 	"bytes"
 
+	"fmt"
+
 	"github.com/pkg/errors"
 )
 
@@ -31,6 +33,8 @@ func ParseJSONResult(httpResp *http.Response, dest interface{}) error {
 
 func PostJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
 	rawData, err := json.Marshal(data)
+	fmt.Println("yuy")
+	fmt.Println(string(rawData))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to marshal body")
 	}
