@@ -1,6 +1,9 @@
 package payment
 
-import "gitlab.inn4science.com/vcg/go-common/types/currency"
+import (
+	"gitlab.inn4science.com/vcg/go-common/ith/auth"
+	"gitlab.inn4science.com/vcg/go-common/types/currency"
+)
 
 type (
 	AffiliateInfo struct {
@@ -27,7 +30,7 @@ type (
 		Status            TxStatus      `json:"status,omitempty"`            // String(1); Status
 		Amount            currency.Fiat `json:"amount,omitempty"`            // BigDecimal(14,2); Transaction amount
 		PaymentMethodCode string        `json:"paymentMethodCode,omitempty"` // String(100); Payment method code
-		Payer             Account       `json:"payer,omitempty"`             // Payer object
+		Payer             auth.Account  `json:"payer,omitempty"`             // Payer object
 		Parameters        []Parameter   `json:"parameters,omitempty"`        // List of name => value pair; Additional parameters
 	}
 
@@ -46,8 +49,8 @@ type (
 		UID                          string         `json:"uid,omitempty"`                          // String(36); ITH platform’s order unique id
 		OrderNumber                  string         `json:"orderNumber,omitempty"`                  // String(20); Visible order number
 		Status                       OrderStatus    `json:"status,omitempty"`                       // String(2)
-		Seller                       *Account       `json:"seller,omitempty"`                       // Order seller object
-		Buyer                        *Account       `json:"buyer,omitempty"`                        // Order buyer object
+		Seller                       *auth.Account  `json:"seller,omitempty"`                       // Order seller object
+		Buyer                        *auth.Account  `json:"buyer,omitempty"`                        // Order buyer object
 		CurrencyCode                 string         `json:"currencyCode,omitempty"`                 // String(3); ISO currency code
 		DiscountAmount               currency.Fiat  `json:"discountAmount,omitempty"`               // BigDecimal(14,2);
 		DiscountPercent              currency.Fiat  `json:"discountPercent,omitempty"`              // BigDecimal(14,2);
@@ -67,14 +70,14 @@ type (
 		SuccessUrl                   string         `json:"successUrl,omitempty"`                   // Success URL
 		FailUrl                      string         `json:"failUrl,omitempty"`                      // Fail URL
 		OrderItems                   []OrderItem    `json:"orderItems,omitempty,omitempty"`         // Order items
-		ShippingAddress              *Address       `json:"shippingAddress,omitempty,omitempty"`    // Shipping address
+		ShippingAddress              *auth.Address  `json:"shippingAddress,omitempty,omitempty"`    // Shipping address
 	}
 
 	OrderShort struct {
 		ExternalOrderID string        `json:"externalOrderId,omitempty"` // Merchant’s order id
 		UID             string        `json:"uid,omitempty"`             // String(36); ITH platform’s order unique id
-		Seller          *Account      `json:"seller,omitempty"`          // Order seller object
-		Buyer           *Account      `json:"buyer,omitempty"`           // Order buyer object
+		Seller          *auth.Account `json:"seller,omitempty"`          // Order seller object
+		Buyer           *auth.Account `json:"buyer,omitempty"`           // Order buyer object
 		AmountTotal     currency.Fiat `json:"amountTotal,omitempty"`     // BigDecimal(14,2); Order total amount
 		CurrencyCode    string        `json:"currencyCode,omitempty"`    // String(3); ISO currency code
 		Status          OrderStatus   `json:"status,omitempty"`          // String(2)
