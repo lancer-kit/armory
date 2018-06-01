@@ -52,15 +52,15 @@ type (
 		UserId    int64 `json:"userId,omitempty" db:"user_id"` //user-integration data fields
 		CountryId int64 `json:"countryId" db:"country_id"`     //user-integration data fields
 		//Ams data structure
-		Uid               string      `json:"uid,omitempty"`     //Address UID, Optional for @address
-		Country           *Country    `json:"country,omitempty"` //Country object, Optional for @address
-		City              string      `json:"city"`              //City, required
-		FirstAddressLine  string      `json:"firstAddressLine"`  //First address line, required
-		SecondAddressLine string      `json:"secondAddressLine"` //Second address line, optional
-		State             string      `json:"state"`             //State, optional
-		PostalCode        string      `json:"postalCode"`        //Postal code, required
-		Type              AddressType `json:"type,omitempty"`    //Optional for @address (see AddressType)
-		Primary           bool        `json:"primary,omitempty"` //Optional for @address
+		Uid               string      `json:"uid,omitempty" db:"uid"`                     //Address UID, Optional for @address
+		Country           *Country    `json:"country,omitempty" db:"-"`                   //Country object, Optional for @address
+		City              string      `json:"city" db:"city"`                             //City, required
+		FirstAddressLine  string      `json:"firstAddressLine" db:"first_address_line"`   //First address line, required
+		SecondAddressLine string      `json:"secondAddressLine" db:"second_address_line"` //Second address line, optional
+		State             string      `json:"state" db:"state"`                           //State, optional
+		PostalCode        string      `json:"postalCode" db:"postal_code"`                //Postal code, required
+		Type              AddressType `json:"type,omitempty" db:"type"`                   //Optional for @address (see AddressType)
+		Primary           bool        `json:"primary,omitempty" db:"primary"`             //Optional for @address
 	}
 
 	//Additional field `country`
@@ -71,8 +71,9 @@ type (
 	//		"brandedCardsAvailable": true
 	//	},
 	Country struct {
-		Id                    int64  `json:"id,omitempty" db:"id"`//Internal for user-integration
+		Id int64 `json:"internal_id,omitempty" db:"id"` //Internal for user-integration
 		//ITH.AMS data structure
+		AmsId                 int64  `json:"id,omitempty" db:"ams_id"`
 		Code                  string `json:"code" db:"code"`
 		Name                  string `json:"name" db:"name"`
 		BrandedCardsAvailable bool   `json:"brandedCardsAvailable,omitempty" db:"branded_cards_available"`
