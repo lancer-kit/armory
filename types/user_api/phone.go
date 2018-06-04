@@ -25,5 +25,5 @@ type (
 var rule = regexp.MustCompile("(^+)|([^a-zA-Z0-9]+)")
 
 func (t *PhoneSearch) CleanPhone() {
-	rule.ReplaceAllString(t.Phone, "")
+	t.Phone = rule.ReplaceAllString(t.Phone, "")
 }
