@@ -8,7 +8,7 @@ type IthUserData struct {
 	AccessToken               string                 `json:"accessToken" db:"access_token"`                     //Refresh token
 	AccountType               ams.AccountType        `json:"accountType" db:"account_type"`                     //See ams.AccountType
 	AccountStatus             ams.AccountStatus      `json:"accountStatus" db:"account_status"`                 //See ams.AccountStatus
-	AffilateId                string                 `json:"affilateId" db:"affilate_id"`                       //Affilate id (referral)  in ITH AMS
+	AffilateId                string                 `json:"affilateId" db:"affiliate_id"`                       //Affilate id (referral)  in ITH AMS
 	Language                  string                 `json:"language" db:"language"`                            //String(2). User language ISO2 code
 	CommunicationLanguage     string                 `json:"communicationLanguage" db:"communication_language"` //String(2). Communication language
 	CampaignId                string                 `json:"campaignId" db:"campaign_id"`                       //Campaign Id (referral)  in ITH AMS
