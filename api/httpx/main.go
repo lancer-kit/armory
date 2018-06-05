@@ -34,11 +34,11 @@ func PostJSON(url string, data interface{}, headers map[string]string) (*http.Re
 }
 
 func PutJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
-	return requestJSON("POST", url, data, headers)
+	return requestJSON("PUT", url, data, headers)
 }
 
 func DeleteJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
-	return requestJSON("POST", url, data, headers)
+	return requestJSON("DELETE", url, data, headers)
 }
 
 func requestJSON(method string, url string, data interface{}, headers map[string]string) (*http.Response, error) {
