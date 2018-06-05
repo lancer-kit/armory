@@ -6,8 +6,6 @@ import (
 
 	"bytes"
 
-	"fmt"
-
 	"github.com/pkg/errors"
 )
 
@@ -32,15 +30,26 @@ func ParseJSONResult(httpResp *http.Response, dest interface{}) error {
 }
 
 func PostJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+	return requestJSON("POST", url, data, headers)
+}
+
+func PutJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+	return requestJSON("POST", url, data, headers)
+}
+
+func DeleteJSON(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+	return requestJSON("POST", url, data, headers)
+}
+
+func requestJSON(method string, url string, data interface{}, headers map[string]string) (*http.Response, error) {
 	rawData, err := json.Marshal(data)
-	fmt.Println("yuy")
-	fmt.Println(string(rawData))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to marshal body")
 	}
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(rawData))
+	req, _ := http.NewRequest(method, url, bytes.NewBuffer(rawData))
 	req.Header.Set("Content-Type", "application/json")
+
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
