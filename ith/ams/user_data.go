@@ -50,7 +50,7 @@ type (
 	Address struct {
 		Id        int64 `json:"id,omitempty" db:"id"`          //user-integration data fields
 		UserId    int64 `json:"userId,omitempty" db:"user_id"` //user-integration data fields
-		CountryId int64 `json:"countryId" db:"country_id"`     //user-integration data fields
+		CountryId int64 `json:"countryId,omitempty" db:"country_id"`     //user-integration data fields
 		//Ams data structure
 		Uid               string      `json:"uid,omitempty" db:"uid"`                     //Address UID, Optional for @address
 		Country           *Country    `json:"country,omitempty" db:"-"`                   //Country object, Optional for @address
