@@ -132,7 +132,7 @@ type (
 	//			"category": "ACC"
 	//		}
 	//	],
-	AccountSettings []AccountSetting
+	AccountSettings []*AccountSetting
 
 	//Item of AccountSettings list
 	AccountSetting struct {

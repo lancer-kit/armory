@@ -18,18 +18,21 @@ type ActionConfirmation int
 var ErrActionConfirmationInvalid = errors.New("ActionConfirmation is invalid")
 
 const (
-	ActionConfirmationEmail ActionConfirmation = iota + 1 //EMAIL – via email;
-	ActionConfirmationSms                                 //SMS – via phone
-	ActionConfirmationGAuth                               //GAUTH – via Google Authenticator
+	ActionConfirmationNone  ActionConfirmation = iota //EMAIL – via email;
+	ActionConfirmationEmail
+	ActionConfirmationSms    //SMS – via phone
+	ActionConfirmationGAuth  //GAUTH – via Google Authenticator
 )
 
 var defActionConfirmationNameToValue = map[string]ActionConfirmation{
+	"":      ActionConfirmationNone,
 	"EMAIL": ActionConfirmationEmail,
 	"SMS":   ActionConfirmationSms,
 	"GAUTH": ActionConfirmationGAuth,
 }
 
 var defActionConfirmationValueToName = map[ActionConfirmation]string{
+	ActionConfirmationNone:  "",
 	ActionConfirmationEmail: "EMAIL",
 	ActionConfirmationSms:   "SMS",
 	ActionConfirmationGAuth: "GAUTH",
