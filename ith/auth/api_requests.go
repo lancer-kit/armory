@@ -12,6 +12,21 @@ type API struct {
 	ith.API
 }
 
+func (api *API) EnsureAuth() error {
+	if !api.Credentials.Expired() {
+		return nil
+	}
+
+	_, err := api.RefreshAuthToken("")
+	return err
+}
+
+func (api *API) AuthHeader() map[string]string {
+	return map[string]string{
+		Header: HeaderVal(api.Credentials.AccessToken),
+	}
+}
+
 func (api *API) GetAuthToken(request *Request) (response *Response, _ error) {
 	if request == nil {
 		request = &Request{
@@ -40,6 +55,10 @@ func (api *API) GetAuthToken(request *Request) (response *Response, _ error) {
 }
 
 func (api *API) RefreshAuthToken(refreshToken string) (response *Response, _ error) {
+	if refreshToken == "" {
+		refreshToken = api.Credentials.RefreshToken
+	}
+
 	u := api.Config.GetURL(APIAuthTokenRefresh)
 	request := RefreshRequest{RefreshToken: refreshToken}
 

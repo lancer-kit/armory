@@ -1,6 +1,9 @@
 package ith
 
-import "net/url"
+import (
+	"net/url"
+	"time"
+)
 
 type ErrorData struct {
 	ErrorCode    int    `json:"errorCode"`
@@ -22,10 +25,19 @@ func (cfg *Config) GetURL(path string) *url.URL {
 
 type API struct {
 	Config      Config
-	Credentials struct {
-		AccessToken  string
-		RefreshToken string
-		SetAt        int64
-		ExpiresIn    int64
-	}
+	Credentials Credentials
+}
+
+type Credentials struct {
+	AccessToken  string `json:"accessToken"`  // String(50); Access token for integration services.
+	RefreshToken string `json:"refreshToken"` // String(50); Refresh token for access token renewal.
+	SetAt        int64  `json:"setAt"`        // Time of the last token renewal (unix timestamp).
+	ExpiresIn    int64  `json:"expiresIn"`    // Expiration time for access token (seconds).
+}
+
+// Expired returns true if the token expires after 1 minute.
+func (c Credentials) Expired() bool {
+	const delta int64 = 60
+
+	return time.Now().UTC().Unix() > c.SetAt+c.ExpiresIn+delta
 }
