@@ -19,9 +19,8 @@ func (api *API) CreateOrder(order *Order) (*CreateOrderRequest, error) {
 	httpResp, err := httpx.PostJSON(
 		u.String(),
 		&CreateOrderRequest{Order: order},
-		map[string]string{
-			auth.Header: auth.HeaderVal(api.Credentials.AccessToken),
-		})
+		api.AuthHeader(),
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to refresh auth token")
 	}
@@ -51,9 +50,8 @@ func (api *API) GetOrderDetails(uid, externalOrderId string) (*OrdersListResp, e
 	httpResp, err := httpx.PostJSON(
 		u.String(),
 		req,
-		map[string]string{
-			auth.Header: auth.HeaderVal(api.Credentials.AccessToken),
-		})
+		api.AuthHeader(),
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to refresh auth token")
 	}
@@ -83,9 +81,8 @@ func (api *API) GetOrderList(since, until int64) (*OrdersListResp, error) {
 	httpResp, err := httpx.PostJSON(
 		u.String(),
 		&request,
-		map[string]string{
-			auth.Header: auth.HeaderVal(api.Credentials.AccessToken),
-		})
+		api.AuthHeader(),
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to refresh auth token")
 	}

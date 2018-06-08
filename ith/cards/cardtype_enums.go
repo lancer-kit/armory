@@ -9,40 +9,18 @@ import (
 	"fmt"
 )
 
-func init() {
-	// stub usage of json for situation when
-	// (Un)MarshalJSON methods will be omitted
-	_ = json.Delim('s')
-
-	// stub usage of sql/driver for situation when
-	// Scan/Value methods will be omitted
-	_ = driver.Bool
-	_ = sql.LevelDefault
-}
-
 var ErrCardTypeInvalid = errors.New("CardType is invalid")
 
-func init() {
-	var v CardType
-	if _, ok := interface{}(v).(fmt.Stringer); ok {
-		defCardTypeNameToValue = map[string]CardType{
-			interface{}(CardTypeAmExpress).(fmt.Stringer).String():  CardTypeAmExpress,
-			interface{}(CardTypeMasterCard).(fmt.Stringer).String(): CardTypeMasterCard,
-			interface{}(CardTypeVisa).(fmt.Stringer).String():       CardTypeVisa,
-		}
-	}
-}
-
 var defCardTypeNameToValue = map[string]CardType{
-	"AmExpress":  CardTypeAmExpress,
-	"MasterCard": CardTypeMasterCard,
-	"Visa":       CardTypeVisa,
+	"A": CardTypeAmExpress,
+	"M": CardTypeMasterCard,
+	"V": CardTypeVisa,
 }
 
 var defCardTypeValueToName = map[CardType]string{
-	CardTypeAmExpress:  "AmExpress",
-	CardTypeMasterCard: "MasterCard",
-	CardTypeVisa:       "Visa",
+	CardTypeAmExpress:  "A",
+	CardTypeMasterCard: "M",
+	CardTypeVisa:       "V",
 }
 
 // String is generated so CardType satisfies fmt.Stringer.

@@ -5,7 +5,7 @@ import "gitlab.inn4science.com/vcg/go-common/ith"
 
 const (
 	APIGetLinkedCards = "/commonapi/account/creditcard"
-	APIVerifyCard     = "/ccommonapi/creditcard/verify"
+	APIVerifyCard     = "/commonapi/creditcard/verify"
 )
 
 type CardListResult struct {
@@ -29,7 +29,7 @@ type Card struct {
 	Primary      bool       `json:"primary"`      // Card is set as primary
 }
 
-//go:generate goplater -type=CardType,CardStatus -transform=none -tprefix=false
+///go:generate goplater -type=CardType,CardStatus -transform=none -tprefix=false
 
 // Card type:
 // A – American Express
