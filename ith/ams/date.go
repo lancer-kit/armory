@@ -1,10 +1,10 @@
 package ams
 
 import (
-	"time"
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type AmsDate time.Time
@@ -13,9 +13,13 @@ func (r AmsDate) Empty() bool {
 	return r.Time().IsZero()
 }
 
+func AmsDateFromInt(i int64) AmsDate {
+	return AmsDate(time.Unix(i, 0))
+}
+
 // String is generated so AddressType satisfies fmt.Stringer.
 func (r AmsDate) String() string {
-	if r.Empty(){
+	if r.Empty() {
 		return ""
 	}
 	y, m, d := time.Time(r).Date()

@@ -18,14 +18,23 @@ func testCountry(t *testing.T, c *Country) {
 	assert.Equal(t, "Latvia", c.Name)
 	assert.Equal(t, true, c.BrandedCardsAvailable)
 	assert.Equal(t, true, c.RegistrationAllowed)
+	if !t.Failed() {
+		println("Ok - testCountry", )
+	}
 }
 
 func testLanguage(t *testing.T, c *Language) {
 	assert.Equal(t, "ru", c.Code)
+	if !t.Failed() {
+		println("Ok - testLanguage", )
+	}
 }
 
 func testCommunicationLanguage(t *testing.T, c *Language) {
 	assert.Equal(t, "en", c.Code)
+	if !t.Failed() {
+		println("Ok - testCommunicationLanguage", )
+	}
 }
 
 func testPhone(t *testing.T, p *AccountPhone) {
@@ -35,6 +44,9 @@ func testPhone(t *testing.T, p *AccountPhone) {
 	assert.Equal(t, false, p.ContactPreference)
 	assert.Equal(t, true, p.Primary)
 	assert.Equal(t, true, p.Confirmed)
+	if !t.Failed() {
+		println("Ok - testPhone", )
+	}
 }
 
 //"accountSettings": [
@@ -53,6 +65,9 @@ func testAccountSettings(t *testing.T, a AccountSettings) {
 	assert.Equal(t, "externalAccountUid", s.Name)
 	assert.Equal(t, "EX-ACC-UID-1234", s.Value)
 	assert.Equal(t, "default_category", s.Category)
+	if !t.Failed() {
+		println("Ok - testAccountSettings", )
+	}
 }
 
 //"accountEmails": [
@@ -73,7 +88,9 @@ func testAccountEmails(t *testing.T, a AccountEmails) {
 	assert.Equal(t, "john@enauda.com", s.Email)
 	assert.Equal(t, false, s.Confirmed)
 	assert.Equal(t, true, s.Primary)
-
+	if !t.Failed() {
+		println("Ok - testAccountEmails", )
+	}
 }
 
 //"addresses": [
@@ -111,8 +128,11 @@ func testAddresses(t *testing.T, a Addresses) {
 	assert.Equal(t, AddressTypeHome, s.Type)
 	assert.Equal(t, true, s.Primary)
 	testCountry(t, s.Country)
-
+	if !t.Failed() {
+		println("Ok - testAddresses", )
+	}
 }
+
 //"person": {
 //	"name": "John",
 //	"surname": "Doe",
@@ -124,38 +144,42 @@ func testPerson(t *testing.T, s *Person) {
 	assert.Equal(t, "Doe", s.Surname)
 	assert.Equal(t, "19810509000000", s.BirthDate.String())
 	assert.Equal(t, false, s.Pep)
+	if !t.Failed() {
+		println("Ok - testPerson", )
+	}
 }
 
 func TestAccountUnMarshalJSON(t *testing.T) {
 	var b AccountResponse
 	e := json.Unmarshal([]byte(responseExample), &b)
-	if !assert.Equal(t, nil, e) {
+	if !assert.NoError(t, e) {
 		assert.Fail(t, "unable to unmarshal Account")
 		return
 	}
-	if !assert.NotEqual(t, nil, b.Account) {
+	if !assert.NotEmpty(t, b.Account) {
 		assert.Fail(t, "unable to unmarshal AccountResponse")
 		return
 	}
 	a := b.Account
 	assert.Equal(t, "100-020-425-40", a.Uid)
-	if a.Country != nil {
+
+	if assert.NotEmpty(t, a.Country) {
 		testCountry(t, a.Country)
-	} else {
-		assert.Fail(t, "Country unmarshal error")
 	}
-	if !assert.NotEqual(t, nil, a.Language) {
+
+	if assert.NotEmpty(t, a.Language) {
 		testLanguage(t, a.Language)
 	}
-	if !assert.NotEqual(t, nil, a.CommunicationLanguage) {
+
+	if assert.NotEmpty(t, a.CommunicationLanguage) {
 		testCommunicationLanguage(t, a.CommunicationLanguage)
 	}
 
 	assert.Equal(t, AccountTypeStandard, a.Type)
 	assert.Equal(t, "S", a.Type.String())
-	assert.Equal(t, nil, a.Type.Validate())
+	assert.NoError(t, a.Type.Validate())
 	assert.Equal(t, StStandardRegistrationConfirmed, a.Status)
-	assert.Equal(t, nil, a.Status.Validate())
+	assert.NoError(t, a.Status.Validate())
 	assert.Equal(t, "SC", a.Status.String())
 	if assert.Equal(t, 1, len(a.AccountPhones)) {
 		testPhone(t, a.AccountPhones[0])

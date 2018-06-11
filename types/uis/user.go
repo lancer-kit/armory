@@ -2,8 +2,10 @@ package uis
 
 import (
 	"errors"
-	"time"
 	"fmt"
+	"time"
+
+	"gitlab.inn4science.com/vcg/go-common/ith/ams"
 )
 
 type (
@@ -19,14 +21,20 @@ type (
 		CountryMarker     string         `json:"countryMarker" db:"country_marker"`
 		PreferredCurrency string         `json:"preferredCurrency" db:"preferred_currency"`
 		MailVerified      bool           `json:"mailVerified" db:"mail_verified"`
-		UserKey           string         `json:"-" db:"user_key"`
+		UserKey           string         `json:"userKey" db:"user_key"`
 		CreatedAt         int64          `json:"createdAt" db:"created_at"`
 		UpdatedAt         int64          `json:"updatedAt" db:"updated_at"`
 		Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`
 	}
+
+	UserRequest struct {
+		User    *User               `json:"user"`
+		Address *ams.AddressRequest `json:"address"`
+	}
+
 	IntegrationMap map[string]interface{}
-	UserStatus int
-	UserBirthDate int64
+	UserStatus     int
+	UserBirthDate  int64
 )
 
 const (
@@ -78,13 +86,20 @@ func (t *UserBirthDate) FromSQLDate(s string) (d UserBirthDate, err error) {
 	return
 }
 
+//UserBirthDate.String - Stringer interface
 func (t UserBirthDate) String() string {
 	tmp := time.Unix(int64(t), 0)
 	return tmp.Format("2006-01-02")
 }
 
+//ToIthAmsString - convert to ITH AMS string presentation
 func (t *UserBirthDate) ToIthAmsString() string {
 	r := time.Unix(int64(*t), 0)
 	y, m, d := time.Time(r).Date()
 	return fmt.Sprintf("%04d%02d%02d", y, m, d) + "000000"
+}
+
+//ToAmsDate - convert UserBirthDate to ams.AmsDate
+func (t UserBirthDate) ToAmsDate() ams.AmsDate {
+	return ams.AmsDate(time.Unix(int64(t), 0))
 }

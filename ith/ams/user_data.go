@@ -48,9 +48,9 @@ type (
 
 	//Address type, item of Addresses list
 	Address struct {
-		Id        int64 `json:"id,omitempty" db:"id"`          //user-integration data fields
-		UserId    int64 `json:"userId,omitempty" db:"user_id"` //user-integration data fields
-		CountryId int64 `json:"countryId,omitempty" db:"country_id"`     //user-integration data fields
+		Id        int64 `json:"id,omitempty" db:"id"`                //user-integration data fields
+		UserId    int64 `json:"userId,omitempty" db:"user_id"`       //user-integration data fields
+		CountryId int64 `json:"countryId,omitempty" db:"country_id"` //user-integration data fields
 		//Ams data structure
 		Uid               string      `json:"uid,omitempty" db:"uid"`                     //Address UID, Optional for @address
 		Country           *Country    `json:"country,omitempty" db:"-"`                   //Country object, Optional for @address
@@ -201,8 +201,9 @@ type (
 
 	//ErrorData - any response
 	ErrorData struct {
-		ErrorCode    int    `json:"errorCode"`    //Error code
-		ErrorMessage string `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
-		RequestUid   string `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
+		ErrorCode    int         `json:"errorCode"`    //Error code
+		ErrorMessage string      `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
+		RequestUid   string      `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
+		Parameters   interface{} `json:"parameters"`   //Error extended parameters
 	}
 )
