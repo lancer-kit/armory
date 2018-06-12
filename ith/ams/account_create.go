@@ -47,31 +47,31 @@ type (
 	// Example:
 	//
 	//  {
-	//	"clientId": "#partner-code#",
-	//	"clientSecret": "#partner-pass#",
-	//	"externalAccountUid": "EX-ACC-UID-1234",
-	//	"phone": "37120000000",
-	//	"email": "john@enauda.com",
-	//	"password": "pAsSw0rD",
-	//	"firstName": "John",
-	//	"lastName": "Doe",
-	//	"birthDate": "19810509000000",
-	//	"country": "LV",
-	//	"language": "ru",
-	//	"address": {
-	//		"city": "Riga",
-	//		"countryCode": "LV",
-	//		"firstAddressLine": "Duntes 4",
-	//		"secondAddressLine": "Office 403",
-	//		"postalCode": "1234",
-	//		"state": "Rigas rajons"
-	//	},
-	//	"affiliateInfo": {
-	//		"affiliateId": "AF4",
-	//		"campaignId": "C539",
-	//		"bannerId": "BRT13",
-	//		"customParameters": "tr=24&hd=3"
-	//	}
+	//		"clientId": "#partner-code#",
+	//		"clientSecret": "#partner-pass#",
+	//		"externalAccountUid": "EX-ACC-UID-1234",
+	//		"phone": "37120000000",
+	//		"email": "john@enauda.com",
+	//		"password": "pAsSw0rD",
+	//		"firstName": "John",
+	//		"lastName": "Doe",
+	//		"birthDate": "19810509000000",
+	//		"country": "LV",
+	//		"language": "ru",
+	//		"address": {
+	//			"city": "Riga",
+	//			"countryCode": "LV",
+	//			"firstAddressLine": "Duntes 4",
+	//			"secondAddressLine": "Office 403",
+	//			"postalCode": "1234",
+	//			"state": "Rigas rajons"
+	//		},
+	//		"affiliateInfo": {
+	//			"affiliateId": "AF4",
+	//			"campaignId": "C539",
+	//			"bannerId": "BRT13",
+	//			"customParameters": "tr=24&hd=3"
+	//		}
 	//  }
 	UserRegistrationRequest struct {
 		ClientId           string          `json:"clientId"`                 //Required, String(50), OAuth client ID
