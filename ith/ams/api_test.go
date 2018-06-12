@@ -37,3 +37,13 @@ func TestAPI_CreateProfile(t *testing.T) {
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, RequestStatusOk, st)
 }
+
+func TestAPI_UpdateProfile(t *testing.T) {
+	api := NewAPI("http://demo-api.enauda.com/", "vipcoin", "vipcoinpass")
+	//resp, err, st := api.UpdateProfile(&testRequest)
+	//if !assert.NoError(t, err) {
+	//	return
+	//}
+	assert.NotEmpty(t, api)
+	//assert.Equal(t, RequestStatusOk, st)
+}
