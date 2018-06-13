@@ -35,4 +35,19 @@ type (
 	AccountResponse struct {
 		Account *Account `json:"account"`
 	}
+	//UserRegistrationResponse response from ITH Account Management Services (AMS)
+	//
+	//  {
+	//	"accountUid": "100-014-275-55",
+	//	"externalAccountUid": "EX-ACC-UID-1234",
+	//	"accessToken": "bdad264b7f8b9896d73436b234e4bddd",
+	//	"account": {....}
+	//  }
+	UserRegistrationResponse struct {
+		ErrorData          *ErrorData `json:"errorData,omitempty"` //null if OK
+		AccountUid         string     `json:"accountUid"`
+		ExternalAccountUid string     `json:"externalAccountUid"`
+		AccessToken        string     `json:"accessToken"`
+		Account            *Account   `json:"account"`
+	}
 )

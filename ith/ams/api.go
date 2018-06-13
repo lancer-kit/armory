@@ -24,9 +24,10 @@ const (
 
 type (
 	Config struct {
-		BaseURL string
-		Client  string //partner API client uid
-		Secret  string //partner API secret
+		BaseURL   string
+		CommonURL string
+		Client    string //partner API client uid
+		Secret    string //partner API secret
 	}
 
 	API struct {
@@ -38,13 +39,23 @@ type (
 	//ErrorData = ith.ErrorData
 )
 
-func NewAPI(baseUrl, client, secret string) *API {
+func NewAPI(baseUrl, commonUrl, client, secret string) *API {
 
 	tmp := &API{
-		Config: Config{BaseURL: baseUrl, Client: client, Secret: secret},
-		log:    log.Default,
+		Config: Config{
+			BaseURL:   baseUrl,
+			CommonURL: commonUrl,
+			Client:    client,
+			Secret:    secret,
+		},
+		log: log.Default,
 	}
-
+	if string(tmp.Config.BaseURL[len(tmp.Config.BaseURL)-1:]) == "/" {
+		tmp.Config.BaseURL = string(tmp.Config.BaseURL[:len(tmp.Config.BaseURL)-1])
+	}
+	if string(tmp.Config.CommonURL[len(tmp.Config.CommonURL)-1:]) == "/" {
+		tmp.Config.CommonURL = string(tmp.Config.CommonURL[:len(tmp.Config.CommonURL)-1])
+	}
 	return tmp
 }
 
@@ -105,7 +116,7 @@ func (api *API) CreateProfile(req *UserRegistrationRequest) (usr *UserRegistrati
 	if err != nil {
 		usr = nil
 		err = errors.Wrap(err, "unable to unmarshal response")
-		api.log.WithError(err).Warning()
+		api.log.WithError(err).Error()
 		status = RequestStatusPartnerError
 		return
 	}
@@ -127,7 +138,7 @@ func (api *API) CreateProfile(req *UserRegistrationRequest) (usr *UserRegistrati
 }
 
 //CreateProfile - request partner API to update the standard user profile
-func (api *API) UpdateProfile(req *UserRegistrationRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus) {
+func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus) {
 	var resp *http.Response
 	status = RequestStatusOk
 	//Set partner API access codes
@@ -142,7 +153,7 @@ func (api *API) UpdateProfile(req *UserRegistrationRequest, token string) (usr *
 		return
 	}
 	headerMap := make(map[string]string)
-	headerMap["Authorization"] = token
+	headerMap["Authorization"] = "Bearer " + token
 	resp, err = httpx.PostJSON(api.Config.BaseURL+APIupdate, req, headerMap)
 	if err != nil {
 		err = errors.Wrap(err, "unable to send")
@@ -180,7 +191,7 @@ func (api *API) UpdateProfile(req *UserRegistrationRequest, token string) (usr *
 	if err != nil {
 		usr = nil
 		err = errors.Wrap(err, "unable to unmarshal response")
-		api.log.WithError(err).Warning()
+		api.log.WithError(err).Error()
 		status = RequestStatusPartnerError
 		return
 	}
@@ -201,14 +212,96 @@ func (api *API) UpdateProfile(req *UserRegistrationRequest, token string) (usr *
 	return
 }
 
-func (api *API) GetToken(req *AuthCodeRequest) (token string, err error) {
+//Get Authorization Code
+//Send request to ITH.Authorization service.
+//Service is used to receive one-time authorization code. This single use code could be used
+//to transfer user session from one module to another.
+func (api *API) GetCode(req *AuthCodeRequest) (code *AuthCodeResponse, err error) {
+	//--- Get Authorization Code---
 	err = req.Validate()
 	if err != nil {
 		return
 	}
-	url := strings.Replace(api.Config.BaseURL+APICode, param, api.Config.Client, -1)
+	url := strings.Replace(api.Config.CommonURL+APICode, param, api.Config.Client, -1)
+	api.log.Debug("URL:", url)
+	b, _ := json.MarshalIndent(req, "", "\t")
+	api.log.Debug(string(b))
+	//return nil, errors.New("STOP")
+	api.log.Debug("URL:", url)
 	var resp *http.Response
 	resp, err = httpx.PostJSON(url, req, nil)
-	api.log.Debug(resp)
+	if err != nil {
+		err = errors.Wrap(err, "unable to get one-time authorization code")
+		api.log.WithError(err).Error("api.GetCode error")
+		return
+	}
+
+	if resp == nil {
+		err = errors.Wrap(err, "unable to get one-time authorization code. empty response")
+		api.log.WithError(err).Error("api.GetCode error")
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		err = errors.New("unable to get one-time authorization code. response code:" + fmt.Sprint(resp.StatusCode))
+		api.log.WithError(err).Error("api.GetCode error")
+		return
+	}
+	code = new(AuthCodeResponse)
+	err = httpx.ParseJSONResult(resp, code)
+	if err != nil {
+		errors.Wrap(err, "unable to parse code response json")
+		api.log.WithError(err).Error("api.GetCode error")
+	}
+
+	return
+}
+
+//GetToken - Get Authorization Token
+//Send request to ITH.Authorization service.
+//Service is used to receive customer access token and refresh token using one-time
+//authorization code. Received access token should be used in other services calls.
+func (api *API) GetToken(req *AuthCodeRequest) (token *AuthTokenResponse, err error) {
+	//--- Get Authorization Code---
+	var respCode *AuthCodeResponse
+	respCode, err = api.GetCode(req)
+	if err != nil {
+		return
+	}
+	//--- Get Token by Authorization Code ---
+	url := api.Config.BaseURL + APIToken
+	api.log.Debug("URL:", url)
+	reqToken := AuthTokenRequest{
+		ClientId:     api.Config.Client,
+		ClientSecret: api.Config.Secret,
+		Code:         respCode.Code,
+	}
+	var resp *http.Response
+	resp, err = httpx.PostJSON(url, reqToken, nil)
+
+	if err != nil {
+		err = errors.Wrap(err, "unable to get authorization tokens")
+		api.log.WithError(err).Error("api.GetToken error")
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		err = errors.New("unable to get one-time authorization code. response code:" + fmt.Sprint(resp.StatusCode))
+		api.log.WithError(err).Error("api.GetToken error")
+		return
+	}
+	token = new(AuthTokenResponse)
+	err = httpx.ParseJSONResult(resp, token)
+	if err != nil {
+		errors.Wrap(err, "unable to parse token response json")
+		api.log.WithError(err).Error("api.GetToken error")
+		return
+	}
+
+	if token.ErrorData != nil {
+		err = errors.New("partner response with error:" + token.ErrorData.ErrorMessage)
+		api.log.WithError(err).Error("api.GetToken error")
+	}
+
 	return
 }

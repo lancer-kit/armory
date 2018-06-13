@@ -27,6 +27,7 @@ type (
 		Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`
 	}
 
+	//Structure to process register and update
 	UserRequest struct {
 		User    *User               `json:"user"`
 		Address *ams.AddressRequest `json:"address"`
@@ -35,6 +36,12 @@ type (
 	IntegrationMap map[string]interface{}
 	UserStatus     int
 	UserBirthDate  int64
+
+	UpdateResult struct {
+		Request    *ams.UserUpdateRequest //User request with fields filled to be updated
+		Token      string                 //User token to process request from ams.API.UpdateProfile()
+		NeedUpdate bool                   //True, when any filed in Request not empty
+	}
 )
 
 const (

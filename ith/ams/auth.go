@@ -10,8 +10,8 @@ type (
 	}
 
 	AuthCodeResponse struct {
-		ErrorData *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
-		Code      string     `json:"code,omitempty"`      //One-time authorization code
+		//ErrorData *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
+		Code string `json:"code"` //One-time authorization code
 	}
 
 	AuthTokenRequest struct {
