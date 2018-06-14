@@ -26,11 +26,11 @@ type (
 		UpdatedAt         int64          `json:"updatedAt" db:"updated_at"`
 		Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`
 	}
-
+	Address = ams.AddressRequest
 	//Structure to process register and update
 	UserRequest struct {
-		User    *User               `json:"user"`
-		Address *ams.AddressRequest `json:"address"`
+		User    *User    `json:"user"`
+		Address *Address `json:"address"`
 	}
 
 	IntegrationMap map[string]interface{}

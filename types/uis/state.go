@@ -11,11 +11,11 @@ import (
 type (
 	RequestState struct {
 		Id          int64             `json:"id" db:"id"`
-		UserId      int64             `json:"userId" db:"user_id"`
+		UserId      int64             `json:"-" db:"user_id"`
 		State       ams.RequestStatus `json:"state" db:"state"`
-		Data        string            `json:"data" db:"data"`
-		CreatedAt   *SqlTime          `json:"createdAt" db:"created_at"`
-		ProcessedAt *SqlTime          `json:"processedAt" db:"processed_at"`
+		Data        string            `json:"data,omitempty" db:"data"`
+		CreatedAt   *SqlTime          `json:"createdAt,omitempty" db:"created_at"`
+		ProcessedAt *SqlTime          `json:"processedAt,omitempty" db:"processed_at"`
 	}
 
 	SqlTime int64
