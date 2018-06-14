@@ -17,6 +17,10 @@ const (
 	RequestStatusNetworkError
 	RequestStatusPartnerError
 	RequestStatusOk
+	UpdateValidationError
+	UpdateDbError
+	UpdateNetworkError
+	UpdatePartnerError
 )
 
 var ErrRequestStatusInvalid = errors.New("RequestStatus is invalid")
@@ -28,6 +32,10 @@ var defRequestStatusNameToValue = map[string]RequestStatus{
 	"CNE": RequestStatusNetworkError,
 	"CPE": RequestStatusPartnerError,
 	"COK": RequestStatusOk,
+	"UVE": UpdateValidationError,
+	"UDE": UpdateDbError,
+	"UNE": UpdateNetworkError,
+	"UPE": UpdatePartnerError,
 }
 
 var defRequestStatusValueToName = map[RequestStatus]string{
@@ -37,6 +45,10 @@ var defRequestStatusValueToName = map[RequestStatus]string{
 	RequestStatusNetworkError:    "CNE",
 	RequestStatusPartnerError:    "CPE",
 	RequestStatusOk:              "COK",
+	UpdateValidationError:        "UVE",
+	UpdateDbError:                "UDE",
+	UpdateNetworkError:           "UNE",
+	UpdatePartnerError:           "UPE",
 }
 
 // String is generated so RequestStatus satisfies fmt.Stringer.
