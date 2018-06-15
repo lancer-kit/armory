@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gitlab.inn4science.com/vcg/go-common/ith/ams"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type (
@@ -65,6 +66,21 @@ var (
 	ErrorInvalidStatus = errors.New("invalid user status")
 	ErrorInvalidDate   = "invalid date: "
 )
+
+func (t *User) Validate() error {
+	return validation.ValidateStruct(t,
+		validation.Field(&t.Id, validation.Required),
+		validation.Field(&t.Phone, validation.Required, validation.Length(6, 20)),
+		validation.Field(&t.Email, validation.Required),
+		validation.Field(&t.Status, validation.Required),
+		validation.Field(&t.FirstName, validation.Required),
+		validation.Field(&t.LastName, validation.Required),
+		validation.Field(&t.LanguageMarker, validation.Required),
+		validation.Field(&t.CountryMarker, validation.Required),
+		validation.Field(&t.PreferredCurrency, validation.Required),
+		validation.Field(&t.UserKey, validation.Required),
+	)
+}
 
 func (t *User) GetStatusName() (string, error) {
 	if v, ok := StatusName[t.Status]; ok {
