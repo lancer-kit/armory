@@ -11,32 +11,34 @@ import (
 
 type (
 	User struct {
-		Id                int64          `json:"id" db:"id"`
-		Phone             string         `json:"phone" db:"phone"`
-		Email             string         `json:"email" db:"email"`
-		Status            UserStatus     `json:"status" db:"status"`
-		FirstName         string         `json:"firstName" db:"first_name"`
-		LastName          string         `json:"lastName" db:"last_name"`
-		BirthDate         UserBirthDate  `json:"birthDate" db:"birth_date"`
-		LanguageMarker    string         `json:"languageMarker" db:"language_marker"`
-		CountryMarker     string         `json:"countryMarker" db:"country_marker"`
-		PreferredCurrency string         `json:"preferredCurrency" db:"preferred_currency"`
-		MailVerified      bool           `json:"mailVerified" db:"mail_verified"`
-		UserKey           string         `json:"userKey" db:"user_key"`
-		CreatedAt         int64          `json:"createdAt" db:"created_at"`
-		UpdatedAt         int64          `json:"updatedAt" db:"updated_at"`
-		Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`
+		Id                int64          `json:"id" db:"id"`                                //user id (same to user-api)
+		Phone             string         `json:"phone" db:"phone"`                          //user phone
+		Email             string         `json:"email" db:"email"`                          //user email
+		Status            UserStatus     `json:"status" db:"status"`                        //status on user-api service
+		FirstName         string         `json:"firstName" db:"first_name"`                 //Fist name
+		LastName          string         `json:"lastName" db:"last_name"`                   //Last name
+		BirthDate         UserBirthDate  `json:"birthDate" db:"birth_date"`                 //Bith date
+		LanguageMarker    string         `json:"languageMarker" db:"language_marker"`       //ISO 2 user language
+		CountryMarker     string         `json:"countryMarker" db:"country_marker"`         //ISO 2 Country
+		PreferredCurrency string         `json:"preferredCurrency" db:"preferred_currency"` //ISO 3 User preferred currency
+		MailVerified      bool           `json:"mailVerified" db:"mail_verified"`           //Flag - is mail verified on user-api service
+		UserKey           string         `json:"userKey" db:"user_key"`                     //User password hash
+		CreatedAt         int64          `json:"createdAt" db:"created_at"`                 //Create at, unix time stamp
+		UpdatedAt         int64          `json:"updatedAt" db:"updated_at"`                 //Updated at, unix time stamp
+		//Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`             //list of integration-specific data
 	}
+	//alias to ams.AddressRequest
 	Address = ams.AddressRequest
+
 	//Structure to process register and update
 	UserRequest struct {
 		User    *User    `json:"user"`
 		Address *Address `json:"address"`
 	}
 
-	IntegrationMap map[string]interface{}
-	UserStatus     int
-	UserBirthDate  int64
+	//IntegrationMap map[string]interface{}
+	UserStatus int
+	UserBirthDate int64
 
 	UpdateResult struct {
 		Request    *ams.UserUpdateRequest //User request with fields filled to be updated
