@@ -18,6 +18,12 @@ type (
 		ProcessedAt *SqlTime          `json:"processedAt,omitempty" db:"processed_at"`
 	}
 
+	RegistrationStatus struct {
+		UserId       int64             `json:"userId"`
+		IsRegistered bool              `json:"isRegistered"`
+		Status       ams.AccountStatus `json:"status"`
+	}
+
 	SqlTime int64
 )
 
