@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	APIDocumentList   = "commonapi/document/list"
+	APIDocumentList   = "/commonapi/document/list"
 	APIDocumentUpload = "/commonapi/document/upload"
 )
 
