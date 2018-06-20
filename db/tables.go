@@ -10,9 +10,13 @@ type Table struct {
 	Name  string
 	Alias string
 
-	DB       sq.BaseRunner
-	QBuilder sq.SelectBuilder
-	Page     *PageQuery
+	DB        sq.BaseRunner
+	QBuilder  sq.SelectBuilder
+	GQBuilder sq.SelectBuilder
+	IQBuilder sq.InsertBuilder
+	UQBuilder sq.UpdateBuilder
+	DQBuilder sq.DeleteBuilder
+	Page      *PageQuery
 }
 
 // AliasedName returns table name with the alias postfix.
