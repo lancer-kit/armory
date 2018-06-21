@@ -7,6 +7,15 @@ ITH integration. ACCOUNT MANAGEMENT SERVICES
 ## Usage
 
 ```go
+const (
+	APICreate = "/partnerapi/account/register"
+	APIupdate = "/partnerapi/account/update"
+	APICode   = "/commonapi/auth/" + param + "/authorization_code"
+	APIToken  = "/partnerapi/token/code"
+)
+```
+
+```go
 var ErrAccountStatusInvalid = errors.New("AccountStatus is invalid")
 ```
 
@@ -27,8 +36,69 @@ var ErrPhoneTypeInvalid = errors.New("PhoneType is invalid")
 ```
 
 ```go
+var ErrRequestStatusInvalid = errors.New("RequestStatus is invalid")
+```
+
+```go
 var ErrWebResourceInvalid = errors.New("WebResource is invalid")
 ```
+
+#### type API
+
+```go
+type API struct {
+	Config Config
+
+	Auth ith.API
+}
+```
+
+
+#### func  NewAPI
+
+```go
+func NewAPI(baseUrl, commonUrl, client, secret string) *API
+```
+
+#### func (*API) CreateProfile
+
+```go
+func (api *API) CreateProfile(req *UserRegistrationRequest) (usr *UserRegistrationResponse, err error, status RequestStatus)
+```
+CreateProfile - request partner API to create the new standard user profile
+
+#### func (*API) GetCode
+
+```go
+func (api *API) GetCode(req *AuthCodeRequest) (code *AuthCodeResponse, err error)
+```
+Get Authorization Code Send request to ITH.Authorization service. Service is
+used to receive one-time authorization code. This single use code could be used
+to transfer user session from one module to another.
+
+#### func (*API) GetToken
+
+```go
+func (api *API) GetToken(req *AuthCodeRequest) (token *AuthTokenResponse, err error)
+```
+GetToken - Get Authorization Token Send request to ITH.Authorization service.
+Service is used to receive customer access token and refresh token using
+one-time authorization code. Received access token should be used in other
+services calls.
+
+#### func (*API) SetLogger
+
+```go
+func (api *API) SetLogger(entry log.Entry)
+```
+Set new logger on ams.API
+
+#### func (*API) UpdateProfile
+
+```go
+func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus)
+```
+CreateProfile - request partner API to update the standard user profile
 
 #### type Account
 
@@ -64,16 +134,46 @@ type Account struct {
 }
 ```
 
+Example:
+
+    {
+    	"uid": "100-020-425-40",
+    	"country": {/*object*/},
+    	"language": {/*object*/},
+    	"communicationLanguage": {/*object*/},
+    	"type": "S",
+    	"status": "SC",
+    	"accountPhones": [/*list*/],
+    	"accountSettings": [/*list*/],
+    	"accountEmails": [/*list*/],
+    	"addresses": [/*list*/],
+    	"person": {/*object*/},
+    	"affiliateId": "AF4",
+    	"campaignId": "C539",
+    	"bannerId": "BRT13",
+    	"customParameters": "tr=24&hd=3",
+    	"timezone": 16,
+    	"weekStartsOn": "MO",
+    	"currencyConversion": true,
+    	"alwaysRefundEWallet": false,
+    	"confirmOutTransaction": false,
+    	"confirmLogin": false,
+    	"actionConfirmationEnabled": false,
+    	"test": false
+    }
 
 #### type AccountEmail
 
 ```go
 type AccountEmail struct {
-	Uid       string `json:"uid,omitempty"`
-	Email     string `json:"email"`
-	Confirmed bool   `json:"confirmed,omitempty"`
-	Primary   bool   `json:"primary,omitempty"`
-	Type      string `json:"type,omitempty"`
+	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+	//ITH.AMS data structure
+	Uid       string `json:"uid,omitempty" db:"uid"`
+	Email     string `json:"email" db:"email"`
+	Confirmed bool   `json:"confirmed,omitempty" db:"confirmed"`
+	Primary   bool   `json:"primary,omitempty" db:"primary"`
+	Type      string `json:"type,omitempty" db:"type"`
 }
 ```
 
@@ -100,13 +200,16 @@ AccountEmails list of AccountEmail
 
 ```go
 type AccountPhone struct {
-	Uid               string    `json:"uid,omitempty"`         //Phone UID
-	CountryCode       string    `json:"countryCode,omitempty"` //Phone country code
-	Number            string    `json:"number,omitempty"`      //Phone number
-	Type              PhoneType `json:"type,omitempty"`        //Phone type (see: PhoneType)
-	ContactPreference bool      `json:"contactPreference"`     //Phone is preferred for communication
-	Primary           bool      `json:"primary,omitempty"`     //Phone is primary
-	Confirmed         bool      `json:"confirmed,omitempty"`   //Phone is confirmed by account holder
+	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+	//ITH.AMS data structure
+	Uid               string    `json:"uid,omitempty" db:"uid"`                    //Phone UID
+	CountryCode       string    `json:"countryCode,omitempty" db:"country_code"`   //Phone country code
+	Number            string    `json:"number,omitempty" db:"number"`              //Phone number
+	Type              PhoneType `json:"type,omitempty" db:"type"`                  //Phone type (see: PhoneType)
+	ContactPreference bool      `json:"contactPreference" db:"contact_preference"` //Phone is preferred for communication
+	Primary           bool      `json:"primary,omitempty" db:"primary"`            //Phone is primary
+	Confirmed         bool      `json:"confirmed,omitempty" db:"confirmed"`        //Phone is confirmed by account holder
 }
 ```
 
@@ -145,9 +248,12 @@ Standard account response (from doc.example)
 
 ```go
 type AccountSetting struct {
-	Name     string `json:"name"`               //Setting name
-	Value    string `json:"value,omitempty"`    //Setting value
-	Category string `json:"category,omitempty"` //Setting category
+	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
+	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+	//ITH.AMS data structure
+	Name     string `json:"name" db:"name"`                   //Setting name
+	Value    string `json:"value,omitempty" db:"value"`       //Setting value
+	Category string `json:"category,omitempty" db:"category"` //Setting category
 }
 ```
 
@@ -337,9 +443,10 @@ Field type for Account.ActionConfirmationType
 
 ```go
 const (
-	ActionConfirmationEmail ActionConfirmation = iota + 1 //EMAIL – via email;
-	ActionConfirmationSms                                 //SMS – via phone
-	ActionConfirmationGAuth                               //GAUTH – via Google Authenticator
+	ActionConfirmationNone ActionConfirmation = iota //EMAIL – via email;
+	ActionConfirmationEmail
+	ActionConfirmationSms   //SMS – via phone
+	ActionConfirmationGAuth //GAUTH – via Google Authenticator
 )
 ```
 
@@ -389,19 +496,19 @@ Value is generated so ActionConfirmation satisfies db row driver.Valuer.
 
 ```go
 type Address struct {
-	Id        int64 `json:"id,omitempty" db:"id"`          //user-integration data fields
-	UserId    int64 `json:"userId,omitempty" db:"user_id"` //user-integration data fields
-	CountryId int64 `json:"countryId" db:"country_id"`     //user-integration data fields
+	Id        int64 `json:"id,omitempty" db:"id"`                //user-integration data fields
+	UserId    int64 `json:"userId,omitempty" db:"user_id"`       //user-integration data fields
+	CountryId int64 `json:"countryId,omitempty" db:"country_id"` //user-integration data fields
 	//Ams data structure
-	Uid               string      `json:"uid,omitempty"`     //Address UID, Optional for @address
-	Country           *Country    `json:"country,omitempty"` //Country object, Optional for @address
-	City              string      `json:"city"`              //City, required
-	FirstAddressLine  string      `json:"firstAddressLine"`  //First address line, required
-	SecondAddressLine string      `json:"secondAddressLine"` //Second address line, optional
-	State             string      `json:"state"`             //State, optional
-	PostalCode        string      `json:"postalCode"`        //Postal code, required
-	Type              AddressType `json:"type,omitempty"`    //Optional for @address (see AddressType)
-	Primary           bool        `json:"primary,omitempty"` //Optional for @address
+	Uid               string      `json:"uid,omitempty" db:"uid"`                     //Address UID, Optional for @address
+	Country           *Country    `json:"country,omitempty" db:"-"`                   //Country object, Optional for @address
+	City              string      `json:"city" db:"city"`                             //City, required
+	FirstAddressLine  string      `json:"firstAddressLine" db:"first_address_line"`   //First address line, required
+	SecondAddressLine string      `json:"secondAddressLine" db:"second_address_line"` //Second address line, optional
+	State             string      `json:"state" db:"state"`                           //State, optional
+	PostalCode        string      `json:"postalCode" db:"postal_code"`                //Postal code, required
+	Type              AddressType `json:"type,omitempty" db:"type"`                   //Optional for @address (see AddressType)
+	Primary           bool        `json:"primary,omitempty" db:"primary"`             //Optional for @address
 }
 ```
 
@@ -506,6 +613,33 @@ func (r AddressType) Value() (driver.Value, error)
 ```
 Value is generated so AddressType satisfies db row driver.Valuer.
 
+#### type AddressUpdate
+
+```go
+type AddressUpdate struct {
+	CountryCode       string `json:"countryCode,omitempty"`       //Optional/fill if updated, String(2), ISO-2 country code
+	City              string `json:"city,omitempty"`              //Optional/fill if updated, String(50), City
+	FirstAddressLine  string `json:"firstAddressLine,omitempty"`  //Optional/fill if updated, String(60), First address line
+	SecondAddressLine string `json:"secondAddressLine,omitempty"` //Optional/fill if updated, String(60), Second address line
+	PostalCode        string `json:"postalCode,omitempty"`        //Optional/fill if updated, String(10), Postal code
+	State             string `json:"state,omitempty"`             //Optional/fill if updated,String(50), State
+}
+```
+
+AddressRequest - used in "Create Standard Account" method of Account Management
+Services
+
+Example:
+
+     {
+    		"city": "Riga",
+    		"countryCode": "LV",
+    		"firstAddressLine": "Duntes 4",
+    		"secondAddressLine": "Office 403",
+    		"postalCode": "1234",
+    		"state": "Rigas rajons"
+    	}
+
 #### type Addresses
 
 ```go
@@ -573,6 +707,12 @@ type AmsDate time.Time
 ```
 
 
+#### func  AmsDateFromInt
+
+```go
+func AmsDateFromInt(i int64) AmsDate
+```
+
 #### func (AmsDate) Empty
 
 ```go
@@ -613,12 +753,64 @@ func (r AmsDate) Validate() error
 ```
 Validate verifies that value is predefined for AddressType.
 
+#### type AuthCodeRequest
+
+```go
+type AuthCodeRequest struct {
+	AccessToken string `json:"accessToken,omitempty"` //user access token
+	Username    string `json:"username,omitempty"`    //Account username (email)
+	Password    string `json:"password,omitempty"`    //Account password (plain password)
+}
+```
+
+
+#### func (*AuthCodeRequest) Validate
+
+```go
+func (r *AuthCodeRequest) Validate() error
+```
+
+#### type AuthCodeResponse
+
+```go
+type AuthCodeResponse struct {
+	//ErrorData *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
+	Code string `json:"code"` //One-time authorization code
+}
+```
+
+
+#### type AuthTokenRequest
+
+```go
+type AuthTokenRequest struct {
+	ClientId     string `json:"clientId"`     //OAuth client ID
+	ClientSecret string `json:"clientSecret"` //OAuth client secret
+	Code         string `json:"code"`         //One-time authorization code
+}
+```
+
+
+#### type AuthTokenResponse
+
+```go
+type AuthTokenResponse struct {
+	ErrorData    *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
+	AccessToken  string     `json:"accessToken"`         //Access token for integration services
+	RefreshToken string     `json:"refreshToken"`        //Refresh token for access token renewal
+	ExpiresIn    int64      `json:"expiresIn"`           //Expiration time for access token (seconds)
+}
+```
+
+
 #### type Company
 
 ```go
 type Company struct {
-	Id     int64 `json:"id,omitempty" db:"id"` //Internal for user-integration
-	UserId int64 `json:"userId" db:"user_id"`  //Internal for user-integration
+	Id     int64  `json:"id,omitempty" db:"id"`          //Internal for user-integration
+	UserId int64  `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
+	Uid    string `json:"uid,omitempty" db:"uid"`        //Internal for user-integration Company UID
+
 	//ITH.AMS data structure
 	BusinessName                    string  `json:"businessName" db:"business_name"`                                         //Company name, String(255)
 	CategoryId                      int     `json:"categoryId" db:"category_id"`                                             //Category ID, Integer
@@ -637,17 +829,31 @@ type Company struct {
 }
 ```
 
-Company Company object (for merchant only)
+Company Company object (for merchant only) swagger:model
+
+#### type Config
+
+```go
+type Config struct {
+	BaseURL   string
+	CommonURL string
+	Client    string //partner API client uid
+	Secret    string //partner API secret
+}
+```
+
 
 #### type Country
 
 ```go
 type Country struct {
-	Id                    int64  `json:"id,omitempty"`
-	Code                  string `json:"code"`
-	Name                  string `json:"name"`
-	BrandedCardsAvailable bool   `json:"brandedCardsAvailable,omitempty"`
-	RegistrationAllowed   bool   `json:"registrationAllowed,omitempty"`
+	Id int64 `json:"internal_id,omitempty" db:"id"` //Internal for user-integration
+	//ITH.AMS data structure
+	AmsId                 int64  `json:"id,omitempty" db:"ams_id"`
+	Code                  string `json:"code" db:"code"`
+	Name                  string `json:"name" db:"name"`
+	BrandedCardsAvailable bool   `json:"brandedCardsAvailable,omitempty" db:"branded_cards_available"`
+	RegistrationAllowed   bool   `json:"registrationAllowed,omitempty" db:"registration_allowed"`
 }
 ```
 
@@ -663,9 +869,10 @@ Additional field `country`
 
 ```go
 type ErrorData struct {
-	ErrorCode    int    `json:"errorCode"`    //Error code
-	ErrorMessage string `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
-	RequestUid   string `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
+	ErrorCode    int         `json:"errorCode"`    //Error code
+	ErrorMessage string      `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
+	RequestUid   string      `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
+	Parameters   interface{} `json:"parameters"`   //Error extended parameters
 }
 ```
 
@@ -675,11 +882,11 @@ ErrorData - any response
 
 ```go
 type Language struct {
-	Uid     string `json:"uid,omitempty"`
-	Code    string `json:"code"` //ISO2 language code
-	Name    string `json:"name,omitempty"`
-	Type    string `json:"type,omitempty"`
-	Primary bool   `json:"primary,omitempty"`
+	Uid     string `json:"uid,omitempty" db:"uid"`
+	Code    string `json:"code" db:"code"` //ISO2 language code
+	Name    string `json:"name,omitempty" db:"name"`
+	Type    string `json:"type,omitempty" db:"type"`
+	Primary bool   `json:"primary,omitempty" db:"primary"`
 }
 ```
 
@@ -796,6 +1003,70 @@ func (r PhoneType) Value() (driver.Value, error)
 ```
 Value is generated so PhoneType satisfies db row driver.Valuer.
 
+#### type RequestStatus
+
+```go
+type RequestStatus int
+```
+
+
+```go
+const (
+	RequestStatusNone RequestStatus = iota
+	RequestStatusValidationError
+	RequestStatusDbError
+	RequestStatusNetworkError
+	RequestStatusPartnerError
+	RequestStatusOk
+	UpdateValidationError
+	UpdateDbError
+	UpdateNetworkError
+	UpdatePartnerError
+)
+```
+
+#### func (RequestStatus) MarshalJSON
+
+```go
+func (r RequestStatus) MarshalJSON() ([]byte, error)
+```
+MarshalJSON is generated so RequestStatus satisfies json.Marshaler.
+
+#### func (*RequestStatus) Scan
+
+```go
+func (r *RequestStatus) Scan(src interface{}) error
+```
+Value is generated so RequestStatus satisfies db row driver.Scanner.
+
+#### func (RequestStatus) String
+
+```go
+func (r RequestStatus) String() string
+```
+String is generated so RequestStatus satisfies fmt.Stringer.
+
+#### func (*RequestStatus) UnmarshalJSON
+
+```go
+func (r *RequestStatus) UnmarshalJSON(data []byte) error
+```
+UnmarshalJSON is generated so RequestStatus satisfies json.Unmarshaler.
+
+#### func (RequestStatus) Validate
+
+```go
+func (r RequestStatus) Validate() error
+```
+Validate verifies that value is predefined for RequestStatus.
+
+#### func (RequestStatus) Value
+
+```go
+func (r RequestStatus) Value() (driver.Value, error)
+```
+Value is generated so RequestStatus satisfies db row driver.Valuer.
+
 #### type UserRegistrationRequest
 
 ```go
@@ -821,31 +1092,31 @@ Request body for POST https://<host>:<port>/partnerapi/account/register
 Example:
 
      {
-    	"clientId": "#partner-code#",
-    	"clientSecret": "#partner-pass#",
-    	"externalAccountUid": "EX-ACC-UID-1234",
-    	"phone": "37120000000",
-    	"email": "john@enauda.com",
-    	"password": "pAsSw0rD",
-    	"firstName": "John",
-    	"lastName": "Doe",
-    	"birthDate": "19810509000000",
-    	"country": "LV",
-    	"language": "ru",
-    	"address": {
-    		"city": "Riga",
-    		"countryCode": "LV",
-    		"firstAddressLine": "Duntes 4",
-    		"secondAddressLine": "Office 403",
-    		"postalCode": "1234",
-    		"state": "Rigas rajons"
-    	},
-    	"affiliateInfo": {
-    		"affiliateId": "AF4",
-    		"campaignId": "C539",
-    		"bannerId": "BRT13",
-    		"customParameters": "tr=24&hd=3"
-    	}
+    		"clientId": "#partner-code#",
+    		"clientSecret": "#partner-pass#",
+    		"externalAccountUid": "EX-ACC-UID-1234",
+    		"phone": "37120000000",
+    		"email": "john@enauda.com",
+    		"password": "pAsSw0rD",
+    		"firstName": "John",
+    		"lastName": "Doe",
+    		"birthDate": "19810509000000",
+    		"country": "LV",
+    		"language": "ru",
+    		"address": {
+    			"city": "Riga",
+    			"countryCode": "LV",
+    			"firstAddressLine": "Duntes 4",
+    			"secondAddressLine": "Office 403",
+    			"postalCode": "1234",
+    			"state": "Rigas rajons"
+    		},
+    		"affiliateInfo": {
+    			"affiliateId": "AF4",
+    			"campaignId": "C539",
+    			"bannerId": "BRT13",
+    			"customParameters": "tr=24&hd=3"
+    		}
      }
 
 #### func (*UserRegistrationRequest) Validate
@@ -875,6 +1146,64 @@ UserRegistrationResponse response from ITH Account Management Services (AMS)
     	"accessToken": "bdad264b7f8b9896d73436b234e4bddd",
     	"account": {....}
      }
+
+#### type UserUpdateRequest
+
+```go
+type UserUpdateRequest struct {
+	ClientId           string         `json:"clientId"`                 //Required, String(50), OAuth client ID
+	ClientSecret       string         `json:"clientSecret"`             //Required, String(32), OAuth client secret
+	ExternalAccountUid string         `json:"externalAccountUid"`       //Required, String(50), User API user ID
+	Phone              string         `json:"phone,omitempty"`          //Optional/fill if updated, String(30), Full phone number. Min length 5
+	Email              string         `json:"email,omitempty"`          //Optional/fill if updated, String(150), Email
+	Password           string         `json:"password,omitempty"`       //Optional/fill if updated, String(50), User account password (plain ?)
+	FirstName          string         `json:"firstName,omitempty"`      //Optional/fill if updated, String(50), Name
+	LastName           string         `json:"lastName,omitempty"`       //Optional/fill if updated, String(50), Surname
+	BirthDate          AmsDate        `json:"birthDate,omitempty"`      //Optional/fill if updated, Date, Format - yyyyMMddHHmmss
+	Country            string         `json:"country,omitempty"`        //Optional/fill if updated, String(2), ISO2 country code
+	Language           string         `json:"language,omitempty"`       //Optional/fill if updated, String(2), ISO2 language code
+	Address            *AddressUpdate `json:"address,omitempty"`        //Optional/fill if updated, User account address
+	AffiliateInfo      *AffiliateInfo `json:"affiliateInfo,ommitempty"` //Optional, Affiliate information
+}
+```
+
+Request body for POST https://<host>:<port>/partnerapi/account/register
+
+Example:
+
+     {
+    		"clientId": "#partner-code#",
+    		"clientSecret": "#partner-pass#",
+    		"externalAccountUid": "EX-ACC-UID-1234",
+    		"phone": "37120000000",
+    		"email": "john@enauda.com",
+    		"password": "pAsSw0rD",
+    		"firstName": "John",
+    		"lastName": "Doe",
+    		"birthDate": "19810509000000",
+    		"country": "LV",
+    		"language": "ru",
+    		"address": {
+    			"city": "Riga",
+    			"countryCode": "LV",
+    			"firstAddressLine": "Duntes 4",
+    			"secondAddressLine": "Office 403",
+    			"postalCode": "1234",
+    			"state": "Rigas rajons"
+    		},
+    		"affiliateInfo": {
+    			"affiliateId": "AF4",
+    			"campaignId": "C539",
+    			"bannerId": "BRT13",
+    			"customParameters": "tr=24&hd=3"
+    		}
+     }
+
+#### func (UserUpdateRequest) Validate
+
+```go
+func (r UserUpdateRequest) Validate() (err error)
+```
 
 #### type WebResource
 

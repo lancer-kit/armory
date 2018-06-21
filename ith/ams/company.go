@@ -2,6 +2,7 @@ package ams
 
 //Company
 // Company object (for merchant only)
+//swagger:model
 type Company struct {
 	Id     int64  `json:"id,omitempty" db:"id"`          //Internal for user-integration
 	UserId int64  `json:"userId,omitempty" db:"user_id"` //Internal for user-integration

@@ -1,6 +1,33 @@
 package ams
 
 type (
+	//Example:
+	//
+	//	{
+	//		"uid": "100-020-425-40",
+	//		"country": {/*object*/},
+	//		"language": {/*object*/},
+	//		"communicationLanguage": {/*object*/},
+	//		"type": "S",
+	//		"status": "SC",
+	//		"accountPhones": [/*list*/],
+	//		"accountSettings": [/*list*/],
+	//		"accountEmails": [/*list*/],
+	//		"addresses": [/*list*/],
+	//		"person": {/*object*/},
+	//		"affiliateId": "AF4",
+	//		"campaignId": "C539",
+	//		"bannerId": "BRT13",
+	//		"customParameters": "tr=24&hd=3",
+	//		"timezone": 16,
+	//		"weekStartsOn": "MO",
+	//		"currencyConversion": true,
+	//		"alwaysRefundEWallet": false,
+	//		"confirmOutTransaction": false,
+	//		"confirmLogin": false,
+	//		"actionConfirmationEnabled": false,
+	//		"test": false
+	//	}
 	Account struct {
 		Uid                       string             `json:"uid"`                       //Account UID in ITH platform
 		Country                   *Country           `json:"country"`                   //Account country object

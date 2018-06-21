@@ -9,6 +9,7 @@ import (
 )
 
 type (
+	//swagger:model
 	RequestState struct {
 		Id          int64             `json:"id" db:"id"`
 		UserId      int64             `json:"-" db:"user_id"`
@@ -17,7 +18,7 @@ type (
 		CreatedAt   *SqlTime          `json:"createdAt,omitempty" db:"created_at"`
 		ProcessedAt *SqlTime          `json:"processedAt,omitempty" db:"processed_at"`
 	}
-
+	//swagger:model
 	RegistrationStatus struct {
 		UserId       int64             `json:"userId"`
 		IsRegistered bool              `json:"isRegistered"`

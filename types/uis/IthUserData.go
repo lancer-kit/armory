@@ -2,13 +2,15 @@ package uis
 
 import "gitlab.inn4science.com/vcg/go-common/ith/ams"
 
+//ITH -specific user data
+//swagger:model
 type IthUserData struct {
 	Id                        int64                  `json:"id"`                                                //User ID.Same in user-api service
 	AccountId                 string                 `json:"accountId" db:"account_id"`                         //External account uid
 	AccessToken               string                 `json:"accessToken" db:"access_token"`                     //Refresh token
 	AccountType               ams.AccountType        `json:"accountType" db:"account_type"`                     //See ams.AccountType
 	AccountStatus             ams.AccountStatus      `json:"accountStatus" db:"account_status"`                 //See ams.AccountStatus
-	AffilateId                string                 `json:"affilateId" db:"affiliate_id"`                       //Affilate id (referral)  in ITH AMS
+	AffilateId                string                 `json:"affilateId" db:"affiliate_id"`                      //Affilate id (referral)  in ITH AMS
 	Language                  string                 `json:"language" db:"language"`                            //String(2). User language ISO2 code
 	CommunicationLanguage     string                 `json:"communicationLanguage" db:"communication_language"` //String(2). Communication language
 	CampaignId                string                 `json:"campaignId" db:"campaign_id"`                       //Campaign Id (referral)  in ITH AMS
@@ -28,7 +30,7 @@ type IthUserData struct {
 }
 
 func GetBoolPtr(v *bool) bool {
-	if v==nil {
+	if v == nil {
 		return false
 	}
 	return *v
