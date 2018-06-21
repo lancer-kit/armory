@@ -74,9 +74,11 @@ var defAccountStatusNameToValue = map[string]AccountStatus{
 	"MM": StMerchantRequiresModeration,
 	"MS": StMerchantSuspended,
 	"MD": StMerchantClosed,
+	"":   0,
 }
 
 var defAccountStatusValueToName = map[AccountStatus]string{
+	0: "",
 	StStandardAutomaticallyRegistered: "SA",
 	StStandardRegistrationRequested:   "SR",
 	StStandardRegistrationConfirmed:   "SC",
