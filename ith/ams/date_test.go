@@ -42,13 +42,11 @@ func TestAmsDate_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, "19810509000000", a.String())
 }
 
-type AmsTypeTest struct {
-	BirthDate *AmsDate `json:"birthDate,omitempty"`
-	Id        int64    `json:"id"`
-}
-
 func Test_OmitemptyMarshalJSON(t *testing.T) {
-	a := AmsTypeTest{Id: 1}
+	a := struct {
+		BirthDate *AmsDate `json:"birthDate,omitempty"`
+		Id        int64    `json:"id"`
+	}{Id: 1}
 	b, e := json.MarshalIndent(&a, "", "  ")
 	assert.NoError(t, e)
 	assert.NotEmpty(t, b)
