@@ -131,3 +131,9 @@ func (t *UserBirthDate) ToIthAmsString() string {
 func (t UserBirthDate) ToAmsDate() ams.AmsDate {
 	return ams.AmsDate(time.Unix(int64(t), 0))
 }
+
+//ToAmsDate - convert UserBirthDate to ams.AmsDate
+func (t UserBirthDate) ToAmsDatePtr() *ams.AmsDate {
+	x := ams.AmsDate(time.Unix(int64(t), 0))
+	return &x
+}
