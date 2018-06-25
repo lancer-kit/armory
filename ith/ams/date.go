@@ -9,7 +9,10 @@ import (
 
 type AmsDate time.Time
 
-func (r AmsDate) Empty() bool {
+func (r *AmsDate) Empty() bool {
+	if r == nil {
+		return true
+	}
 	return r.Time().IsZero()
 }
 
@@ -18,11 +21,11 @@ func AmsDateFromInt(i int64) AmsDate {
 }
 
 // String is generated so AddressType satisfies fmt.Stringer.
-func (r AmsDate) String() string {
+func (r *AmsDate) String() string {
 	if r.Empty() {
 		return ""
 	}
-	y, m, d := time.Time(r).Date()
+	y, m, d := time.Time(*r).Date()
 	return fmt.Sprintf("%04d%02d%02d", y, m, d) + "000000"
 }
 
@@ -31,7 +34,7 @@ func (r AmsDate) Time() time.Time {
 }
 
 // Validate verifies that value is predefined for AddressType.
-func (r AmsDate) Validate() error {
+func (r *AmsDate) Validate() error {
 	if len(r.String()) != 14 {
 		return fmt.Errorf("invalid AmsDate type: %s", r.String())
 	}
@@ -39,7 +42,10 @@ func (r AmsDate) Validate() error {
 }
 
 // MarshalJSON  AmsDate satisfies json.Marshaler.
-func (r AmsDate) MarshalJSON() ([]byte, error) {
+func (r *AmsDate) MarshalJSON() ([]byte, error) {
+	if r.Empty() {
+		return nil, nil
+	}
 	s := r.String()
 	return json.Marshal(s)
 }

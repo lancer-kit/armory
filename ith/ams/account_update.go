@@ -63,7 +63,7 @@ type (
 		Password           string         `json:"password,omitempty"`       //Optional/fill if updated, String(50), User account password (plain ?)
 		FirstName          string         `json:"firstName,omitempty"`      //Optional/fill if updated, String(50), Name
 		LastName           string         `json:"lastName,omitempty"`       //Optional/fill if updated, String(50), Surname
-		BirthDate          AmsDate        `json:"birthDate,omitempty"`      //Optional/fill if updated, Date, Format - yyyyMMddHHmmss
+		BirthDate          *AmsDate       `json:"birthDate,omitempty"`      //Optional/fill if updated, Date, Format - yyyyMMddHHmmss
 		Country            string         `json:"country,omitempty"`        //Optional/fill if updated, String(2), ISO2 country code
 		Language           string         `json:"language,omitempty"`       //Optional/fill if updated, String(2), ISO2 language code
 		Address            *AddressUpdate `json:"address,omitempty"`        //Optional/fill if updated, User account address
