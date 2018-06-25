@@ -10,12 +10,22 @@ import (
 type PaymentState string
 
 const (
-	PaymentPending       PaymentState = "pending"
-	PaymentSubmitted     PaymentState = "submitted"
-	PaymentApplied       PaymentState = "applied"
-	PaymentFailed        PaymentState = "failed"
+	// PaymentNotConfirmed indicates that the payment requires confirmation by the payer.
+	PaymentNotConfirmed PaymentState = "not_confirmed"
+	// PaymentDeclined indicates that the payment was canceled by the payer.
+	PaymentDeclined PaymentState = "declined"
+	// PaymentPending indicates that the payment is ready to be sent as a transaction.
+	PaymentPending PaymentState = "pending"
+	// PaymentSubmitted indicates that the payment was submitted as a transaction.
+	PaymentSubmitted PaymentState = "submitted"
+	// PaymentApplied indicates that the balance states of the payment participants have been updated.
+	PaymentApplied PaymentState = "applied"
+	// PaymentApplied indicates that the payment was not submitted as a transaction.
+	PaymentFailed PaymentState = "failed"
+	// PaymentPaid4Referrer indicates that the referrer's share was credited to the account.
 	PaymentPaid4Referrer PaymentState = "paid_for_referrer"
-	PaymentBlocked       PaymentState = "blocked"
+	// PaymentBlocked ...
+	PaymentBlocked PaymentState = "blocked"
 )
 
 type PaymentType string
