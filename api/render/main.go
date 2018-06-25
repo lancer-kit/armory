@@ -48,3 +48,8 @@ func BadRequest(w http.ResponseWriter, reason interface{}) {
 func Unauthorized(w http.ResponseWriter, reason interface{}) {
 	ResultUnauthorized.SetError(reason).Render(w)
 }
+
+// InProgress renders `ResultAccepted` with `reason` as an message.
+func InProgress(w http.ResponseWriter, result interface{}) {
+	WriteJSON(w, http.StatusAccepted, result)
+}
