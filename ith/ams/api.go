@@ -50,11 +50,16 @@ func NewAPI(baseUrl, commonUrl, client, secret string) *API {
 		},
 		log: log.Default,
 	}
-	if string(tmp.Config.BaseURL[len(tmp.Config.BaseURL)-1:]) == "/" {
-		tmp.Config.BaseURL = string(tmp.Config.BaseURL[:len(tmp.Config.BaseURL)-1])
+	if len(tmp.Config.BaseURL) > 2 {
+		if string(tmp.Config.BaseURL[len(tmp.Config.BaseURL)-1:]) == "/" {
+			tmp.Config.BaseURL = string(tmp.Config.BaseURL[:len(tmp.Config.BaseURL)-1])
+		}
 	}
-	if string(tmp.Config.CommonURL[len(tmp.Config.CommonURL)-1:]) == "/" {
-		tmp.Config.CommonURL = string(tmp.Config.CommonURL[:len(tmp.Config.CommonURL)-1])
+
+	if len(tmp.Config.CommonURL) > 2 {
+		if string(tmp.Config.CommonURL[len(tmp.Config.CommonURL)-1:]) == "/" {
+			tmp.Config.CommonURL = string(tmp.Config.CommonURL[:len(tmp.Config.CommonURL)-1])
+		}
 	}
 	return tmp
 }
