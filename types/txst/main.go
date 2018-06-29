@@ -1,5 +1,7 @@
 package txst
 
+import "gitlab.inn4science.com/vcg/go-common/api/render"
+
 type Transactional interface {
 	UID() string
 	ToOpSource() OperationSource
@@ -8,6 +10,5 @@ type Transactional interface {
 }
 
 type BaseRow struct {
-	ID       int64 `db:"id" json:"id"`
-	RowCount int64 `db:"row_count" json:"-"`
+	render.BaseRow
 }
