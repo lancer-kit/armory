@@ -9,6 +9,7 @@ type Transactional interface {
 	TxType() TxType
 }
 
+// TODO: Update TX, check another and remove
 type BaseRow struct {
 	render.BaseRow
 }
