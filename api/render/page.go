@@ -22,6 +22,5 @@ func (page *Page) SetTotal(rowCount, pageSize uint64) {
 }
 
 type BaseRow struct {
-	ID       int64 `db:"id" json:"id"`
 	RowCount int64 `db:"row_count" json:"-"`
 }

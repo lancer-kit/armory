@@ -12,4 +12,5 @@ type Transactional interface {
 // TODO: Update TX, check another and remove
 type BaseRow struct {
 	render.BaseRow
+	ID int64 `db:"id" json:"id"`
 }
