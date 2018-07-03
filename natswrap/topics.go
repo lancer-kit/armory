@@ -19,4 +19,6 @@ const (
 
 	TopicTxRepaymentNew     = "tx.repayment.new"
 	TopicTxRepaymentResults = "tx.repayment.results"
+
+	TopicRateNewPrice = "rate.new_price"
 )
