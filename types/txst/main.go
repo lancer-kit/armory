@@ -1,5 +1,7 @@
 package txst
 
+import "gitlab.inn4science.com/vcg/go-common/api/render"
+
 type Transactional interface {
 	UID() string
 	ToOpSource() OperationSource
@@ -7,7 +9,8 @@ type Transactional interface {
 	TxType() TxType
 }
 
+// TODO: Update TX, check another and remove
 type BaseRow struct {
-	ID       int64 `db:"id" json:"id"`
-	RowCount int64 `db:"row_count" json:"-"`
+	render.BaseRow
+	ID int64 `db:"id" json:"id"`
 }

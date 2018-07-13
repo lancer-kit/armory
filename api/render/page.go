@@ -20,3 +20,7 @@ func (page *Page) Render(w http.ResponseWriter) {
 func (page *Page) SetTotal(rowCount, pageSize uint64) {
 	page.Total = uint64(math.Ceil(float64(rowCount) / float64(pageSize)))
 }
+
+type BaseRow struct {
+	RowCount int64 `db:"row_count" json:"-"`
+}

@@ -1,3 +1,6 @@
+// sender is a client package for sender service.
+// It allow to make and send emails.
+// `Message` can be sent through the HTTP or NATS.
 package sender
 
 // LetterType is an enum of predefined letter templates.
@@ -14,22 +17,28 @@ const (
 // NATSTopic is a topic in NATS, through which the sender receives new messages.
 const NATSTopic = "sender.letters"
 
+// HTTPURL is URL path in which the sender receives new messages.
+const HTTPURL = "/v1/email"
+
 // Message is the data for some template.
 // The type field indicates which template will be sent.
 type Message struct {
+	// Type indicates which template will be used.
 	Type LetterType `json:"type"`
-	Data MsgData    `json:"data"`
+	// Data to fill in the template, depends on the `Type`.
+	Data MsgData `json:"data"`
 }
 
 // MsgData data for letter templates.
 type MsgData struct {
-	Base      Base      `json:"singUp,omitempty"`
+	Base      Base      `json:"base,omitempty"`
 	Device    Device    `json:"device,omitempty"`
 	Universal Universal `json:"universal,omitempty"`
 }
 
 // Base is a structure for the base letter template.
 type Base struct {
+	// Email is a addressee of the letter.
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Link     string `json:"link"`
