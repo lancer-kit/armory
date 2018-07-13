@@ -2,6 +2,8 @@
 // ACCOUNT MANAGEMENT SERVICES
 package ams
 
+import "fmt"
+
 type (
 	//Use (countryCode and number) OR fullNumber
 	//
@@ -191,3 +193,14 @@ type (
 		Parameters   interface{} `json:"parameters"`   //Error extended parameters
 	}
 )
+
+func (e *ErrorData) Message() string {
+	if e == nil {
+		return ""
+	}
+	s := "message: " + e.ErrorMessage
+	if e.Parameters != nil {
+		s += ";parameters: " + fmt.Sprint(e.Parameters)
+	}
+	return s
+}

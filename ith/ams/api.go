@@ -142,7 +142,7 @@ func (api *API) CreateProfile(req *UserRegistrationRequest) (usr *UserRegistrati
 	return
 }
 
-//CreateProfile - request partner API to update the standard user profile
+//UpdateProfile - request partner API to update the standard user profile
 func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus) {
 	var resp *http.Response
 	status = RequestStatusOk
