@@ -30,6 +30,7 @@ type (
 		Url      string //NATS connection url
 		User     string //NATS user
 		Password string //Nats password
+		Token    string //Nats auth token
 	}
 
 	// Main message structure
@@ -69,10 +70,14 @@ func NewSender(cfg *Config) (*Sender, error) {
 			Url:    nats.DefaultURL,
 		}
 	}
+
 	var op nats.Option
 	op = emptyOption()
 	if cfg.User != "" {
 		op = nats.UserInfo(cfg.User, cfg.Password)
+	}
+	if cfg.Token != "" {
+		op = nats.Token(cfg.Token)
 	}
 	nc, err := nats.Connect(cfg.Url, op)
 
