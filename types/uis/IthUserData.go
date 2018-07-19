@@ -27,6 +27,8 @@ type IthUserData struct {
 	ActionConfirmationEnabled bool                   `json:"actionConfirmationEnabled" db:"action_confirmation_enabled"`
 	ActionConfirmationType    ams.ActionConfirmation `json:"actionConfirmationType" db:"action_confirmation_type"`
 	Test                      *bool                  `json:"test,omitempty" db:"test"`
+	CreatedAt                 int64                  `json:"createdAt" db:"created_at"` //Created @, unix timestamp
+	UpdatedAt                 int64                  `json:"updatedAt" db:"updated_at"` //Updated @, unix timestamp
 }
 
 func GetBoolPtr(v *bool) bool {
