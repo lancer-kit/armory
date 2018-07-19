@@ -26,8 +26,10 @@ type (
 
 	//Sender configuration
 	Config struct {
-		Chanel string //chanel name. default = notifier
-		Url    string //NATS connection url
+		Chanel   string //chanel (topic) name. default = notifier
+		Url      string //NATS connection url
+		User     string //NATS user
+		Password string //Nats password
 	}
 
 	// Main message structure
@@ -53,6 +55,12 @@ const (
 
 var Default *Sender
 
+func emptyOption() nats.Option {
+	return func(o *nats.Options) error {
+		return nil
+	}
+}
+
 //NewSender - initialize new sender structure and try to connect with NATS sever
 func NewSender(cfg *Config) (*Sender, error) {
 	if cfg == nil {
@@ -61,7 +69,12 @@ func NewSender(cfg *Config) (*Sender, error) {
 			Url:    nats.DefaultURL,
 		}
 	}
-	nc, err := nats.Connect(cfg.Url)
+	var op nats.Option
+	op = emptyOption()
+	if cfg.User != "" {
+		op = nats.UserInfo(cfg.User, cfg.Password)
+	}
+	nc, err := nats.Connect(cfg.Url, op)
 
 	s := &Sender{
 		cfg:  cfg,
