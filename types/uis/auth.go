@@ -4,6 +4,7 @@ import "gitlab.inn4science.com/vcg/go-common/ith/ams"
 
 //Result of request user-integration service @ /ith/auth
 //Needs to be signed request (see go-common/auth)
+//
 //Example of request: `GET` `http:localhost:2094/v1/uis/ith/auth
 //
 //   Header. jwt:{"jti":"1"}

@@ -5,11 +5,11 @@
 
 ## Usage
 
-```go
+```
 const SqlTimeLayout = "2006-01-02 15:04:05"
 ```
 
-```go
+```
 var (
 	StatusName = map[UserStatus]string{
 		UserStatusBlocked:        "user blocked",
@@ -26,13 +26,13 @@ var (
 
 #### func  GetBoolPtr
 
-```go
+```
 func GetBoolPtr(v *bool) bool
 ```
 
 #### type Address
 
-```go
+```
 type Address = ams.AddressRequest
 ```
 
@@ -40,7 +40,7 @@ alias to ams.AddressRequest
 
 #### type IthUserData
 
-```go
+```
 type IthUserData struct {
 	Id                        int64                  `json:"id"`                                                //User ID.Same in user-api service
 	AccountId                 string                 `json:"accountId" db:"account_id"`                         //External account uid
@@ -64,13 +64,16 @@ type IthUserData struct {
 	ActionConfirmationEnabled bool                   `json:"actionConfirmationEnabled" db:"action_confirmation_enabled"`
 	ActionConfirmationType    ams.ActionConfirmation `json:"actionConfirmationType" db:"action_confirmation_type"`
 	Test                      *bool                  `json:"test,omitempty" db:"test"`
+	CreatedAt                 int64                  `json:"createdAt" db:"created_at"` //Created @, unix timestamp
+	UpdatedAt                 int64                  `json:"updatedAt" db:"updated_at"` //Updated @, unix timestamp
 }
 ```
 
+ITH -specific user data swagger:model
 
 #### type RegistrationStatus
 
-```go
+```
 type RegistrationStatus struct {
 	UserId       int64             `json:"userId"`
 	IsRegistered bool              `json:"isRegistered"`
@@ -78,10 +81,11 @@ type RegistrationStatus struct {
 }
 ```
 
+swagger:model
 
 #### type RequestState
 
-```go
+```
 type RequestState struct {
 	Id          int64             `json:"id" db:"id"`
 	UserId      int64             `json:"-" db:"user_id"`
@@ -92,41 +96,42 @@ type RequestState struct {
 }
 ```
 
+swagger:model
 
 #### type SqlTime
 
-```go
+```
 type SqlTime int64
 ```
 
 
 #### func (*SqlTime) FromString
 
-```go
+```
 func (t *SqlTime) FromString(s string) error
 ```
 
 #### func (*SqlTime) Scan
 
-```go
+```
 func (t *SqlTime) Scan(src interface{}) error
 ```
 
 #### func (*SqlTime) String
 
-```go
+```
 func (t *SqlTime) String() string
 ```
 
 #### func (*SqlTime) ToTime
 
-```go
+```
 func (t *SqlTime) ToTime() time.Time
 ```
 
 #### type UpdateResult
 
-```go
+```
 type UpdateResult struct {
 	Request    *ams.UserUpdateRequest //User request with fields filled to be updated
 	Token      string                 //User token to process request from ams.API.UpdateProfile()
@@ -134,10 +139,11 @@ type UpdateResult struct {
 }
 ```
 
+swagger:model
 
 #### type User
 
-```go
+```
 type User struct {
 	Id                int64         `json:"id" db:"id"`                                //user id (same to user-api)
 	Phone             string        `json:"phone" db:"phone"`                          //user phone
@@ -157,22 +163,23 @@ type User struct {
 }
 ```
 
+swagger:model
 
 #### func (*User) GetStatusName
 
-```go
+```
 func (t *User) GetStatusName() (string, error)
 ```
 
 #### func (*User) Validate
 
-```go
+```
 func (t *User) Validate() error
 ```
 
 #### type UserAuth
 
-```go
+```
 type UserAuth struct {
 	UserId      int64             `json:"userId"`      //User ID
 	AccessToken string            `json:"accessToken"` //Token to process data from/to ITH
@@ -181,8 +188,9 @@ type UserAuth struct {
 ```
 
 Result of request user-integration service @ /ith/auth Needs to be signed
-request (see go-common/auth) Example of request: `GET`
-`http:localhost:2094/v1/uis/ith/auth
+request (see go-common/auth)
+
+Example of request: `GET` `http:localhost:2094/v1/uis/ith/auth
 
     Header. jwt:{"jti":"1"}
 
@@ -196,58 +204,65 @@ Response:
 
 #### type UserBirthDate
 
-```go
+```
 type UserBirthDate int64
 ```
 
 
 #### func (*UserBirthDate) FromSQLDate
 
-```go
+```
 func (t *UserBirthDate) FromSQLDate(s string) (d UserBirthDate, err error)
 ```
 
 #### func (UserBirthDate) String
 
-```go
+```
 func (t UserBirthDate) String() string
 ```
 UserBirthDate.String - Stringer interface
 
 #### func (UserBirthDate) ToAmsDate
 
-```go
+```
 func (t UserBirthDate) ToAmsDate() ams.AmsDate
+```
+ToAmsDate - convert UserBirthDate to ams.AmsDate
+
+#### func (UserBirthDate) ToAmsDatePtr
+
+```
+func (t UserBirthDate) ToAmsDatePtr() *ams.AmsDate
 ```
 ToAmsDate - convert UserBirthDate to ams.AmsDate
 
 #### func (*UserBirthDate) ToIthAmsString
 
-```go
+```
 func (t *UserBirthDate) ToIthAmsString() string
 ```
 ToIthAmsString - convert to ITH AMS string presentation
 
 #### type UserRequest
 
-```go
+```
 type UserRequest struct {
 	User    *User    `json:"user"`
 	Address *Address `json:"address"`
 }
 ```
 
-Structure to process register and update
+Structure to process register and update swagger:model
 
 #### type UserStatus
 
-```go
+```
 type UserStatus int
 ```
 
 IntegrationMap map[string]interface{}
 
-```go
+```
 const (
 	UserStatusBlocked        UserStatus = -10
 	UserStatusNew            UserStatus = 0
@@ -260,6 +275,6 @@ const (
 
 #### func (UserStatus) String
 
-```go
+```
 func (t UserStatus) String() string
 ```
