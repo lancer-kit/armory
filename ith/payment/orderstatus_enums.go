@@ -46,7 +46,7 @@ var (
 // String is generated so OrderStatus satisfies fmt.Stringer.
 func (r OrderStatus) String() string {
 	s, ok := defOrderStatusValueToName[r]
-	if !ok {
+	if !ok && r > 0 {
 		return fmt.Sprintf("OrderStatus(%d)", r)
 	}
 	return s
@@ -97,10 +97,7 @@ func (r OrderStatus) Value() (driver.Value, error) {
 func (r *OrderStatus) Scan(src interface{}) error {
 	switch src.(type) {
 	case string:
-		val, ok := defOrderStatusNameToValue[src.(string)]
-		if !ok {
-			return errors.New("OrderStatus: can't unmarshal column data")
-		}
+		val, _ := defOrderStatusNameToValue[src.(string)]
 		*r = val
 		return nil
 	case []byte:
