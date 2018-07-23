@@ -3,7 +3,7 @@
 `render` is a simple response render helper and prepared collection of the responses 
 
 ## Usage 
-```go
+```
 package main
 
 import (

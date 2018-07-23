@@ -23,11 +23,11 @@ type (
 		CountryMarker     string        `json:"countryMarker" db:"country_marker"`         //ISO 2 Country
 		PreferredCurrency string        `json:"preferredCurrency" db:"preferred_currency"` //ISO 3 User preferred currency
 		MailVerified      bool          `json:"mailVerified" db:"mail_verified"`           //Flag - is mail verified on user-api service
-		UserKey           string        `json:"userKey" db:"user_key"`                     //User password hash
+		UserKey           string        `json:"userKey" db:"-"`                            //User password (plain, not for save) for create new profile on ITH.AMS
 		CreatedAt         int64         `json:"createdAt" db:"created_at"`                 //Create at, unix time stamp
 		UpdatedAt         int64         `json:"updatedAt" db:"updated_at"`                 //Updated at, unix time stamp
-		//Integrations      IntegrationMap `json:"integrations,omitempty" db:"-"`             //list of integration-specific data
 	}
+
 	//alias to ams.AddressRequest
 	Address = ams.AddressRequest
 
@@ -136,4 +136,10 @@ func (t UserBirthDate) ToAmsDate() ams.AmsDate {
 func (t UserBirthDate) ToAmsDatePtr() *ams.AmsDate {
 	x := ams.AmsDate(time.Unix(int64(t), 0))
 	return &x
+}
+
+func (t *UserBirthDate) FromAmsDate(d ams.AmsDate) {
+	if t != nil {
+		*t = UserBirthDate(d.Time().UTC().Unix())
+	}
 }

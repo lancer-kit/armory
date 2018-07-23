@@ -154,7 +154,7 @@ func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRe
 	if err != nil {
 		err = errors.Wrap(err, "error validating")
 		api.log.Warning("api.UpdateProfile error validation error")
-		status = RequestStatusValidationError
+		status = UpdateValidationError
 		return
 	}
 	headerMap := make(map[string]string)
@@ -169,14 +169,14 @@ func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRe
 			resp.Body.Read(b)
 			api.log.Debug("Response:", string(b))
 		}
-		status = RequestStatusNetworkError
+		status = UpdateNetworkError
 		return
 	}
 
 	if resp == nil {
 		err = errors.New("empty http response")
 		api.log.WithError(err).Warning("api.UpdateProfile error")
-		status = RequestStatusNetworkError
+		status = UpdateNetworkError
 		return
 	}
 
@@ -187,7 +187,7 @@ func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRe
 			WithField("response", resp).
 			WithField("url", resp.Request.URL.String()).
 			Warning("api.UpdateProfile error")
-		status = RequestStatusNetworkError
+		status = UpdateNetworkError
 		return
 	}
 
@@ -197,7 +197,7 @@ func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRe
 		usr = nil
 		err = errors.Wrap(err, "unable to unmarshal response")
 		api.log.WithError(err).Error()
-		status = RequestStatusPartnerError
+		status = UpdateNetworkError
 		return
 	}
 
@@ -211,7 +211,7 @@ func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRe
 			Warning("api.UpdateProfile error")
 		b, _ = json.MarshalIndent(req, "", "\t")
 		println("Sent:\n", string(b))
-		status = RequestStatusPartnerError
+		status = UpdatePartnerError
 	}
 
 	return

@@ -6,7 +6,7 @@ ITH integration. ACCOUNT MANAGEMENT SERVICES
 
 ## Usage
 
-```go
+```
 const (
 	APICreate = "/partnerapi/account/register"
 	APIupdate = "/partnerapi/account/update"
@@ -15,37 +15,37 @@ const (
 )
 ```
 
-```go
+```
 var ErrAccountStatusInvalid = errors.New("AccountStatus is invalid")
 ```
 
-```go
+```
 var ErrAccountTypeInvalid = errors.New("AccountType is invalid")
 ```
 
-```go
+```
 var ErrActionConfirmationInvalid = errors.New("ActionConfirmation is invalid")
 ```
 
-```go
+```
 var ErrAddressTypeInvalid = errors.New("AddressType is invalid")
 ```
 
-```go
+```
 var ErrPhoneTypeInvalid = errors.New("PhoneType is invalid")
 ```
 
-```go
+```
 var ErrRequestStatusInvalid = errors.New("RequestStatus is invalid")
 ```
 
-```go
+```
 var ErrWebResourceInvalid = errors.New("WebResource is invalid")
 ```
 
 #### type API
 
-```go
+```
 type API struct {
 	Config Config
 
@@ -56,20 +56,20 @@ type API struct {
 
 #### func  NewAPI
 
-```go
+```
 func NewAPI(baseUrl, commonUrl, client, secret string) *API
 ```
 
 #### func (*API) CreateProfile
 
-```go
+```
 func (api *API) CreateProfile(req *UserRegistrationRequest) (usr *UserRegistrationResponse, err error, status RequestStatus)
 ```
 CreateProfile - request partner API to create the new standard user profile
 
 #### func (*API) GetCode
 
-```go
+```
 func (api *API) GetCode(req *AuthCodeRequest) (code *AuthCodeResponse, err error)
 ```
 Get Authorization Code Send request to ITH.Authorization service. Service is
@@ -78,7 +78,7 @@ to transfer user session from one module to another.
 
 #### func (*API) GetToken
 
-```go
+```
 func (api *API) GetToken(req *AuthCodeRequest) (token *AuthTokenResponse, err error)
 ```
 GetToken - Get Authorization Token Send request to ITH.Authorization service.
@@ -88,21 +88,21 @@ services calls.
 
 #### func (*API) SetLogger
 
-```go
+```
 func (api *API) SetLogger(entry log.Entry)
 ```
 Set new logger on ams.API
 
 #### func (*API) UpdateProfile
 
-```go
+```
 func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus)
 ```
 CreateProfile - request partner API to update the standard user profile
 
 #### type Account
 
-```go
+```
 type Account struct {
 	Uid                       string             `json:"uid"`                       //Account UID in ITH platform
 	Country                   *Country           `json:"country"`                   //Account country object
@@ -164,7 +164,7 @@ Example:
 
 #### type AccountEmail
 
-```go
+```
 type AccountEmail struct {
 	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
 	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
@@ -181,7 +181,7 @@ Item of AccountEmails list
 
 #### type AccountEmails
 
-```go
+```
 type AccountEmails []*AccountEmail
 ```
 
@@ -198,7 +198,7 @@ AccountEmails list of AccountEmail
 
 #### type AccountPhone
 
-```go
+```
 type AccountPhone struct {
 	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
 	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
@@ -217,7 +217,7 @@ Item of AccountPhones
 
 #### type AccountPhones
 
-```go
+```
 type AccountPhones []*AccountPhone
 ```
 
@@ -236,7 +236,7 @@ AccountPhones, list of AccountPhone
 
 #### type AccountResponse
 
-```go
+```
 type AccountResponse struct {
 	Account *Account `json:"account"`
 }
@@ -246,7 +246,7 @@ Standard account response (from doc.example)
 
 #### type AccountSetting
 
-```go
+```
 type AccountSetting struct {
 	Id     int64 `json:"id,omitempty" db:"id"`          //Internal for user-integration
 	UserId int64 `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
@@ -261,7 +261,7 @@ Item of AccountSettings list
 
 #### type AccountSettings
 
-```go
+```
 type AccountSettings []*AccountSetting
 ```
 
@@ -277,7 +277,7 @@ List of account settings
 
 #### type AccountStatus
 
-```go
+```
 type AccountStatus int
 ```
 
@@ -302,7 +302,7 @@ AccountStatus:
     * MS – Merchant: Suspended (Blocked)
     * MD – Merchant: Closed
 
-```go
+```
 const (
 	StStandardAutomaticallyRegistered AccountStatus = iota + 1 //SA – Standard: Automatically Registered
 	StStandardRegistrationRequested                            //SR – Standard: Registration Requested
@@ -327,49 +327,49 @@ const (
 
 #### func (AccountStatus) MarshalJSON
 
-```go
+```
 func (r AccountStatus) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so AccountStatus satisfies json.Marshaler.
 
 #### func (*AccountStatus) Scan
 
-```go
+```
 func (r *AccountStatus) Scan(src interface{}) error
 ```
 Value is generated so AccountStatus satisfies db row driver.Scanner.
 
 #### func (AccountStatus) String
 
-```go
+```
 func (r AccountStatus) String() string
 ```
 String is generated so AccountStatus satisfies fmt.Stringer.
 
 #### func (*AccountStatus) UnmarshalJSON
 
-```go
+```
 func (r *AccountStatus) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so AccountStatus satisfies json.Unmarshaler.
 
 #### func (AccountStatus) Validate
 
-```go
+```
 func (r AccountStatus) Validate() error
 ```
 Validate verifies that value is predefined for AccountStatus.
 
 #### func (AccountStatus) Value
 
-```go
+```
 func (r AccountStatus) Value() (driver.Value, error)
 ```
 Value is generated so AccountStatus satisfies db row driver.Valuer.
 
 #### type AccountType
 
-```go
+```
 type AccountType int
 ```
 
@@ -379,7 +379,7 @@ AccountType:
     * M - Merchant
     * B - Business
 
-```go
+```
 const (
 	AccountTypeStandard AccountType = iota + 1 //Standard
 	AccountTypeMerchant                        //Merchant
@@ -389,49 +389,49 @@ const (
 
 #### func (AccountType) MarshalJSON
 
-```go
+```
 func (r AccountType) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so AccountType satisfies json.Marshaler.
 
 #### func (*AccountType) Scan
 
-```go
+```
 func (r *AccountType) Scan(src interface{}) error
 ```
 Value is generated so AccountType satisfies db row driver.Scanner.
 
 #### func (AccountType) String
 
-```go
+```
 func (r AccountType) String() string
 ```
 String is generated so AccountType satisfies fmt.Stringer.
 
 #### func (*AccountType) UnmarshalJSON
 
-```go
+```
 func (r *AccountType) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so AccountType satisfies json.Unmarshaler.
 
 #### func (AccountType) Validate
 
-```go
+```
 func (r AccountType) Validate() error
 ```
 Validate verifies that value is predefined for AccountType.
 
 #### func (AccountType) Value
 
-```go
+```
 func (r AccountType) Value() (driver.Value, error)
 ```
 Value is generated so AccountType satisfies db row driver.Valuer.
 
 #### type ActionConfirmation
 
-```go
+```
 type ActionConfirmation int
 ```
 
@@ -441,7 +441,7 @@ Field type for Account.ActionConfirmationType
     * "SMS" – via phone
     * "GAUTH" – via Google Authenticator
 
-```go
+```
 const (
 	ActionConfirmationNone ActionConfirmation = iota //EMAIL – via email;
 	ActionConfirmationEmail
@@ -452,49 +452,49 @@ const (
 
 #### func (ActionConfirmation) MarshalJSON
 
-```go
+```
 func (r ActionConfirmation) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so ActionConfirmation satisfies json.Marshaler.
 
 #### func (*ActionConfirmation) Scan
 
-```go
+```
 func (r *ActionConfirmation) Scan(src interface{}) error
 ```
 Value is generated so ActionConfirmation satisfies db row driver.Scanner.
 
 #### func (ActionConfirmation) String
 
-```go
+```
 func (r ActionConfirmation) String() string
 ```
 String is generated so ActionConfirmation satisfies fmt.Stringer.
 
 #### func (*ActionConfirmation) UnmarshalJSON
 
-```go
+```
 func (r *ActionConfirmation) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so ActionConfirmation satisfies json.Unmarshaler.
 
 #### func (ActionConfirmation) Validate
 
-```go
+```
 func (r ActionConfirmation) Validate() error
 ```
 Validate verifies that value is predefined for ActionConfirmation.
 
 #### func (ActionConfirmation) Value
 
-```go
+```
 func (r ActionConfirmation) Value() (driver.Value, error)
 ```
 Value is generated so ActionConfirmation satisfies db row driver.Valuer.
 
 #### type Address
 
-```go
+```
 type Address struct {
 	Id        int64 `json:"id,omitempty" db:"id"`                //user-integration data fields
 	UserId    int64 `json:"userId,omitempty" db:"user_id"`       //user-integration data fields
@@ -516,7 +516,7 @@ Address type, item of Addresses list
 
 #### type AddressRequest
 
-```go
+```
 type AddressRequest struct {
 	CountryCode       string `json:"countryCode"`       //Required, String(2), ISO-2 country code
 	City              string `json:"city"`              //Required, String(50), City
@@ -543,14 +543,14 @@ Example:
 
 #### func (*AddressRequest) Validate
 
-```go
+```
 func (r *AddressRequest) Validate() (err error)
 ```
 Validate verifies that value is predefined for AddressRequest.
 
 #### type AddressType
 
-```go
+```
 type AddressType int
 ```
 
@@ -561,7 +561,7 @@ AddressType:
     * O – Other;
     * C – Communication
 
-```go
+```
 const (
 	AddressTypeBusiness      AddressType = iota + 1 //B – Business;
 	AddressTypeHome                                 //H – Home;
@@ -573,49 +573,49 @@ const (
 
 #### func (AddressType) MarshalJSON
 
-```go
+```
 func (r AddressType) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so AddressType satisfies json.Marshaler.
 
 #### func (*AddressType) Scan
 
-```go
+```
 func (r *AddressType) Scan(src interface{}) error
 ```
 Value is generated so AddressType satisfies db row driver.Scanner.
 
 #### func (AddressType) String
 
-```go
+```
 func (r AddressType) String() string
 ```
 String is generated so AddressType satisfies fmt.Stringer.
 
 #### func (*AddressType) UnmarshalJSON
 
-```go
+```
 func (r *AddressType) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so AddressType satisfies json.Unmarshaler.
 
 #### func (AddressType) Validate
 
-```go
+```
 func (r AddressType) Validate() error
 ```
 Validate verifies that value is predefined for AddressType.
 
 #### func (AddressType) Value
 
-```go
+```
 func (r AddressType) Value() (driver.Value, error)
 ```
 Value is generated so AddressType satisfies db row driver.Valuer.
 
 #### type AddressUpdate
 
-```go
+```
 type AddressUpdate struct {
 	CountryCode       string `json:"countryCode,omitempty"`       //Optional/fill if updated, String(2), ISO-2 country code
 	City              string `json:"city,omitempty"`              //Optional/fill if updated, String(50), City
@@ -642,7 +642,7 @@ Example:
 
 #### type Addresses
 
-```go
+```
 type Addresses []*Address
 ```
 
@@ -673,7 +673,7 @@ Example:
 
 #### type AffiliateInfo
 
-```go
+```
 type AffiliateInfo struct {
 	AffiliateId      string `json:"affiliateId"`      //Optional, String(50), Affiliate ID
 	CampaignId       string `json:"campaignId"`       //Optional, String(50), Campaign ID
@@ -695,67 +695,67 @@ Account Management Services
 
 #### func (*AffiliateInfo) Validate
 
-```go
+```
 func (r *AffiliateInfo) Validate() (err error)
 ```
 Validate verifies that value is predefined for AffiliateInfo.
 
 #### type AmsDate
 
-```go
+```
 type AmsDate time.Time
 ```
 
 
 #### func  AmsDateFromInt
 
-```go
+```
 func AmsDateFromInt(i int64) AmsDate
 ```
 
 #### func (AmsDate) Empty
 
-```go
+```
 func (r AmsDate) Empty() bool
 ```
 
 #### func (AmsDate) MarshalJSON
 
-```go
+```
 func (r AmsDate) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON AmsDate satisfies json.Marshaler.
 
 #### func (AmsDate) String
 
-```go
+```
 func (r AmsDate) String() string
 ```
 String is generated so AddressType satisfies fmt.Stringer.
 
 #### func (AmsDate) Time
 
-```go
+```
 func (r AmsDate) Time() time.Time
 ```
 
 #### func (*AmsDate) UnmarshalJSON
 
-```go
+```
 func (r *AmsDate) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON AmsDate satisfies json.Unmarshaler.
 
 #### func (AmsDate) Validate
 
-```go
+```
 func (r AmsDate) Validate() error
 ```
 Validate verifies that value is predefined for AddressType.
 
 #### type AuthCodeRequest
 
-```go
+```
 type AuthCodeRequest struct {
 	AccessToken string `json:"accessToken,omitempty"` //user access token
 	Username    string `json:"username,omitempty"`    //Account username (email)
@@ -766,13 +766,13 @@ type AuthCodeRequest struct {
 
 #### func (*AuthCodeRequest) Validate
 
-```go
+```
 func (r *AuthCodeRequest) Validate() error
 ```
 
 #### type AuthCodeResponse
 
-```go
+```
 type AuthCodeResponse struct {
 	//ErrorData *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
 	Code string `json:"code"` //One-time authorization code
@@ -782,7 +782,7 @@ type AuthCodeResponse struct {
 
 #### type AuthTokenRequest
 
-```go
+```
 type AuthTokenRequest struct {
 	ClientId     string `json:"clientId"`     //OAuth client ID
 	ClientSecret string `json:"clientSecret"` //OAuth client secret
@@ -793,7 +793,7 @@ type AuthTokenRequest struct {
 
 #### type AuthTokenResponse
 
-```go
+```
 type AuthTokenResponse struct {
 	ErrorData    *ErrorData `json:"errorData,omitempty"` //Not returned if operation is successful
 	AccessToken  string     `json:"accessToken"`         //Access token for integration services
@@ -805,7 +805,7 @@ type AuthTokenResponse struct {
 
 #### type Company
 
-```go
+```
 type Company struct {
 	Id     int64  `json:"id,omitempty" db:"id"`          //Internal for user-integration
 	UserId int64  `json:"userId,omitempty" db:"user_id"` //Internal for user-integration
@@ -833,7 +833,7 @@ Company Company object (for merchant only) swagger:model
 
 #### type Config
 
-```go
+```
 type Config struct {
 	BaseURL   string
 	CommonURL string
@@ -845,7 +845,7 @@ type Config struct {
 
 #### type Country
 
-```go
+```
 type Country struct {
 	Id int64 `json:"internal_id,omitempty" db:"id"` //Internal for user-integration
 	//ITH.AMS data structure
@@ -867,7 +867,7 @@ Additional field `country`
 
 #### type ErrorData
 
-```go
+```
 type ErrorData struct {
 	ErrorCode    int         `json:"errorCode"`    //Error code
 	ErrorMessage string      `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
@@ -880,7 +880,7 @@ ErrorData - any response
 
 #### type Language
 
-```go
+```
 type Language struct {
 	Uid     string `json:"uid,omitempty" db:"uid"`
 	Code    string `json:"code" db:"code"` //ISO2 language code
@@ -899,7 +899,7 @@ Additional field `language`
 
 #### type Person
 
-```go
+```
 type Person struct {
 	Name      string  `json:"name"`      //Name
 	Surname   string  `json:"surname"`   //Surname
@@ -919,7 +919,7 @@ Person object
 
 #### type Phone
 
-```go
+```
 type Phone struct {
 	CountryCode *string `json:"countryCode,omitempty"` //Phone country code (optional, when fullNumber filled)
 	Number      *string `json:"number,omitempty"`      //Phone number (optional, when fullNumber filled)
@@ -941,7 +941,7 @@ Example:
 
 #### type PhoneType
 
-```go
+```
 type PhoneType int
 ```
 
@@ -953,7 +953,7 @@ PhoneType:
 
 * W - Work
 
-```go
+```
 const (
 	PhoneTypeMobile PhoneType = iota + 1 //Mobile
 	PhoneTypeHome                        //Home
@@ -963,54 +963,54 @@ const (
 
 #### func (PhoneType) MarshalJSON
 
-```go
+```
 func (r PhoneType) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so PhoneType satisfies json.Marshaler.
 
 #### func (*PhoneType) Scan
 
-```go
+```
 func (r *PhoneType) Scan(src interface{}) error
 ```
 Value is generated so PhoneType satisfies db row driver.Scanner.
 
 #### func (PhoneType) String
 
-```go
+```
 func (r PhoneType) String() string
 ```
 String is generated so PhoneType satisfies fmt.Stringer.
 
 #### func (*PhoneType) UnmarshalJSON
 
-```go
+```
 func (r *PhoneType) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so PhoneType satisfies json.Unmarshaler.
 
 #### func (PhoneType) Validate
 
-```go
+```
 func (r PhoneType) Validate() error
 ```
 Validate verifies that value is predefined for PhoneType.
 
 #### func (PhoneType) Value
 
-```go
+```
 func (r PhoneType) Value() (driver.Value, error)
 ```
 Value is generated so PhoneType satisfies db row driver.Valuer.
 
 #### type RequestStatus
 
-```go
+```
 type RequestStatus int
 ```
 
 
-```go
+```
 const (
 	RequestStatusNone RequestStatus = iota
 	RequestStatusValidationError
@@ -1027,49 +1027,49 @@ const (
 
 #### func (RequestStatus) MarshalJSON
 
-```go
+```
 func (r RequestStatus) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so RequestStatus satisfies json.Marshaler.
 
 #### func (*RequestStatus) Scan
 
-```go
+```
 func (r *RequestStatus) Scan(src interface{}) error
 ```
 Value is generated so RequestStatus satisfies db row driver.Scanner.
 
 #### func (RequestStatus) String
 
-```go
+```
 func (r RequestStatus) String() string
 ```
 String is generated so RequestStatus satisfies fmt.Stringer.
 
 #### func (*RequestStatus) UnmarshalJSON
 
-```go
+```
 func (r *RequestStatus) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so RequestStatus satisfies json.Unmarshaler.
 
 #### func (RequestStatus) Validate
 
-```go
+```
 func (r RequestStatus) Validate() error
 ```
 Validate verifies that value is predefined for RequestStatus.
 
 #### func (RequestStatus) Value
 
-```go
+```
 func (r RequestStatus) Value() (driver.Value, error)
 ```
 Value is generated so RequestStatus satisfies db row driver.Valuer.
 
 #### type UserRegistrationRequest
 
-```go
+```
 type UserRegistrationRequest struct {
 	ClientId           string          `json:"clientId"`                 //Required, String(50), OAuth client ID
 	ClientSecret       string          `json:"clientSecret"`             //Required, String(32), OAuth client secret
@@ -1121,14 +1121,14 @@ Example:
 
 #### func (*UserRegistrationRequest) Validate
 
-```go
+```
 func (r *UserRegistrationRequest) Validate() (err error)
 ```
 Validate verifies that value is predefined for AffiliateInfo.
 
 #### type UserRegistrationResponse
 
-```go
+```
 type UserRegistrationResponse struct {
 	ErrorData          *ErrorData `json:"errorData,omitempty"` //null if OK
 	AccountUid         string     `json:"accountUid"`
@@ -1149,7 +1149,7 @@ UserRegistrationResponse response from ITH Account Management Services (AMS)
 
 #### type UserUpdateRequest
 
-```go
+```
 type UserUpdateRequest struct {
 	ClientId           string         `json:"clientId"`                 //Required, String(50), OAuth client ID
 	ClientSecret       string         `json:"clientSecret"`             //Required, String(32), OAuth client secret
@@ -1201,13 +1201,13 @@ Example:
 
 #### func (UserUpdateRequest) Validate
 
-```go
+```
 func (r UserUpdateRequest) Validate() (err error)
 ```
 
 #### type WebResource
 
-```go
+```
 type WebResource int
 ```
 
@@ -1217,7 +1217,7 @@ WebResource:
     * F – Facebook;
     * T – Twitter
 
-```go
+```
 const (
 	WebResourceWeb      WebResource = iota + 1 // W – Web;
 	WebResourceFacebook                        //F – Facebook;
@@ -1227,42 +1227,42 @@ const (
 
 #### func (WebResource) MarshalJSON
 
-```go
+```
 func (r WebResource) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON is generated so WebResource satisfies json.Marshaler.
 
 #### func (*WebResource) Scan
 
-```go
+```
 func (r *WebResource) Scan(src interface{}) error
 ```
 Value is generated so WebResource satisfies db row driver.Scanner.
 
 #### func (WebResource) String
 
-```go
+```
 func (r WebResource) String() string
 ```
 String is generated so WebResource satisfies fmt.Stringer.
 
 #### func (*WebResource) UnmarshalJSON
 
-```go
+```
 func (r *WebResource) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON is generated so WebResource satisfies json.Unmarshaler.
 
 #### func (WebResource) Validate
 
-```go
+```
 func (r WebResource) Validate() error
 ```
 Validate verifies that value is predefined for WebResource.
 
 #### func (WebResource) Value
 
-```go
+```
 func (r WebResource) Value() (driver.Value, error)
 ```
 Value is generated so WebResource satisfies db row driver.Valuer.

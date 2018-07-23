@@ -5,7 +5,7 @@
 
 ## Usage
 
-```go
+```
 const (
 	Header    = "Authorization"
 	JWTHeader = "jwt"
@@ -15,7 +15,7 @@ const (
 ```
 Header name of the `Authorization` header.
 
-```go
+```
 const (
 	HeaderHash        = "X-Auth-Hash"
 	HeaderSignature   = "X-Auth-Signature"
@@ -27,26 +27,26 @@ const (
 
 #### func  CheckToken
 
-```go
+```
 func CheckToken(authtoken string) (int, []byte, error)
 ```
 CheckToken checks `Authorization` token if it valid return nil.
 
 #### func  ExtractUserID
 
-```go
+```
 func ExtractUserID() func(http.Handler) http.Handler
 ```
 
 #### func  Init
 
-```go
+```
 func Init(usrApiLink string)
 ```
 
 #### func  NewSignedGetRequest
 
-```go
+```
 func NewSignedGetRequest(privateKey, path, service string) (*http.Request, error)
 ```
 NewSignedGetRequest creates a new GET request, sings the request details using
@@ -54,7 +54,7 @@ the `privateKey` and adds the auth headers.
 
 #### func  NewSignedPostRequest
 
-```go
+```
 func NewSignedPostRequest(privateKey, path string, body []byte, mimeType, service string) (*http.Request, error)
 ```
 NewSignedPostRequest creates a new POST request, hashes the body, sings the
@@ -62,7 +62,7 @@ request details using the `privateKey` and adds the auth headers.
 
 #### func  ValidateAuthHeader
 
-```go
+```
 func ValidateAuthHeader(required bool) func(http.Handler) http.Handler
 ```
 ValidateAuthHeader checks the request Authorization token. If token valid -
@@ -71,7 +71,7 @@ requester.
 
 #### func  VerifyRequestSignature
 
-```go
+```
 func VerifyRequestSignature(r *http.Request, publicKey string) (bool, error)
 ```
 VerifyRequestSignature checks the request auth headers.
