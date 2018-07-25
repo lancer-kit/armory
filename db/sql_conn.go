@@ -107,7 +107,7 @@ func (conn *SQLConn) ExecRaw(query string, args ...interface{}) error {
 }
 
 // Insert compile `sqq` to SQL and runs query. Return last inserted id
-func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id int64, err error) {
+func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id interface{}, err error) {
 	start := time.Now()
 	err = sqq.Suffix(`RETURNING "id"`).
 		RunWith(conn.baseRunner()).
