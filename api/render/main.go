@@ -3,6 +3,8 @@ package render
 import (
 	"encoding/json"
 	"net/http"
+
+	"gitlab.inn4science.com/vcg/go-common/db"
 )
 
 // PrettyMarshal is a flag that enable marshalling with indent
@@ -57,4 +59,16 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 	w.Write(marshaled)
+}
+
+func RenderListWithPages(w http.ResponseWriter, pageQuery db.PageQuery, total int64, list interface{}) {
+	result := Page{
+		Page:     pageQuery.Page,
+		PageSize: pageQuery.PageSize,
+		Order:    pageQuery.Order,
+		Total:    total,
+		Records:  list,
+	}
+
+	result.Render(w)
 }

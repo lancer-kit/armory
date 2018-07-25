@@ -9,7 +9,7 @@ type Page struct {
 	Page     uint64      `json:"page"`
 	PageSize uint64      `json:"pageSize"`
 	Order    string      `json:"order"`
-	Total    uint64      `json:"total"`
+	Total    int64       `json:"total"`
 	Records  interface{} `json:"records"`
 }
 
@@ -18,7 +18,7 @@ func (page *Page) Render(w http.ResponseWriter) {
 }
 
 func (page *Page) SetTotal(rowCount, pageSize uint64) {
-	page.Total = uint64(math.Ceil(float64(rowCount) / float64(pageSize)))
+	page.Total = int64(math.Ceil(float64(rowCount) / float64(pageSize)))
 }
 
 type BaseRow struct {
