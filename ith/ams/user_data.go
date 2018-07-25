@@ -187,10 +187,25 @@ type (
 
 	//ErrorData - any response
 	ErrorData struct {
-		ErrorCode    int         `json:"errorCode"`    //Error code
-		ErrorMessage string      `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
-		RequestUid   string      `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
-		Parameters   interface{} `json:"parameters"`   //Error extended parameters
+		// Error code required:true example:400
+		ErrorCode    int         `json:"errorCode"`
+
+		// Localized error message. Supported languages are English, Russian, and Latvian.
+		// English is used	when no customer locale is available
+		//
+		// required: true
+		// example: Server error
+		ErrorMessage string      `json:"errorMessage"`
+
+		// Request UID, used for investigation of exceptional cases
+		// required:true
+		// example: {234234-23424-23424-23424}
+		RequestUid   string      `json:"requestUid"`
+
+		// Error extended parameters, optional
+		// required:false
+		// example:[param]
+		Parameters   interface{} `json:"parameters"`
 	}
 )
 
