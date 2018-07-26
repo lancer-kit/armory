@@ -58,10 +58,14 @@ type (
 		Test                      bool               `json:"test"` //Account is test
 	}
 
-	//Standard account response (from doc.example)
+	//Account response (from doc.example)
 	AccountResponse struct {
+		//Not returned if operation is successful
+		ErrorData *ErrorData `json:"errorData"`
+		//Full account object
 		Account *Account `json:"account"`
 	}
+
 	//UserRegistrationResponse response from ITH Account Management Services (AMS)
 	//
 	//  {

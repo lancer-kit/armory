@@ -10,6 +10,7 @@ ITH integration. ACCOUNT MANAGEMENT SERVICES
 const (
 	APICreate = "/partnerapi/account/register"
 	APIupdate = "/partnerapi/account/update"
+	APIGet    = "/commonapi/account/full"
 	APICode   = "/commonapi/auth/" + param + "/authorization_code"
 	APIToken  = "/partnerapi/token/code"
 )
@@ -76,6 +77,12 @@ Get Authorization Code Send request to ITH.Authorization service. Service is
 used to receive one-time authorization code. This single use code could be used
 to transfer user session from one module to another.
 
+#### func (*API) GetFullProfile
+
+```
+func (api *API) GetFullProfile(token string) (res *Account, err error, status RequestStatus)
+```
+
 #### func (*API) GetToken
 
 ```
@@ -98,7 +105,7 @@ Set new logger on ams.API
 ```
 func (api *API) UpdateProfile(req *UserUpdateRequest, token string) (usr *UserRegistrationResponse, err error, status RequestStatus)
 ```
-CreateProfile - request partner API to update the standard user profile
+UpdateProfile - request partner API to update the standard user profile
 
 #### type Account
 
@@ -238,7 +245,10 @@ AccountPhones, list of AccountPhone
 
 ```
 type AccountResponse struct {
-	Account *Account `json:"account"`
+	//Not returned if operation is successful
+	//
+	ErrorData *ErrorData `json:"errorData"`
+	Account   *Account   `json:"account"`
 }
 ```
 
@@ -713,23 +723,23 @@ type AmsDate time.Time
 func AmsDateFromInt(i int64) AmsDate
 ```
 
-#### func (AmsDate) Empty
+#### func (*AmsDate) Empty
 
 ```
-func (r AmsDate) Empty() bool
+func (r *AmsDate) Empty() bool
 ```
 
-#### func (AmsDate) MarshalJSON
+#### func (*AmsDate) MarshalJSON
 
 ```
-func (r AmsDate) MarshalJSON() ([]byte, error)
+func (r *AmsDate) MarshalJSON() ([]byte, error)
 ```
 MarshalJSON AmsDate satisfies json.Marshaler.
 
-#### func (AmsDate) String
+#### func (*AmsDate) String
 
 ```
-func (r AmsDate) String() string
+func (r *AmsDate) String() string
 ```
 String is generated so AddressType satisfies fmt.Stringer.
 
@@ -746,10 +756,10 @@ func (r *AmsDate) UnmarshalJSON(data []byte) error
 ```
 UnmarshalJSON AmsDate satisfies json.Unmarshaler.
 
-#### func (AmsDate) Validate
+#### func (*AmsDate) Validate
 
 ```
-func (r AmsDate) Validate() error
+func (r *AmsDate) Validate() error
 ```
 Validate verifies that value is predefined for AddressType.
 
@@ -869,14 +879,49 @@ Additional field `country`
 
 ```
 type ErrorData struct {
-	ErrorCode    int         `json:"errorCode"`    //Error code
-	ErrorMessage string      `json:"errorMessage"` //Localized error message. Supported languages are English, Russian, and Latvian. English is used	when no customer locale is available
-	RequestUid   string      `json:"requestUid"`   //Request UID, used for investigation of exceptional cases
-	Parameters   interface{} `json:"parameters"`   //Error extended parameters
+	// Error code required:true example:400
+	ErrorCode int `json:"errorCode"`
+
+	// Localized error message. Supported languages are English, Russian, and Latvian.
+	// English is used	when no customer locale is available
+	//
+	// required: true
+	// example: Server error
+	ErrorMessage string `json:"errorMessage"`
+
+	// Request UID, used for investigation of exceptional cases
+	// required:true
+	// example: {234234-23424-23424-23424}
+	RequestUid string `json:"requestUid"`
+
+	// Error extended parameters, optional
+	// required:false
+	// example:[param]
+	Parameters interface{} `json:"parameters"`
 }
 ```
 
 ErrorData - any response
+
+#### func (*ErrorData) Message
+
+```
+func (e *ErrorData) Message() string
+```
+
+#### type FullProfileResponse
+
+```
+type FullProfileResponse struct {
+	// Full account object
+	Account *Account `json:"account"`
+
+	//Not returned if operation is successful
+	ErrorData *ErrorData `json:"errorData"`
+}
+```
+
+swagger:model
 
 #### type Language
 
@@ -896,6 +941,41 @@ Additional field `language`
     		"code": "ru",
     		"name": "Russian"
     	},
+
+#### type MerchantRequest
+
+```
+type MerchantRequest struct {
+
+	// ITH account ID
+	//
+	// required: true
+	// example: "100-020-425-40"
+	AccountUid string `json:"accountUid"`
+
+	// ITH access token, required when create
+	//
+	// required: false
+	// example: bdad264b7f8b9896d73436b234e4bddd
+	AccessToken string `json:"accessToken,omitempty"`
+
+	// Callback URL required: true
+	// example: https://<host>:<port>/callback
+	CallbackUrl string `json:"callbackUrl"`
+
+	// Internal, for validation
+	// example: false
+	IsCreateRequest bool `json:"-"`
+}
+```
+
+swagger:model
+
+#### func (*MerchantRequest) Validate
+
+```
+func (t *MerchantRequest) Validate() (err error)
+```
 
 #### type Person
 
@@ -1159,7 +1239,7 @@ type UserUpdateRequest struct {
 	Password           string         `json:"password,omitempty"`       //Optional/fill if updated, String(50), User account password (plain ?)
 	FirstName          string         `json:"firstName,omitempty"`      //Optional/fill if updated, String(50), Name
 	LastName           string         `json:"lastName,omitempty"`       //Optional/fill if updated, String(50), Surname
-	BirthDate          AmsDate        `json:"birthDate,omitempty"`      //Optional/fill if updated, Date, Format - yyyyMMddHHmmss
+	BirthDate          *AmsDate       `json:"birthDate,omitempty"`      //Optional/fill if updated, Date, Format - yyyyMMddHHmmss
 	Country            string         `json:"country,omitempty"`        //Optional/fill if updated, String(2), ISO2 country code
 	Language           string         `json:"language,omitempty"`       //Optional/fill if updated, String(2), ISO2 language code
 	Address            *AddressUpdate `json:"address,omitempty"`        //Optional/fill if updated, User account address

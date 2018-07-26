@@ -17,6 +17,7 @@ import (
 const (
 	APICreate = "/partnerapi/account/register"
 	APIupdate = "/partnerapi/account/update"
+	APIGet    = "/commonapi/account/full"
 	APICode   = "/commonapi/auth/" + param + "/authorization_code"
 	APIToken  = "/partnerapi/token/code"
 	param     = "{{.client}}"
@@ -67,6 +68,58 @@ func NewAPI(baseUrl, commonUrl, client, secret string) *API {
 //Set new logger on ams.API
 func (api *API) SetLogger(entry log.Entry) {
 	api.log = entry
+}
+
+func (api *API) GetFullProfile(token string) (res *Account, err error, status RequestStatus) {
+	status = RequestStatusOk
+	hdr := httpx.Headers{"Authorization": "Bearer " + token}
+	body := httpx.Headers{}
+	var resp *http.Response
+	resp, err = httpx.PostJSON(api.Config.CommonURL+APIGet, body, hdr)
+	if err != nil {
+		if resp != nil && resp.Body != nil {
+			resp.Body.Close()
+		}
+		status = RequestStatusNetworkError
+		return
+	}
+	if resp == nil {
+		err = errors.New("empty http response")
+		status = RequestStatusNetworkError
+		return
+	}
+	if resp.StatusCode != 200 {
+		err = errors.Errorf("response code:%d on request get user fill profile", resp.StatusCode)
+		api.log.
+			WithError(err).
+			WithField("response", resp).
+			WithField("url", resp.Request.URL.String()).
+			Warning("api.GetFullProfile error")
+		status = RequestStatusNetworkError
+		return
+	}
+	tmp := new(AccountResponse)
+	err = httpx.ParseJSONResult(resp, tmp)
+	if err != nil {
+		err = errors.Wrap(err, "unable to unmarshal response")
+		api.log.WithError(err).Error()
+		status = RequestStatusPartnerError
+		return
+	}
+
+	if tmp.ErrorData != nil {
+		b, _ := json.MarshalIndent(tmp.ErrorData, "", "  ")
+		err = errors.New("partner response error:" + fmt.Sprint(tmp.ErrorData))
+		api.log.
+			WithField("error-data", string(b)).
+			WithError(err).
+			WithField("response", resp).
+			Warning("api.CreateProfile error")
+		status = RequestStatusPartnerError
+		return
+	}
+	res = tmp.Account
+	return
 }
 
 //CreateProfile - request partner API to create the new standard user profile

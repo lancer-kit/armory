@@ -70,3 +70,15 @@ func TestAPI_UpdateProfile(t *testing.T) {
 	api.log.Info(resp)
 
 }
+
+func TestAPI_GetFullProfile(t *testing.T) {
+	api := NewAPI("http://demo-api.enauda.com/", "http://demo-commonapi.enauda.com", "vipcoin", "vipcoinpass")
+	resp, err, st := api.GetFullProfile("b575be6b56ec7506f15e0429dc92b436")
+	if !assert.NoError(t, err) {
+		assert.Fail(t, "unable to get profile")
+		return
+	}
+	assert.NotEmpty(t, resp)
+	assert.Equal(t, RequestStatusOk, st)
+	assert.Equal(t, "100-001-319-33", resp.Uid)
+}
