@@ -9,8 +9,8 @@ const (
 )
 
 type CardListResult struct {
-	ErrorData ith.ErrorData `json:"errorData,omitempty"`
-	CardList  []Card        `json:"cardList,omitempty"`
+	ErrorData *ith.ErrorData `json:"errorData,omitempty"`
+	CardList  []Card         `json:"cardList,omitempty"`
 }
 
 type VerifyCardRequest struct {

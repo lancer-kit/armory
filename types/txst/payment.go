@@ -32,7 +32,7 @@ type PaymentType string
 
 const (
 	PaymentTDirect  PaymentType = "direct"
-	PaymentTInvoice PaymentType = "invoice"
+	PaymentTRequest PaymentType = "request"
 )
 
 // PaymentDefaultPercent is the default interest rate
