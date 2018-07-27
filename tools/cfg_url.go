@@ -3,6 +3,8 @@ package tools
 import (
 	"net/url"
 	"strings"
+
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type URL struct {
@@ -39,4 +41,9 @@ func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	j.URL = u
 	j.basePath = strings.TrimSuffix(u.Path, slash)
 	return err
+}
+
+func (j *URL) Validate() error {
+	return validation.ValidateStruct(j,
+		validation.Field(j.Str, validation.Required))
 }
