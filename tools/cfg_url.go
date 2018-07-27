@@ -20,6 +20,13 @@ func (j *URL) WithPath(path string) string {
 	return ur.String()
 }
 
+func (j *URL) WithPathURL(path string) url.URL {
+	ur := *j.URL
+	ur.Path = j.basePath + slash + strings.TrimPrefix(path, slash)
+
+	return ur
+}
+
 func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var s string
 	err := unmarshal(&s)
