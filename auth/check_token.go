@@ -113,7 +113,8 @@ func ExtractUserID(required bool) func(http.Handler) http.Handler {
 				return
 
 			}
-			err := json.Unmarshal([]byte(rawJwt), &ReturnAuthStruct{})
+			jwt := ReturnAuthStruct{}
+			err := json.Unmarshal([]byte(rawJwt), &jwt)
 			if err != nil {
 				render.ResultBadRequest.
 					SetError("JWT Header is invalid json").
@@ -122,8 +123,8 @@ func ExtractUserID(required bool) func(http.Handler) http.Handler {
 			}
 
 			//r = r.WithContext(context.WithValue(r.Context(), KeyUID, ReturnAuthStruct{}.Jti))
-			rCtx := context.WithValue(r.Context(), KeyUID, ReturnAuthStruct{}.Jti)
-			rCtx = context.WithValue(rCtx, KeyIsAdmin, ReturnAuthStruct{}.IsAdmin)
+			rCtx := context.WithValue(r.Context(), KeyUID, jwt.Jti)
+			rCtx = context.WithValue(rCtx, KeyIsAdmin, jwt.IsAdmin)
 			r = r.WithContext(rCtx)
 			next.ServeHTTP(w, r)
 			return
