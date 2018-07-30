@@ -96,14 +96,20 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 	}
 }
 
-func ExtractUserID() func(http.Handler) http.Handler {
+func ExtractUserID(required ... bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rawJwt := r.Header.Get(JWTHeader)
 			if rawJwt == "" {
-				render.ResultBadRequest.
-					SetError("JWT Header must not bee empty").
-					Render(w)
+				if len(required) == 0 || (len(required) > 0 && required[0]) {
+					render.ResultBadRequest.
+						SetError("JWT Header must not bee empty").
+						Render(w)
+					return
+				}
+
+				r = r.WithContext(context.WithValue(r.Context(), KeyUID, int64(0)))
+				next.ServeHTTP(w, r)
 				return
 			}
 			jwt := ReturnAuthStruct{}
