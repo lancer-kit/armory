@@ -1,21 +1,29 @@
 package auth
 
 import (
-	"context"
-	"encoding/json"
+		"encoding/json"
 	"net/http"
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/vcg/go-common/api/render"
 	"gitlab.inn4science.com/vcg/go-common/log"
+	"context"
 )
+
+type ReturnAuthStruct struct {
+	Jti int64 `json:"jti,string"`
+	IsAdmin bool `json:"isAdmin"`
+}
+
+type key string
 
 // Header name of the `Authorization` header.
 const (
 	Header    = "Authorization"
 	JWTHeader = "jwt"
 
-	KeyUID = iota
+	KeyUID key = "key_uid"
+	KeyIsAdmin key = "key_isAdmin"
 )
 
 var userApiLink string
@@ -90,20 +98,24 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 	}
 }
 
-func ExtractUserID() func(http.Handler) http.Handler {
+func ExtractUserID(required bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
+
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rawJwt := r.Header.Get(JWTHeader)
 			if rawJwt == "" {
-				render.ResultBadRequest.
-					SetError("JWT Header must not bee empty").
-					Render(w)
-				return
+				if required {
+					render.ResultBadRequest.
+						SetError("JWT Header must not bee empty").
+						Render(w)
+					return
+				}
+
 			}
-			jwt := struct {
-				Jti int64 `json:"jti,string"`
-			}{}
-			err := json.Unmarshal([]byte(rawJwt), &jwt)
+			//jwt := struct {
+			//	Jti int64 `json:"jti,string"`
+			//}{}
+			err := json.Unmarshal([]byte(rawJwt), &ReturnAuthStruct{})
 			if err != nil {
 				render.ResultBadRequest.
 					SetError("JWT Header is invalid json").
@@ -111,7 +123,10 @@ func ExtractUserID() func(http.Handler) http.Handler {
 				return
 			}
 
-			r = r.WithContext(context.WithValue(r.Context(), KeyUID, jwt.Jti))
+			//r = r.WithContext(context.WithValue(r.Context(), KeyUID, ReturnAuthStruct{}.Jti))
+			rCtx := context.WithValue(r.Context(), KeyUID, ReturnAuthStruct{}.Jti)
+			rCtx = context.WithValue(rCtx, KeyIsAdmin, ReturnAuthStruct{}.IsAdmin)
+			r = r.WithContext(rCtx)
 			next.ServeHTTP(w, r)
 			return
 
