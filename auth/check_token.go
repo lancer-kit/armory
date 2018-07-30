@@ -1,29 +1,27 @@
 package auth
 
 import (
-		"encoding/json"
+	"context"
+	"encoding/json"
 	"net/http"
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/vcg/go-common/api/render"
 	"gitlab.inn4science.com/vcg/go-common/log"
-	"context"
 )
 
 type ReturnAuthStruct struct {
-	Jti int64 `json:"jti,string"`
-	IsAdmin bool `json:"isAdmin"`
+	Jti     int64 `json:"jti,string"`
+	IsAdmin bool  `json:"isAdmin,bool"`
 }
-
-type key string
 
 // Header name of the `Authorization` header.
 const (
 	Header    = "Authorization"
 	JWTHeader = "jwt"
 
-	KeyUID key = "key_uid"
-	KeyIsAdmin key = "key_isAdmin"
+	KeyUID     = "key_uid"
+	KeyIsAdmin = "key_isAdmin"
 )
 
 var userApiLink string
@@ -100,7 +98,6 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 
 func ExtractUserID(required bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rawJwt := r.Header.Get(JWTHeader)
 			if rawJwt == "" {
@@ -111,10 +108,11 @@ func ExtractUserID(required bool) func(http.Handler) http.Handler {
 					return
 				}
 
+				r = r.WithContext(context.WithValue(r.Context(), KeyUID, int64(0)))
+				next.ServeHTTP(w, r)
+				return
+
 			}
-			//jwt := struct {
-			//	Jti int64 `json:"jti,string"`
-			//}{}
 			err := json.Unmarshal([]byte(rawJwt), &ReturnAuthStruct{})
 			if err != nil {
 				render.ResultBadRequest.
