@@ -96,7 +96,10 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 	}
 }
 
-func ExtractUserID(required ... bool) func(http.Handler) http.Handler {
+// Method reads JWT Header and fill KeyUID and KeyIsAdmin in the context
+// Use ExtractUserID() if jwt required
+// Use ExtractUserID(false) if jwt not required
+func ExtractUserID(required ...bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rawJwt := r.Header.Get(JWTHeader)
@@ -108,7 +111,9 @@ func ExtractUserID(required ... bool) func(http.Handler) http.Handler {
 					return
 				}
 
-				r = r.WithContext(context.WithValue(r.Context(), KeyUID, int64(0)))
+				rCtx := context.WithValue(r.Context(), KeyUID, int64(0))
+				rCtx = context.WithValue(rCtx, KeyIsAdmin, false)
+				r = r.WithContext(rCtx)
 				next.ServeHTTP(w, r)
 				return
 			}
