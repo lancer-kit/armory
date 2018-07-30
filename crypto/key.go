@@ -28,7 +28,7 @@ func (key Key) ToPublicKey() ed25519.PublicKey {
 
 // String is a realization of the `Stringer` interface.
 func (key Key) String() string {
-	return base32Encode(key)
+	return Base32Encode(key)
 }
 
 // UnmarshalJSON is a realization of the `Unmarshaller` interface.
@@ -38,7 +38,7 @@ func (key *Key) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "can not to unmarshal Key into string")
 	}
-	rawKey, err := base32Decode(rawStr)
+	rawKey, err := Base32Decode(rawStr)
 	if err != nil {
 		return errors.Wrap(err, "can not to decode Key")
 	}

@@ -11,6 +11,13 @@ type ConversionResult struct {
 	Price Price `json:"price"`
 }
 
+type CapSummary struct {
+	Currency string `json:"currency"`
+	Coins    Coin   `json:"coins"`
+	Fiat     Fiat   `json:"fiat"`
+	Gold     Coin   `json:"gold"`
+}
+
 type Convertible interface {
 	Convert(Price) ConversionResult
 }
@@ -48,7 +55,7 @@ func AmountPercent(amount Amount, percent int64) Amount {
 	result.Mul(&result, &percentRat)
 	res, acc := result.Int64()
 	if acc == big.Below {
-		res ++
+		res++
 	}
 	return Amount(res)
 }

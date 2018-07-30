@@ -3,6 +3,7 @@ package log
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/onrik/logrus/filename"
 	"github.com/onrik/logrus/sentry"
 	"github.com/sirupsen/logrus"
@@ -31,8 +32,13 @@ func DefaultForRequest(r *http.Request) *logrus.Entry {
 
 // IncludeRequest includes http.Request details into the log.Entry.
 func IncludeRequest(log *logrus.Entry, r *http.Request) *logrus.Entry {
+	reqID := middleware.GetReqID(r.Context())
+
 	return log.
-		WithField("path", r.URL.Path).
-		WithField("method", r.Method).
-		WithField("sender", r.Header.Get("X-Forwarded-For"))
+		WithFields(logrus.Fields{
+			"req_id": reqID,
+			"path":   r.URL.Path,
+			"method": r.Method,
+			"sender": r.Header.Get("X-Forwarded-For"),
+		})
 }

@@ -2,6 +2,7 @@ package vcgtools
 
 import "time"
 
+// DEPRECATED: use gitlab.inn4science.com/vcg/go-common/tools instead
 // RetryIn retries passed function `call`
 // until it end with success, else repeat again.
 func RetryIn(interval time.Duration, call func() bool) {
@@ -13,6 +14,7 @@ func RetryIn(interval time.Duration, call func() bool) {
 	}
 }
 
+// DEPRECATED: use gitlab.inn4science.com/vcg/go-common/tools instead
 // RetryIncrementally retries passed function `call` until it end with success,
 // else repeat again and increments retrying interval up to 2 hour.
 func RetryIncrementally(interval time.Duration, call func() bool) {

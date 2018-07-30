@@ -31,7 +31,7 @@ Chief is a head of workers, it must be used to register, initialize and correctl
 
 #### Method list:
 
-- `AddWorker(name string, worker Worker)`- register a new `Worker` to the `Chief` worker pool.
+- `AddWorker(name string, worker Worker` - register a new `Worker` to the `Chief` worker pool.
 - `EnableWorkers(names ...string)` - enables all worker from the `names` list. By default, all added workers are enabled.
 - `EnableWorker(name string)` - enables the worker with the specified `name`. By default, all added workers are enabled.
 - `IsEnabled(name string) bool` - checks is enable worker with passed `name`.

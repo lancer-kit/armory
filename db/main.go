@@ -9,8 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Conn represents a connector to a database.
-type Conn interface {
+// сonn represents a connector to a database.
+type сonn interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)
 	Get(dest interface{}, query string, args ...interface{}) error
 	Rebind(sql string) string
