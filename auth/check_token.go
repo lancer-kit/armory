@@ -115,7 +115,6 @@ func ExtractUserID() func(http.Handler) http.Handler {
 				return
 			}
 
-			//r = r.WithContext(context.WithValue(r.Context(), KeyUID, ReturnAuthStruct{}.Jti))
 			rCtx := context.WithValue(r.Context(), KeyUID, jwt.Jti)
 			rCtx = context.WithValue(rCtx, KeyIsAdmin, jwt.IsAdmin)
 			r = r.WithContext(rCtx)
