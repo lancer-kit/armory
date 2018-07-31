@@ -44,10 +44,14 @@ func (r *AmsDate) Validate() error {
 // MarshalJSON  AmsDate satisfies json.Marshaler.
 func (r *AmsDate) MarshalJSON() ([]byte, error) {
 	if r.Empty() {
-		return nil, nil
+		s := ""
+		return json.Marshal(&s)
 	}
 	s := r.String()
-	return json.Marshal(s)
+	println("AMS Date:", s)
+	a, e := json.Marshal(&s)
+	println("AMS Date (marshalled:", string(a))
+	return a, e
 }
 
 // UnmarshalJSON  AmsDate satisfies json.Unmarshaler.
