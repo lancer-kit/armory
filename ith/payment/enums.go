@@ -58,3 +58,19 @@ const (
 	OrderITypeItem OrderIType = 1 + iota
 	OrderITypeShipping
 )
+
+type PaymentMethod int
+
+const (
+	Bankcard PaymentMethod = 1 + iota
+	Banktransfer
+	Ewallet
+)
+
+type WalletType int
+
+const (
+	S WalletType = 1 + iota
+	R
+	AC
+)

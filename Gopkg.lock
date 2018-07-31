@@ -2,177 +2,237 @@
 
 
 [[projects]]
+  digest = "1:015ef9a11d36760d2075aa92839fd545cde0ef2ffe13ddaf849f2270eb292f1c"
   name = "github.com/Masterminds/squirrel"
   packages = ["."]
+  pruneopts = ""
   revision = "a6b93000bd219143c56c16e6cb1c4b91da3f224b"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:8722889ad027febfced94665914d1e7be8f1b703d31f2ef9461c59e4d40fe974"
   name = "github.com/certifi/gocertifi"
   packages = ["."]
+  pruneopts = ""
   revision = "deb3ae2ef2610fde3330947281941c562861188b"
   version = "2018.01.18"
 
 [[projects]]
+  digest = "1:56c130d885a4aacae1dd9c7b71cfe39912c7ebc1ff7d2b46083c8812996dc43b"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
+  pruneopts = ""
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:4ce9d2c22ad456131e67fb8aef8664107b0f69c9aea799631028f7ce5bccb486"
   name = "github.com/getsentry/raven-go"
   packages = ["."]
+  pruneopts = ""
   revision = "7562301a6763c9ac631b0a2011b4aa0e064e45d4"
 
 [[projects]]
+  digest = "1:2f4d4ba08e54c0c63693d7dd21c30c8ff6800d047efcbbe8addd5620d2625871"
   name = "github.com/go-chi/chi"
   packages = [
     ".",
-    "middleware"
+    "middleware",
   ]
+  pruneopts = ""
   revision = "e83ac2304db3c50cf03d96a2fcd39009d458bc35"
   version = "v3.3.2"
 
 [[projects]]
+  digest = "1:cb589c43cf1a44b8583a1ffa01eb16cdd7346a396797049f86a6d3c93c73003a"
   name = "github.com/go-ozzo/ozzo-validation"
   packages = ["."]
+  pruneopts = ""
   revision = "85dcd8368eba387e65a03488b003e233994e87e9"
   version = "v3.3"
 
 [[projects]]
   branch = "master"
+  digest = "1:8a3c0eacde01fd09e733180c47607a4eec76ef1152c28c5cba35571741cf6a16"
   name = "github.com/gopherjs/gopherjs"
   packages = ["js"]
+  pruneopts = ""
   revision = "8dffc02ea1cb8398bb73f30424697c60fcf8d4c5"
 
 [[projects]]
   branch = "master"
+  digest = "1:aed523e57388b4394b950a14bcd31a61146ef2cf22040029e038ac5930246c70"
   name = "github.com/jmoiron/sqlx"
   packages = [
     ".",
-    "reflectx"
+    "reflectx",
   ]
+  pruneopts = ""
   revision = "cf35089a197953c69420c8d0cecda90809764b1d"
 
 [[projects]]
+  digest = "1:d8ead22d381cfed54d53be7d935eb0f9f2b75889a4fb595802844b805dc13b87"
   name = "github.com/jtolds/gls"
   packages = ["."]
+  pruneopts = ""
   revision = "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
   version = "v4.2.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:63d75c4f611d0d43b5ba3b6609161c0ddb81275a183f05f607f8279cafa86b7e"
   name = "github.com/lann/builder"
   packages = ["."]
+  pruneopts = ""
   revision = "1b87b36280d04fe7882d1512bf038ea2967ad534"
 
 [[projects]]
   branch = "master"
+  digest = "1:bfb195bbfe4edff0d8a078dd59d7567aae6f3c0d1a2cdf855fdcdd23c9b3bd8d"
   name = "github.com/lann/ps"
   packages = ["."]
+  pruneopts = ""
   revision = "62de8c46ede02a7675c4c79c84883eb164cb71e3"
 
 [[projects]]
   branch = "master"
+  digest = "1:8f0ecac344e2c0a4a55df0306994ed2ce3b9e9598da959ce4e5831aaa05f1e1e"
   name = "github.com/lib/pq"
   packages = [
     ".",
-    "oid"
+    "oid",
   ]
+  pruneopts = ""
   revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
 [[projects]]
+  digest = "1:665af347df4c5d1ae4c3eacd0754f5337a301f6a3f2444c9993b996605c8c02b"
   name = "github.com/nats-io/go-nats"
   packages = [
     ".",
     "encoders/builtin",
-    "util"
+    "util",
   ]
+  pruneopts = ""
   revision = "062418ea1c2181f52dc0f954f6204370519a868b"
   version = "v1.5.0"
 
 [[projects]]
+  digest = "1:be61e8224b84064109eaba8157cbb4bbe6ca12443e182b6624fdfa1c0dcf53d9"
   name = "github.com/nats-io/nuid"
   packages = ["."]
+  pruneopts = ""
   revision = "289cccf02c178dc782430d534e3c1f5b72af807f"
   version = "v1.0.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:f8ccc246f9824a870bb6b1c08f3865fb495d6b6bf7dfdceb8f98e3337f8cdc4f"
   name = "github.com/onrik/logrus"
   packages = [
     "filename",
-    "sentry"
+    "sentry",
   ]
+  pruneopts = ""
   revision = "6a64e23a4923a8d0d4db2806dcf3e55af1e48f61"
 
 [[projects]]
+  digest = "1:7365acd48986e205ccb8652cc746f09c8b7876030d53710ea6ef7d0bd0dcd7ca"
   name = "github.com/pkg/errors"
   packages = ["."]
+  pruneopts = ""
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:256484dbbcd271f9ecebc6795b2df8cad4c458dd0f5fd82a8c2fa0c29f233411"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
+  pruneopts = ""
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:8cf46b6c18a91068d446e26b67512cf16f1540b45d90b28b9533706a127f0ca6"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = ""
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
 
 [[projects]]
+  digest = "1:c686b5040ec4be5005e10020ce3d1d7f888bfae796a039addf7d9071d8776be8"
   name = "github.com/smartystreets/assertions"
   packages = [
     ".",
     "internal/go-render/render",
-    "internal/oglematchers"
+    "internal/oglematchers",
   ]
+  pruneopts = ""
   revision = "7678a5452ebea5b7090a6b163f844c133f523da2"
   version = "1.8.3"
 
 [[projects]]
+  digest = "1:dd808f0f1628ff85a1b54424d3e6a61c54a87353d5063b9b5c82ad360f0346d5"
   name = "github.com/smartystreets/goconvey"
   packages = [
     "convey",
     "convey/gotest",
-    "convey/reporting"
+    "convey/reporting",
   ]
+  pruneopts = ""
   revision = "9e8dc3f972df6c8fcc0375ef492c24d0bb204857"
   version = "1.6.3"
 
 [[projects]]
+  digest = "1:a30066593578732a356dc7e5d7f78d69184ca65aeeff5939241a3ab10559bb06"
   name = "github.com/stretchr/testify"
   packages = ["assert"]
+  pruneopts = ""
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:5de4dd09c6356b1bb6785caeef425147708c21cfbe4afb23324a7cd30d24942b"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
     "ed25519/internal/edwards25519",
-    "ssh/terminal"
+    "ssh/terminal",
   ]
+  pruneopts = ""
   revision = "88942b9c40a4c9d203b82b3731787b672d6e809b"
 
 [[projects]]
   branch = "master"
+  digest = "1:39d88a855976e160babdd254802e1c2ae75ed380328c39742b57928852da6207"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
+  pruneopts = ""
   revision = "13d03a9a82fba647c21a0ef8fba44a795d0f0835"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7779ed0a0c8b0cfa6c588b8f4ce878e597c0a4e4c38bcdaec1d2a467b7595207"
+  input-imports = [
+    "github.com/Masterminds/squirrel",
+    "github.com/go-chi/chi/middleware",
+    "github.com/go-ozzo/ozzo-validation",
+    "github.com/jmoiron/sqlx",
+    "github.com/lib/pq",
+    "github.com/nats-io/go-nats",
+    "github.com/onrik/logrus/filename",
+    "github.com/onrik/logrus/sentry",
+    "github.com/pkg/errors",
+    "github.com/sirupsen/logrus",
+    "github.com/smartystreets/goconvey/convey",
+    "github.com/stretchr/testify/assert",
+    "golang.org/x/crypto/ed25519",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
