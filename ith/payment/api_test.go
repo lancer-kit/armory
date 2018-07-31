@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gitlab.inn4science.com/vcg/go-common/ith/auth"
 	"gitlab.inn4science.com/vcg/go-common/types/currency"
-)
+	)
 
 func TestAPI_CreateOrder(t *testing.T) {
 	api := API{}
@@ -61,7 +61,33 @@ func TestAPI_CreateOrder(t *testing.T) {
 		time.Now().Unix())
 	assert.NoError(t, err)
 	assert.NotEmpty(t, list)
-	list, err = api.GetOrderDetails("GetOrderDetails", "8ed61188-a43d-44f2-85b5-563df4bf92b8")
+
+	orderDetails, err := api.GetOrderDetails("", "VCG-ORDER-wqefmolseemopptuymo")
 	assert.NoError(t, err)
-	assert.NotEmpty(t, list)
+	assert.NotEmpty(t, orderDetails)
+
+	refundItem := RefundRequest{"", 4, "comment"}
+	refundOrder, err := api.Refund(refundItem)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, refundOrder)
+
+	updateStatusReq := UpdateOrderStatusRequest{"", "MP"}
+	newStatus, err := api.SetOrderNewStatus(updateStatusReq)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, newStatus)
+
+	draft, err := api.CreateOrderDraft(order)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, draft)
+
+	updatedDraft, err := api.UpdateOrderDraft(order)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, updatedDraft)
+
+	err1 := api.DeleteOrderDraft("")
+	assert.NoError(t, err1)
+
+	sentDraft, err := api.SendOrderDraft("")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, sentDraft)
 }
