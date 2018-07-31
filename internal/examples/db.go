@@ -42,8 +42,8 @@ func (q *UserQ) Insert(user *User) error {
 		"age":   user.Age,
 	})
 
-	var err error
-	user.ID, err = q.SQLConn.Insert(query)
+	idi, err := q.SQLConn.Insert(query)
+	user.ID = idi.(int64)
 	return err
 }
 
