@@ -6,6 +6,8 @@ import (
 	"github.com/nats-io/go-nats"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gitlab.inn4science.com/vcg/go-common/types/txst"
+	"gitlab.inn4science.com/vcg/go-common/types/currency"
 )
 
 type (
@@ -47,6 +49,34 @@ type (
 		ErrorMessage string      `json:"errorMessage"`        //message when error
 		ErrorKind    int         `json:"errorKind,omitempty"` //code / kind of error
 		Data         interface{} `json:"data,omitempty"`      // Message data
+	}
+
+	// Structure used for sending transaction updates (WS)
+	WSTxMessage struct {
+		TxID      string       `json:"txId"`
+		TxType    txst.TxType  `json:"txType"`
+		TxState   txst.TxState `json:"txState"`
+		UpdatedAt int64        `json:"updatedAt"`
+	}
+
+	// Structure used for sending operation updates (WS)
+	WSOperationMessage struct {
+		OperationID string             `json:"operationId"`
+		Type        txst.OperationType `json:"operationType"`
+		Status      string             `json:"status"`
+		TxID        string             `json:"txId"`
+		UpdatedAt   int64              `json:"updatedAt"`
+	}
+
+	// Structure used for sending payment updates (WS)
+	WSPaymentMessage struct {
+		PaymentID    string            `json:"paymentId"`
+		State        txst.PaymentState `json:"state"`
+		Type         txst.PaymentType  `json:"type"`
+		Amount       currency.Coin     `json:"amount"`
+		FromWalletID string            `json:"fromWalletId"`
+		ToWalletID   string            `json:"toWalletId"`
+		UpdatedAt    int64             `json:"updatedAt"`
 	}
 )
 
