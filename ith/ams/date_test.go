@@ -34,6 +34,14 @@ func TestAmsDate_String(t *testing.T) {
 	assert.NotEqual(t, "", a.String())
 }
 
+func TestAmsDateFromInt(t *testing.T) {
+	var x int64
+	cx := time.Now().UTC()
+	x = cx.Unix()
+	ad := DateFromInt(x)
+	assert.Equal(t, ad.Time().Unix(), x)
+}
+
 func TestAmsDate_UnmarshalJSON(t *testing.T) {
 	var a AmsDate
 	e := json.Unmarshal([]byte(`"19810509000000"`), &a)

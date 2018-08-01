@@ -16,7 +16,7 @@ func (r *AmsDate) Empty() bool {
 	return r.Time().IsZero()
 }
 
-func AmsDateFromInt(i int64) AmsDate {
+func DateFromInt(i int64) AmsDate {
 	return AmsDate(time.Unix(i, 0))
 }
 
