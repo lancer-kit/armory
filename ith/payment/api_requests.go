@@ -104,12 +104,11 @@ func (api *API) GetOrderList(since, until int64) (*OrdersListResp, error) {
 	return response, err
 }
 
-func (api *API) Refund(refund RefundRequest) (*RefundRequest, error) {
+func (api *API) Refund(refund RefundRequest) (*CreateOrderRequest, error) {
 	u := api.Config.GetURL(APIOrderRefund)
-
 	httpResp, err := httpx.PostJSON(
 		u.String(),
-		refund,
+		&refund,
 		api.AuthHeader(),
 	)
 	if err != nil {
@@ -120,7 +119,7 @@ func (api *API) Refund(refund RefundRequest) (*RefundRequest, error) {
 		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
 	}
 
-	response := new(RefundRequest)
+	response := new(CreateOrderRequest)
 	err = httpx.ParseJSONResult(httpResp, response)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse response")
@@ -267,9 +266,8 @@ func (api *API) CreateExternalPurchaseOrder(order *Order) (*CreateOrderRequest, 
 
 func (api *API) GetOrderTariff(orderUid string) (*GetOrderTariffResponse, error) {
 	u := api.Config.GetURL(APIGetOrderTariff + orderUid)
-	httpResp, err := httpx.PostJSON(
+	httpResp, err := httpx.GetJSON(
 		u.String(),
-		orderUid,
 		api.AuthHeader(),
 	)
 	if err != nil {
