@@ -235,6 +235,10 @@ func (api *API) SendOrderDraft(uid string) (*CreateOrderRequest, error) {
 	}
 
 	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
 	return response, err
 }
 

@@ -115,15 +115,15 @@ func TestAPI_CreateOrder(t *testing.T) {
 	err1 := api.DeleteOrderDraft("c1547085-411b-4d77-9344-8c74cd946aa5")
 	assert.NoError(t, err1)
 
-	//sentDraft, err := api.SendOrderDraft("5182c7bf-6c54-4bdf-a59c-6e147f4082ee")
-	//assert.NoError(t, err)
-	//assert.NotEmpty(t, sentDraft)
+	sentDraft, err := api.SendOrderDraft("5182c7bf-6c54-4bdf-a59c-6e147f4082ee")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, sentDraft)
 
 	createdExternalPurchaseOrder, err := api.CreateExternalPurchaseOrder(extPurchaseOrder)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, createdExternalPurchaseOrder)
 
-	orderTariff, err := api.GetOrderTariff("fe1380f2-a148-4683-95a4-56af5627678f")
+	orderTariff, err := api.GetOrderTariff("465dfb0a-c114-4d00-9c17-c2318123524c")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, orderTariff)
 }
