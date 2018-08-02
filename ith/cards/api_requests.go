@@ -65,3 +65,139 @@ func (api *API) VerifyCard(request VerifyCardRequest) (*CardListResult, error) {
 	}
 	return response, err
 }
+
+func (api *API) GetBankAccountList(request string) (*BankAccountList, error) {
+	err := api.EnsureAuth()
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := httpx.PostJSON(
+		api.Config.GetURL(GetBankAccountList).String(),
+		&request,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account list")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(BankAccountList)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse account list cards response")
+	}
+	return response, err
+}
+
+func (api *API) AddBankAccount(request *BankAccountRequest) (*BankAccountList, error) {
+	err := api.EnsureAuth()
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := httpx.PutJSON(
+		api.Config.GetURL(AddBankAccount).String(),
+		&request,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to add bank account")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(BankAccountList)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse account list cards response")
+	}
+	//fmt.Println(response.BankAccountList)
+	return response, err
+}
+
+func (api *API) EditBankAccount(request *BankAccountRequest) (*BankAccountList, error) {
+	err := api.EnsureAuth()
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := httpx.PostJSON(
+		api.Config.GetURL(EditBankAccount).String(),
+		&request,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to edit bank account")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(BankAccountList)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse account list cards response")
+	}
+	return response, err
+}
+
+func (api *API) DeleteBankAccount(request AccountUidRequest) (*BankAccountList, error) {
+	err := api.EnsureAuth()
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := httpx.PostJSON(
+		api.Config.GetURL(DeleteBankAccount).String(),
+		&request,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to edit bank account")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(BankAccountList)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse account list cards response")
+	}
+	return response, err
+}
+
+func (api *API) SetPrimaryBankAccount(request AccountUidRequest) (*BankAccountList, error) {
+	err := api.EnsureAuth()
+	if err != nil {
+		return nil, err
+	}
+
+	httpResp, err := httpx.PostJSON(
+		api.Config.GetURL(SetPrimaryBankAccount).String(),
+		&request,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to edit bank account")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(BankAccountList)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse account list cards response")
+	}
+	return response, err
+}

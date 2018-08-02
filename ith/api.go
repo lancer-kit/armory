@@ -8,6 +8,7 @@ import (
 type ErrorData struct {
 	ErrorCode    int    `json:"errorCode"`
 	ErrorMessage string `json:"errorMessage"`
+	RequestUid   string `json:"requestUid,omitempty"` //Request UID, used for investigation of exceptional cases
 }
 
 type Config struct {
