@@ -81,11 +81,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:63d75c4f611d0d43b5ba3b6609161c0ddb81275a183f05f607f8279cafa86b7e"
+  digest = "1:0fe2dd9762093b9d72e4c9eeb4f0832fb6582428cee2c62b074e1c9aa68564d8"
   name = "github.com/lann/builder"
   packages = ["."]
   pruneopts = ""
-  revision = "1b87b36280d04fe7882d1512bf038ea2967ad534"
+  revision = "47ae307949d02aa1f1069fdafc00ca08e1dbabac"
 
 [[projects]]
   branch = "master"
@@ -128,14 +128,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:06c458ae256aa95d1d3fd986908100dfbca0a60a5bbc89e41b9205f4de95bb42"
+  digest = "1:57eb9b1281b805a5ac973a015658f366eabfe3454c76c587ef135d6f5c6dcdca"
   name = "github.com/onrik/logrus"
   packages = [
     "filename",
     "sentry",
   ]
   pruneopts = ""
-  revision = "00f4ddfaeb23824ce8b9ce969095a9b2529b9eca"
+  revision = "ca0a758702be2ae04725ba88dcd27a71949faf33"
 
 [[projects]]
   digest = "1:7365acd48986e205ccb8652cc746f09c8b7876030d53710ea6ef7d0bd0dcd7ca"
@@ -195,7 +195,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:cae234a803b78380e4d769db6036b9fcc8c08ed4ff862571ffc1a958edc1f629"
+  digest = "1:6acb37854006d86279ba349ff9ae07103a0956569d0eb8dca9fe38732222e3a5"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
@@ -203,18 +203,18 @@
     "ssh/terminal",
   ]
   pruneopts = ""
-  revision = "c126467f60eb25f8f27e5a981f32a87e3965053f"
+  revision = "56440b844dfe139a8ac053f4ecac0b20b79058f4"
 
 [[projects]]
   branch = "master"
-  digest = "1:dd631ee90bd2e7aa16b6e094217d77a797684b52811374c948c695cbb46b5bbb"
+  digest = "1:9ca540a348c8f7bc0eb140238fe1639beebe93f2b19ef326c455f4833ba708c0"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = ""
-  revision = "bd9dbc187b6e1dacfdd2722a87e83093c2d7bd6e"
+  revision = "0ffbfd41fbef8ffcf9b62b0b0aa3a5873ed7a4fe"
 
 [solve-meta]
   analyzer-name = "dep"

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.inn4science.com/vcg/go-common/crypto"
+	"encoding/json"
+
 	"github.com/pkg/errors"
+	"gitlab.inn4science.com/vcg/go-common/crypto"
 )
 
 const (
@@ -44,6 +46,38 @@ func NewSignedPostRequest(privateKey, path string, body []byte, mimeType, servic
 		return nil, errors.Wrap(err, "failed to hash body")
 	}
 	req, err := http.NewRequest(http.MethodPost, path, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new http request")
+	}
+
+	fullPath := req.URL.Path + req.URL.RawQuery
+	msg := msgSchema(service, req.Method, fullPath, bodyHash, mimeType)
+	sign, err := crypto.SignMessage(privateKey, msg)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to sign message")
+	}
+
+	req.Header.Set("Content-Type", mimeType)
+	req.Header.Set(HeaderHash, bodyHash)
+	req.Header.Set(HeaderSignature, sign)
+	req.Header.Set(HeaderService, service)
+	return req, nil
+}
+
+// NewSignedPostRequest creates a new POST/PUT/PATCH request, hashes the model json parsed body,
+// sings the request details using the `privateKey` and adds the auth headers.
+func NewSignedDataRequest(method, privateKey, path string, model interface{}, service string) (*http.Request, error) {
+	mimeType := "application/json"
+	body, err := json.Marshal(model)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to marshal model")
+	}
+
+	bodyHash, err := crypto.HashData(body)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to hash body")
+	}
+	req, err := http.NewRequest(method, path, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new http request")
 	}
