@@ -19,15 +19,36 @@ type ReturnAuthStruct struct {
 const (
 	Header    = "Authorization"
 	JWTHeader = "jwt"
+)
 
-	KeyUID     = "key_uid"
-	KeyIsAdmin = "key_isAdmin"
+type CtxKey string
+
+const (
+	KeyUID     CtxKey = "key_uid"
+	KeyIsAdmin CtxKey = "key_isAdmin"
 )
 
 var userApiLink string
 
 func Init(usrApiLink string) {
 	userApiLink = usrApiLink
+}
+
+// AuthtokenHeader extracts from the `http.Request` Authorization header.
+func AuthtokenHeader(r *http.Request) string {
+	return r.Header.Get(Header)
+}
+
+// GetUID extracts User-ID  from the `http.Request` ctx.
+func GetUID(r *http.Request) int64 {
+	uid, _ := r.Context().Value(KeyUID).(int64)
+	return uid
+}
+
+// IsAdmin return `true` if request sent by admin.
+func IsAdmin(r *http.Request) bool {
+	isAdmin, _ := r.Context().Value(KeyIsAdmin).(bool)
+	return isAdmin
 }
 
 // CheckToken checks `Authorization` token if it valid return nil.
