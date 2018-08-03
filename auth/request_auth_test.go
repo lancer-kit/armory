@@ -6,8 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"gitlab.inn4science.com/vcg/go-common/crypto"
-	"gitlab.inn4science.com/vcg/go-common/ith/ams"
 )
+
+type TestModel struct {
+	TestData string `json:"testData"`
+}
 
 func TestVerifyRequestSignature(t *testing.T) {
 	privateKey, publicKey := crypto.GenKeyPair()
@@ -33,8 +36,8 @@ func TestVerifyRequestSignature(t *testing.T) {
 func TestNewSignedDataRequest(t *testing.T) {
 	privateKey, publicKey := crypto.GenKeyPair()
 	println("[", privateKey, ",", publicKey, "]")
-	x := &ams.Address{
-		City: "Vegas",
+	x := &TestModel{
+		TestData: "Vegas",
 	}
 	testRequest, err := NewSignedDataRequest("POST", privateKey,
 		"https://localhost:8080/test/42?que=ctulhu", x, "dummy")
