@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.inn4science.com/vcg/go-common/crypto"
 	"github.com/pkg/errors"
+	"gitlab.inn4science.com/vcg/go-common/crypto"
 )
 
 const (
@@ -15,6 +15,7 @@ const (
 	HeaderSigner      = "X-Auth-Signer"
 	HeaderService     = "X-Auth-Service"
 	HeaderContentType = "Content-Type"
+
 )
 
 // NewSignedGetRequest creates a new GET request, sings the request
