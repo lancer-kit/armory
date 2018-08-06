@@ -1,11 +1,18 @@
 // Cards Service is used to get linked cards for specified account.
 package cards
 
-import "gitlab.inn4science.com/vcg/go-common/ith"
+import (
+	"gitlab.inn4science.com/vcg/go-common/ith"
+)
 
 const (
-	APIGetLinkedCards = "/commonapi/account/creditcard"
-	APIVerifyCard     = "/commonapi/creditcard/verify"
+	APIGetLinkedCards        = "/commonapi/account/creditcard"
+	APIVerifyCard            = "/commonapi/creditcard/verify"
+	APIGetBankAccountList    = "/commonapi/bankaccount/list"
+	APIAddBankAccount        = "/commonapi/bankaccount/add"
+	APIEditBankAccount       = "/commonapi/bankaccount/edit"
+	APIDeleteBankAccount     = "/commonapi/bankaccount/delete"
+	APISetPrimaryBankAccount = "/commonapi/bankaccount/primary"
 )
 
 type CardListResult struct {
@@ -27,6 +34,53 @@ type Card struct {
 	Type         CardType   `json:"type"`         // String(1); Card type
 	Status       CardStatus `json:"status"`       // String(1); Card status
 	Primary      bool       `json:"primary"`      // Card is set as primary
+}
+
+type Country struct {
+	Code                  string `json:"code"`                  //String(2); ISO country code
+	Name                  string `json:"name"`                  //String(255); ISO country code
+	BrandedCardsAvailable bool   `json:"brandedCardsAvailable"` //Branded cards are supported for this country
+	RegistrationAllowed   bool   `json:"registrationAllowed"`   //Registration from this country is supported
+}
+
+type BankAccount struct {
+	PublicId                 string  `json:"publicId,omitempty"`       // String(36); Bank account UID
+	AccountNumber            string  `json:"accountNumber"`            // String(255); Bank account number
+	BankName                 string  `json:"bankName"`                 // String(255); Bank name
+	HolderName               string  `json:"holderName"`               // String(255); Bank account holder name
+	SwiftCode                string  `json:"swiftCode"`                // String(255); Bank SWIFT code
+	Country                  Country `json:"country"`                  //Bank country object
+	Type                     string  `json:"type"`                     //String(1); Bank account type: I – Internal (shown in customer UI), E – External
+	HolderAddress            string  `json:"holderAddress"`            //String(70); Bank account holder address
+	HolderCountry            Country `json:"holderCountry"`            //Bank account holder country object
+	CorrespondentBankDetails string  `json:"correspondentBankDetails"` //String(500); Correspondent bank details
+
+}
+type ErrorData struct {
+	ith.ErrorData
+}
+
+type BankAccountList struct {
+	ErrorData         *ErrorData    `json:"errorData,omitempty"`
+	BankAccountList   []BankAccount `json:"bankAccountList,omitempty"`
+	NewBankAccountUid string        `json:"NewBankAccountUid,omitempty"` //String(36); UID of added bank account
+}
+
+type BankAccountRequest struct {
+	BankAccountUid           string          `json:"bankAccountUid,omitempty"` // String(36); Bank account UID
+	AccountNumber            string          `json:"accountNumber"`            // String(255); Bank account number
+	BankName                 string          `json:"bankName"`                 // String(255); Bank name
+	HolderName               string          `json:"holderName"`               // String(255); Bank account holder name
+	SwiftCode                string          `json:"swiftCode"`                // String(255); Bank SWIFT code
+	CountryCode              string          `json:"countryCode"`              //String(2); Bank country ISO code
+	Type                     BankAccountType `json:"type"`                     //String(1); Bank account type: I – Internal (shown in customer UI), E – External
+	HolderAddress            string          `json:"holderAddress"`            //String(70); Bank account holder address
+	HolderCountryCode        string          `json:"holderCountryCode"`        //String(2); Bank account holder country ISO code
+	CorrespondentBankDetails string          `json:"correspondentBankDetails"` //Correspondent bank details
+}
+
+type AccountUidRequest struct {
+	BankAccountUid string `json:"bankAccountUid"` // String(36); Bank account UID
 }
 
 ///go:generate goplater -type=CardType,CardStatus -transform=none -tprefix=false
@@ -53,4 +107,12 @@ const (
 	CardStatusExpired CardStatus = iota + 1
 	CardStatusNotVerified
 	CardStatusVerified
+)
+
+//go:generate goplater -type=BankAccountType -transform=none -tprefix=false
+type BankAccountType int
+
+const (
+	BankAccountTypeI BankAccountType = 1 + iota // I – Internal (shown in customer UI)
+	BankAccountTypeE                            // E – External
 )

@@ -42,7 +42,7 @@ func TestAPI_CreateOrder(t *testing.T) {
 			Email: "vipcoin-standard@coinfide.com",
 		},
 		CurrencyCode:    "EUR",
-		ExternalOrderID: "VCG-ORDER-wqefmolseemopptuyms",
+		ExternalOrderID: "VCG-ORDER-wqefmolseemopptuymo",
 		OrderItems: []OrderItem{
 			{
 				Type:        OrderITypeItem,
@@ -53,15 +53,77 @@ func TestAPI_CreateOrder(t *testing.T) {
 			},
 		},
 	}
+
+	extPurchaseOrder := &Order{
+		Seller: &auth.Account{
+			Email: "vipcoin-merchant@coinfide.com",
+		},
+		Buyer: &auth.Account{
+			Email: "vipcoin-standard@coinfide.com",
+		},
+		CurrencyCode:    "EUR",
+		ExternalOrderID: "VCG-ORDER-wqefmolseemopptuymo",
+		OrderItems: []OrderItem{
+			{
+				Type:        OrderITypeItem,
+				Name:        "Item1",
+				Description: "First item description",
+				PriceUnit:   currency.Fiat(10 * currency.One),
+				Quantity:    currency.Fiat(1 * currency.One),
+			},
+		},
+		ExternalPayout: &ExternalPayout{
+			Method: 1,
+		},
+	}
+
 	_, err = json.Marshal(order)
 	assert.NoError(t, err)
+
+	createdOrder, err := api.CreateOrder(order)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, createdOrder)
 
 	list, err := api.GetOrderList(
 		time.Now().Add(-1*30*24*time.Hour).Unix(),
 		time.Now().Unix())
 	assert.NoError(t, err)
 	assert.NotEmpty(t, list)
-	list, err = api.GetOrderDetails("GetOrderDetails", "8ed61188-a43d-44f2-85b5-563df4bf92b8")
+
+	orderDetails, err := api.GetOrderDetails("", "VCG-ORDER-wqefmolseemopptuymo")
 	assert.NoError(t, err)
-	assert.NotEmpty(t, list)
+	assert.NotEmpty(t, orderDetails)
+
+	refundItem := RefundRequest{"19c4321a-28f0-4903-a379-d55650580c11", 4, "comment"}
+	refundOrder, err := api.Refund(refundItem)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, refundOrder)
+
+	updateStatusReq := UpdateOrderStatusRequest{"", "MP"}
+	newStatus, err := api.SetOrderNewStatus(updateStatusReq)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, newStatus)
+
+	draft, err := api.CreateOrderDraft(order)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, draft)
+
+	updatedDraft, err := api.UpdateOrderDraft(order)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, updatedDraft)
+
+	err1 := api.DeleteOrderDraft("c1547085-411b-4d77-9344-8c74cd946aa5")
+	assert.NoError(t, err1)
+
+	sentDraft, err := api.SendOrderDraft("5182c7bf-6c54-4bdf-a59c-6e147f4082ee")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, sentDraft)
+
+	createdExternalPurchaseOrder, err := api.CreateExternalPurchaseOrder(extPurchaseOrder)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, createdExternalPurchaseOrder)
+
+	orderTariff, err := api.GetOrderTariff("465dfb0a-c114-4d00-9c17-c2318123524c")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, orderTariff)
 }

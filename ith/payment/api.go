@@ -6,9 +6,16 @@ import (
 )
 
 const (
-	APIOrderCreate = "/paymentapi/order/create"
-	APIOrderData   = "/paymentapi/order/details"
-	APIOrdersList  = "/paymentapi/order/list"
+	APIOrderCreate      = "/paymentapi/order/create"
+	APIOrderData        = "/paymentapi/order/details"
+	APIOrdersList       = "/paymentapi/order/list"
+	APIOrderRefund      = "/paymentapi/order/refund"
+	APIOrderNewStatus   = "/paymentapi/order/status"
+	APIOrderDraft       = "/paymentapi/order/draft/create"
+	APIOrderDraftUpdate = "/paymentapi/order/draft/update"
+	APIOrderDraftDelete = "/paymentapi/order/draft/delete"
+	APIOrderDraftSend   = "/paymentapi/order/draft/send"
+	APIGetOrderTariff   = "/paymentapi/tariff/order/"
 )
 
 type ErrorData struct {
@@ -34,4 +41,20 @@ type CreateOrderRequest struct {
 	ErrorData   *ErrorData `json:"errorData,omitempty"`
 	Order       *Order     `json:"order,omitempty"`
 	RedirectUrl string     `json:"redirectUrl,omitempty"`
+}
+
+type DeleteOrderUID struct {
+	UID string `json:"uid"`
+}
+
+type UpdateOrderStatusRequest struct {
+	UID    string `json:"uid"`
+	Status string `json:"status"`
+}
+
+type GetOrderTariffResponse struct {
+	ErrorData           *ErrorData          `json:"errorData,omitempty"`
+	OrderUid            string              `json:"orderUid,omitempty"`
+	OriginalOrderAmount float64             `json:"originalOrderAmount,omitempty"`
+	PaymentMethods      PaymentMethodTariff `json:"paymentMethods,omitempty"`
 }

@@ -13,9 +13,33 @@ type (
 		CustomParameters string `json:"customParameters,omitempty"` // String(255);
 	}
 
+	Currency struct {
+		Code        string `json:"code"`
+		Symbol      string `json:"symbol"`
+		Description string `json:"description"`
+	}
+
+	ExternalPayout struct {
+		Method         PaymentMethod `json:"paymentMethod"`
+		BankCarsUid    string        `json:"bankCardUid"`
+		BankAccountUid string        `json:"bankAccountUid"`
+		WalletUid      string        `json:"walletUid"`
+	}
+
 	Parameter struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
+	}
+
+	PaymentMethodTariff struct {
+		Code                       string        `json:"code"`
+		Name                       string        `json:"name"`
+		Method                     PaymentMethod `json:"paymentMethod"`
+		Commission                 float64       `json:"commission"`
+		CommissionPercent          float64       `json:"commissionPercent"`
+		CommissionAmountAdditional float64       `json:"commissionAmountAdditional"`
+		AmountSent                 float64       `json:"amountSent"`
+		AmountReceived             float64       `json:"amountReceived"`
 	}
 
 	Tax struct {
@@ -46,31 +70,32 @@ type (
 	}
 
 	Order struct {
-		UID                          string         `json:"uid,omitempty"`                          // String(36); ITH platform’s order unique id
-		OrderNumber                  string         `json:"orderNumber,omitempty"`                  // String(20); Visible order number
-		Status                       OrderStatus    `json:"status,omitempty"`                       // String(2)
-		Seller                       *auth.Account  `json:"seller,omitempty"`                       // Order seller object
-		Buyer                        *auth.Account  `json:"buyer,omitempty"`                        // Order buyer object
-		CurrencyCode                 string         `json:"currencyCode,omitempty"`                 // String(3); ISO currency code
-		DiscountAmount               currency.Fiat  `json:"discountAmount,omitempty"`               // BigDecimal(14,2);
-		DiscountPercent              currency.Fiat  `json:"discountPercent,omitempty"`              // BigDecimal(14,2);
-		AmountTotal                  currency.Fiat  `json:"amountTotal,omitempty"`                  // BigDecimal(14,2); Order total amount
-		IssueDate                    string         `json:"issueDate,omitempty"`                    // String(14); Order issue date. Format - yyyyMMddHHmmss
-		DueDate                      string         `json:"dueDate,omitempty"`                      // String(14); Order due date. Format - yyyyMMddHHmmss
-		ExternalOrderID              string         `json:"externalOrderId,omitempty"`              // Order ID in external system
-		Reference                    string         `json:"reference,omitempty"`                    // Reference
-		Note                         string         `json:"note,omitempty"`                         // Note
-		Terms                        string         `json:"terms,omitempty"`                        // Terms
-		ProvisionChannel             string         `json:"provisionChannel,omitempty"`             // String(6); Provision channel
-		AffiliateInfo                *AffiliateInfo `json:"affiliateInfo,omitempty"`                // Affiliate information
-		AcceptPaymentsIfOrderExpired bool           `json:"acceptPaymentsIfOrderExpired,omitempty"` // Accept payments if order expired
-		TaxBeforeDiscount            bool           `json:"taxBeforeDiscount,omitempty"`            // Tax before discount flag
-		TaxInclusive                 bool           `json:"taxInclusive,omitempty"`                 // Tax inclusive flag
-		PaymentPageUrl               string         `json:"paymentPageUrl,omitempty"`               // External payment page URL
-		SuccessUrl                   string         `json:"successUrl,omitempty"`                   // Success URL
-		FailUrl                      string         `json:"failUrl,omitempty"`                      // Fail URL
-		OrderItems                   []OrderItem    `json:"orderItems,omitempty,omitempty"`         // Order items
-		ShippingAddress              *auth.Address  `json:"shippingAddress,omitempty,omitempty"`    // Shipping address
+		UID                          string          `json:"uid,omitempty"`                          // String(36); ITH platform’s order unique id
+		OrderNumber                  string          `json:"orderNumber,omitempty"`                  // String(20); Visible order number
+		Status                       OrderStatus     `json:"status,omitempty"`                       // String(2)
+		Seller                       *auth.Account   `json:"seller,omitempty"`                       // Order seller object
+		Buyer                        *auth.Account   `json:"buyer,omitempty"`                        // Order buyer object
+		CurrencyCode                 string          `json:"currencyCode,omitempty"`                 // String(3); ISO currency code
+		DiscountAmount               currency.Fiat   `json:"discountAmount,omitempty"`               // BigDecimal(14,2);
+		DiscountPercent              currency.Fiat   `json:"discountPercent,omitempty"`              // BigDecimal(14,2);
+		AmountTotal                  currency.Fiat   `json:"amountTotal,omitempty"`                  // BigDecimal(14,2); Order total amount
+		IssueDate                    string          `json:"issueDate,omitempty"`                    // String(14); Order issue date. Format - yyyyMMddHHmmss
+		DueDate                      string          `json:"dueDate,omitempty"`                      // String(14); Order due date. Format - yyyyMMddHHmmss
+		ExternalOrderID              string          `json:"externalOrderId,omitempty"`              // Order ID in external system
+		Reference                    string          `json:"reference,omitempty"`                    // Reference
+		Note                         string          `json:"note,omitempty"`                         // Note
+		Terms                        string          `json:"terms,omitempty"`                        // Terms
+		ProvisionChannel             string          `json:"provisionChannel,omitempty"`             // String(6); Provision channel
+		AffiliateInfo                *AffiliateInfo  `json:"affiliateInfo,omitempty"`                // Affiliate information
+		AcceptPaymentsIfOrderExpired bool            `json:"acceptPaymentsIfOrderExpired,omitempty"` // Accept payments if order expired
+		TaxBeforeDiscount            bool            `json:"taxBeforeDiscount,omitempty"`            // Tax before discount flag
+		TaxInclusive                 bool            `json:"taxInclusive,omitempty"`                 // Tax inclusive flag
+		PaymentPageUrl               string          `json:"paymentPageUrl,omitempty"`               // External payment page URL
+		SuccessUrl                   string          `json:"successUrl,omitempty"`                   // Success URL
+		FailUrl                      string          `json:"failUrl,omitempty"`                      // Fail URL
+		OrderItems                   []OrderItem     `json:"orderItems,omitempty"`                   // Order items
+		ShippingAddress              *auth.Address   `json:"shippingAddress,omitempty"`              // Shipping address
+		ExternalPayout               *ExternalPayout `json:"externalPayout,omitempty"`
 	}
 
 	OrderShort struct {
@@ -84,5 +109,13 @@ type (
 		MerchantUrl     string        `json:"merchantUrl,omitempty"`     // URL for callback sending. Provided only in callbacks
 		Transactions    []Transaction `json:"transactions,omitempty"`    // List of related transactions. Provided only in callbacks
 		TestOrder       bool          `json:"testOrder,omitempty"`
+	}
+
+	Wallet struct {
+		Uid      string     `json:"uid"`
+		Type     WalletType `json:"type"`
+		Currency Currency   `json:"type"`
+		Balance  float64    `json:"balance"`
+		Primary  bool       `json:"primary"`
 	}
 )

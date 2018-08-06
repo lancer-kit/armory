@@ -3,10 +3,12 @@ package payment
 import (
 	"fmt"
 
+	"strconv"
+
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/vcg/go-common/api/httpx"
-	"gitlab.inn4science.com/vcg/go-common/ith"
 	"gitlab.inn4science.com/vcg/go-common/ith/auth"
+	_ "gitlab.inn4science.com/vcg/go-common/ith/auth"
 )
 
 type API struct {
@@ -46,7 +48,6 @@ func (api *API) GetOrderDetails(uid, externalOrderId string) (*OrdersListResp, e
 		UID:             uid,
 		ExternalOrderId: externalOrderId,
 	}
-
 	httpResp, err := httpx.PostJSON(
 		u.String(),
 		req,
@@ -70,12 +71,16 @@ func (api *API) GetOrderDetails(uid, externalOrderId string) (*OrdersListResp, e
 
 func (api *API) GetOrderList(since, until int64) (*OrdersListResp, error) {
 	u := api.Config.GetURL(APIOrdersList)
+	timeSince := strconv.Itoa(int(since))
+	timeFrom := strconv.Itoa(int(until))
+
 	request := struct {
-		DateFrom ith.Time `json:"dateFrom"`
-		DateTo   ith.Time `json:"dateTo"`
+		DateFrom string `json:"dateFrom"`
+		DateTo   string `json:"dateTo"`
 	}{
-		DateFrom: ith.Time("").FromTimestamp(since),
-		DateTo:   ith.Time("").FromTimestamp(until),
+
+		DateFrom: timeSince,
+		DateTo:   timeFrom,
 	}
 
 	httpResp, err := httpx.PostJSON(
@@ -92,6 +97,192 @@ func (api *API) GetOrderList(since, until int64) (*OrdersListResp, error) {
 	}
 
 	response := new(OrdersListResp)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) Refund(refund RefundRequest) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderRefund)
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&refund,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) SetOrderNewStatus(updateItem UpdateOrderStatusRequest) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderNewStatus)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		updateItem,
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) CreateOrderDraft(order *Order) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderDraft)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&CreateOrderRequest{Order: order},
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) UpdateOrderDraft(order *Order) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderDraftUpdate)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&CreateOrderRequest{Order: order},
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) DeleteOrderDraft(uid string) error {
+	u := api.Config.GetURL(APIOrderDraftDelete)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&DeleteOrderUID{UID: uid},
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+	return err
+}
+
+func (api *API) SendOrderDraft(uid string) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderDraftSend)
+
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&DeleteOrderUID{UID: uid},
+		api.AuthHeader(),
+	)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) CreateExternalPurchaseOrder(order *Order) (*CreateOrderRequest, error) {
+	u := api.Config.GetURL(APIOrderCreate)
+	if order.ExternalPayout == nil {
+		return nil, fmt.Errorf("externalPayout is a required parameter")
+	}
+	httpResp, err := httpx.PostJSON(
+		u.String(),
+		&CreateOrderRequest{Order: order},
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(CreateOrderRequest)
+	err = httpx.ParseJSONResult(httpResp, response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse response")
+	}
+	return response, err
+}
+
+func (api *API) GetOrderTariff(orderUid string) (*GetOrderTariffResponse, error) {
+	u := api.Config.GetURL(APIGetOrderTariff + orderUid)
+	httpResp, err := httpx.GetJSON(
+		u.String(),
+		api.AuthHeader(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh auth token")
+	}
+
+	if httpResp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed with status - %d", httpResp.StatusCode)
+	}
+
+	response := new(GetOrderTariffResponse)
 	err = httpx.ParseJSONResult(httpResp, response)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse response")

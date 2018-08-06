@@ -58,3 +58,21 @@ const (
 	OrderITypeItem OrderIType = 1 + iota
 	OrderITypeShipping
 )
+
+//go:generate goplater -type=PaymentMethod -transform=snake -tprefix=false
+type PaymentMethod int
+
+const (
+	PaymentMethodBankcard PaymentMethod = 1 + iota
+	PaymentMethodBanktransfer
+	PaymentMethodEwallet
+)
+
+//go:generate goplater -type=WalletType -transform=snake -tprefix=false
+type WalletType int
+
+const (
+	WalletTypeS  WalletType = 1 + iota // S – Standard
+	WalletTypeR                        // R – Rolling reserve
+	WalletTypeAC                       // AC – Accumulation wallet
+)
