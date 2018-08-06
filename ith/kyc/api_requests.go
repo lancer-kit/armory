@@ -15,6 +15,11 @@ type API struct {
 func (api *API) CreateDocument(document *Document) (*CreateDocumentRequest, error) {
 	u := api.Config.GetURL(APIDocumentUpload)
 
+	err := document.Validate()
+	if err != nil {
+		return nil, errors.Wrap(err, "document validation failed")
+	}
+
 	httpResp, err := httpx.PostJSON(
 		u.String(),
 		document,
