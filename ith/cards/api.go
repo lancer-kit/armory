@@ -6,13 +6,13 @@ import (
 )
 
 const (
-	APIGetLinkedCards  = "/commonapi/account/creditcard"
-	APIVerifyCard      = "/commonapi/creditcard/verify"
-	GetBankAccountList = "/commonapi/bankaccount/list"
-	AddBankAccount     = "/commonapi/bankaccount/add"
-	EditBankAccount    = "/commonapi/bankaccount/edit"
-	DeleteBankAccount  = "/commonapi/bankaccount/delete"
-	SetPrimaryBankAccount = "/commonapi/bankaccount/primary"
+	APIGetLinkedCards        = "/commonapi/account/creditcard"
+	APIVerifyCard            = "/commonapi/creditcard/verify"
+	APIGetBankAccountList    = "/commonapi/bankaccount/list"
+	APIAddBankAccount        = "/commonapi/bankaccount/add"
+	APIEditBankAccount       = "/commonapi/bankaccount/edit"
+	APIDeleteBankAccount     = "/commonapi/bankaccount/delete"
+	APISetPrimaryBankAccount = "/commonapi/bankaccount/primary"
 )
 
 type CardListResult struct {
@@ -37,14 +37,14 @@ type Card struct {
 }
 
 type Country struct {
-	Code                   string `json:"code"`                   //String(2); ISO country code
-	Name                   string `json:"name"`                   //String(255); ISO country code
-	BradnsedCardsAvaliable bool   `json:"bradnsedCardsAvaliable"` //Branded cards are supported for this country
-	RegistrationAllowed    bool   `json:"registrationAllowed"`    //Registration from this country is supported
+	Code                  string `json:"code"`                  //String(2); ISO country code
+	Name                  string `json:"name"`                  //String(255); ISO country code
+	BrandedCardsAvailable bool   `json:"brandedCardsAvailable"` //Branded cards are supported for this country
+	RegistrationAllowed   bool   `json:"registrationAllowed"`   //Registration from this country is supported
 }
 
 type BankAccount struct {
-	PublicId                 string  `json:"publicId, omitempty"`      // String(36); Bank account UID
+	PublicId                 string  `json:"publicId,omitempty"`       // String(36); Bank account UID
 	AccountNumber            string  `json:"accountNumber"`            // String(255); Bank account number
 	BankName                 string  `json:"bankName"`                 // String(255); Bank name
 	HolderName               string  `json:"holderName"`               // String(255); Bank account holder name
@@ -67,16 +67,16 @@ type BankAccountList struct {
 }
 
 type BankAccountRequest struct {
-	BankAccountUid           string `json:"bankAccountUid, omitempty"` // String(36); Bank account UID
-	AccountNumber            string `json:"accountNumber"`             // String(255); Bank account number
-	BankName                 string `json:"bankName"`                  // String(255); Bank name
-	HolderName               string `json:"holderName"`                // String(255); Bank account holder name
-	SwiftCode                string `json:"swiftCode"`                 // String(255); Bank SWIFT code
-	CountryCode              string `json:"countryCode"`               //String(2); Bank country ISO code
-	Type                     string `json:"type"`                      //String(1); Bank account type: I – Internal (shown in customer UI), E – External
-	HolderAddress            string `json:"holderAddress"`             //String(70); Bank account holder address
-	HolderCountryCode        string `json:"holderCountryCode"`         //String(2); Bank account holder country ISO code
-	CorrespondentBankDetails string `json:"correspondentBankDetails"`  //Correspondent bank details
+	BankAccountUid           string          `json:"bankAccountUid,omitempty"` // String(36); Bank account UID
+	AccountNumber            string          `json:"accountNumber"`            // String(255); Bank account number
+	BankName                 string          `json:"bankName"`                 // String(255); Bank name
+	HolderName               string          `json:"holderName"`               // String(255); Bank account holder name
+	SwiftCode                string          `json:"swiftCode"`                // String(255); Bank SWIFT code
+	CountryCode              string          `json:"countryCode"`              //String(2); Bank country ISO code
+	Type                     BankAccountType `json:"type"`                     //String(1); Bank account type: I – Internal (shown in customer UI), E – External
+	HolderAddress            string          `json:"holderAddress"`            //String(70); Bank account holder address
+	HolderCountryCode        string          `json:"holderCountryCode"`        //String(2); Bank account holder country ISO code
+	CorrespondentBankDetails string          `json:"correspondentBankDetails"` //Correspondent bank details
 }
 
 type AccountUidRequest struct {
@@ -109,9 +109,10 @@ const (
 	CardStatusVerified
 )
 
-//type BankAccountType int
-//
-//const (
-//	I BankAccountType = 1 + iota
-//	E
-//)
+//go:generate goplater -type=BankAccountType -transform=none -tprefix=false
+type BankAccountType int
+
+const (
+	BankAccountTypeI BankAccountType = 1 + iota // I – Internal (shown in customer UI)
+	BankAccountTypeE                            // E – External
+)

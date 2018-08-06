@@ -59,18 +59,20 @@ const (
 	OrderITypeShipping
 )
 
+//go:generate goplater -type=PaymentMethod -transform=snake -tprefix=false
 type PaymentMethod int
 
 const (
-	Bankcard PaymentMethod = 1 + iota
-	Banktransfer
-	Ewallet
+	PaymentMethodBankcard PaymentMethod = 1 + iota
+	PaymentMethodBanktransfer
+	PaymentMethodEwallet
 )
 
+//go:generate goplater -type=WalletType -transform=snake -tprefix=false
 type WalletType int
 
 const (
-	S WalletType = 1 + iota
-	R
-	AC
+	WalletTypeS  WalletType = 1 + iota // S – Standard
+	WalletTypeR                        // R – Rolling reserve
+	WalletTypeAC                       // AC – Accumulation wallet
 )

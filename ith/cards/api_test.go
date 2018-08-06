@@ -43,7 +43,7 @@ func TestAPI_GetCardList(t *testing.T) {
 		HolderName:               "John Doe",
 		SwiftCode:                "DGHTY55645H",
 		CountryCode:              "DE",
-		Type:                     "I",
+		Type:                     BankAccountTypeI,
 		HolderAddress:            "345, TH 6",
 		HolderCountryCode:        "UA",
 		CorrespondentBankDetails: "A lot of information here",
@@ -56,7 +56,7 @@ func TestAPI_GetCardList(t *testing.T) {
 		HolderName:               "John Doe",
 		SwiftCode:                "DGHTY55645H",
 		CountryCode:              "DE",
-		Type:                     "I",
+		Type:                     BankAccountTypeI,
 		HolderAddress:            "345, TH 6",
 		HolderCountryCode:        "UA",
 		CorrespondentBankDetails: "A lot of information here",
@@ -66,6 +66,7 @@ func TestAPI_GetCardList(t *testing.T) {
 	assert.Empty(t, result.ErrorData)
 	assert.NotEmpty(t, addedAccount.BankAccountList)
 
+	//fixme: Error: Should NOT be empty, but was []
 	//bankAccountList, err := api.GetBankAccountList("")
 	//assert.NoError(t, err)
 	//assert.NotEmpty(t, bankAccountList.BankAccountList)

@@ -245,7 +245,7 @@ func (api *API) SendOrderDraft(uid string) (*CreateOrderRequest, error) {
 func (api *API) CreateExternalPurchaseOrder(order *Order) (*CreateOrderRequest, error) {
 	u := api.Config.GetURL(APIOrderCreate)
 	if order.ExternalPayout == nil {
-		return nil, fmt.Errorf("External Payout is a required parameter")
+		return nil, fmt.Errorf("externalPayout is a required parameter")
 	}
 	httpResp, err := httpx.PostJSON(
 		u.String(),

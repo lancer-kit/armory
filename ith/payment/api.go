@@ -9,7 +9,7 @@ const (
 	APIOrderCreate      = "/paymentapi/order/create"
 	APIOrderData        = "/paymentapi/order/details"
 	APIOrdersList       = "/paymentapi/order/list"
-	APIOrderRefund      = "paymentapi/order/refund"
+	APIOrderRefund      = "/paymentapi/order/refund"
 	APIOrderNewStatus   = "/paymentapi/order/status"
 	APIOrderDraft       = "/paymentapi/order/draft/create"
 	APIOrderDraftUpdate = "/paymentapi/order/draft/update"
@@ -50,38 +50,6 @@ type DeleteOrderUID struct {
 type UpdateOrderStatusRequest struct {
 	UID    string `json:"uid"`
 	Status string `json:"status"`
-}
-
-type ExternalPayout struct {
-	Method         PaymentMethod `json:"paymentMethod"`
-	BankCarsUid    string        `json:"bankCardUid"`
-	BankAccountUid string        `json:"bankAccountUid"`
-	WalletUid      string        `json:"walletUid"`
-}
-
-type PaymentMethodTariff struct {
-	Code                       string        `json:"code"`
-	Name                       string        `json:"name"`
-	Method                     PaymentMethod `json:"paymentMethod"`
-	Commission                 float64       `json:"commission"`
-	CommisionPercent           float64       `json:"commissionPercent"`
-	CommissionAmountAdditional float64       `json:"commissionAmountAdditional"`
-	AmountSent                 float64       `json:"amountSent"`
-	AmountReceived             float64       `json:"amountReceived"`
-}
-
-type Currency struct {
-	Code        string `json:"code"`
-	Symbol      string `json:"symbol"`
-	Description string `json:"description"`
-}
-
-type Wallet struct {
-	Uid      string     `json:"uid"`
-	Type     WalletType `json:"type"`
-	Currency Currency   `json:"type"`
-	Balance  float64    `json:"balance"`
-	Primary  bool       `json:"primary"`
 }
 
 type GetOrderTariffResponse struct {

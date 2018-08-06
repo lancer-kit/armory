@@ -73,7 +73,7 @@ func (api *API) GetBankAccountList(request string) (*BankAccountList, error) {
 	}
 
 	httpResp, err := httpx.PostJSON(
-		api.Config.GetURL(GetBankAccountList).String(),
+		api.Config.GetURL(APIGetBankAccountList).String(),
 		&request,
 		api.AuthHeader(),
 	)
@@ -100,7 +100,7 @@ func (api *API) AddBankAccount(request *BankAccountRequest) (*BankAccountList, e
 	}
 
 	httpResp, err := httpx.PutJSON(
-		api.Config.GetURL(AddBankAccount).String(),
+		api.Config.GetURL(APIAddBankAccount).String(),
 		&request,
 		api.AuthHeader(),
 	)
@@ -128,7 +128,7 @@ func (api *API) EditBankAccount(request *BankAccountRequest) (*BankAccountList, 
 	}
 
 	httpResp, err := httpx.PostJSON(
-		api.Config.GetURL(EditBankAccount).String(),
+		api.Config.GetURL(APIEditBankAccount).String(),
 		&request,
 		api.AuthHeader(),
 	)
@@ -155,7 +155,7 @@ func (api *API) DeleteBankAccount(request AccountUidRequest) (*BankAccountList, 
 	}
 
 	httpResp, err := httpx.PostJSON(
-		api.Config.GetURL(DeleteBankAccount).String(),
+		api.Config.GetURL(APIDeleteBankAccount).String(),
 		&request,
 		api.AuthHeader(),
 	)
@@ -182,7 +182,7 @@ func (api *API) SetPrimaryBankAccount(request AccountUidRequest) (*BankAccountLi
 	}
 
 	httpResp, err := httpx.PostJSON(
-		api.Config.GetURL(SetPrimaryBankAccount).String(),
+		api.Config.GetURL(APISetPrimaryBankAccount).String(),
 		&request,
 		api.AuthHeader(),
 	)

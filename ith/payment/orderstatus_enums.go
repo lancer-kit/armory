@@ -89,8 +89,11 @@ func (r *OrderStatus) UnmarshalJSON(data []byte) error {
 
 // Value is generated so OrderStatus satisfies db row driver.Valuer.
 func (r OrderStatus) Value() (driver.Value, error) {
-	j, err := json.Marshal(r)
-	return j, err
+	s, ok := defOrderStatusValueToName[r]
+	if !ok {
+		return "", nil
+	}
+	return s, nil
 }
 
 // Value is generated so OrderStatus satisfies db row driver.Scanner.

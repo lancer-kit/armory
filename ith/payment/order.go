@@ -13,9 +13,33 @@ type (
 		CustomParameters string `json:"customParameters,omitempty"` // String(255);
 	}
 
+	Currency struct {
+		Code        string `json:"code"`
+		Symbol      string `json:"symbol"`
+		Description string `json:"description"`
+	}
+
+	ExternalPayout struct {
+		Method         PaymentMethod `json:"paymentMethod"`
+		BankCarsUid    string        `json:"bankCardUid"`
+		BankAccountUid string        `json:"bankAccountUid"`
+		WalletUid      string        `json:"walletUid"`
+	}
+
 	Parameter struct {
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
+	}
+
+	PaymentMethodTariff struct {
+		Code                       string        `json:"code"`
+		Name                       string        `json:"name"`
+		Method                     PaymentMethod `json:"paymentMethod"`
+		Commission                 float64       `json:"commission"`
+		CommissionPercent          float64       `json:"commissionPercent"`
+		CommissionAmountAdditional float64       `json:"commissionAmountAdditional"`
+		AmountSent                 float64       `json:"amountSent"`
+		AmountReceived             float64       `json:"amountReceived"`
 	}
 
 	Tax struct {
@@ -85,5 +109,13 @@ type (
 		MerchantUrl     string        `json:"merchantUrl,omitempty"`     // URL for callback sending. Provided only in callbacks
 		Transactions    []Transaction `json:"transactions,omitempty"`    // List of related transactions. Provided only in callbacks
 		TestOrder       bool          `json:"testOrder,omitempty"`
+	}
+
+	Wallet struct {
+		Uid      string     `json:"uid"`
+		Type     WalletType `json:"type"`
+		Currency Currency   `json:"type"`
+		Balance  float64    `json:"balance"`
+		Primary  bool       `json:"primary"`
 	}
 )
