@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.inn4science.com/vcg/go-common/db"
+	"gitlab.inn4science.com/gophers/service-kit/db"
 )
 
 // PrettyMarshal is a flag that enable marshalling with indent

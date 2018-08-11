@@ -34,7 +34,7 @@ package main
 
 import (
     "log"
-    "gitlab.inn4science.com/vcg/go-common/db"
+    "gitlab.inn4science.com/gophers/service-kit/db"
 )
 
 func main() {

@@ -9,7 +9,7 @@ To start use the `natswrap` package add import:
 ``` go
 ...
 import (
-  "gitlab.inn4science.com/vcg/go-common/natswrap"
+  "gitlab.inn4science.com/gophers/service-kit/natswrap"
 )
 ...
 ```
@@ -41,7 +41,7 @@ package main
 
 import (
     "fmt"
-    "gitlab.inn4science.com/vcg/go-common/natswrap"
+    "gitlab.inn4science.com/gophers/service-kit/natswrap"
 )
 
 var config = natswrap.Config{

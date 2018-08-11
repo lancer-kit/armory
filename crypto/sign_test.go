@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/vcg/go-common/types/currency"
+	"gitlab.inn4science.com/gophers/service-kit/types/currency"
 )
 
 func TestVerifySignature(t *testing.T) {

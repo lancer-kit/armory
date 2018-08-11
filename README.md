@@ -1,4 +1,4 @@
-# vcg-go-common
+# Service Kit
 
 Common libraries for go services:
 
@@ -12,5 +12,3 @@ Common libraries for go services:
 - **Api**
     - [Render](./api/render/README.md) - response helper, base responses
     - [Natswrap](./natswrap/README.md) - simple wrapper for Nats
-- **Data models**
-    - [ITH.Account management services](./ith/ams/README.md)

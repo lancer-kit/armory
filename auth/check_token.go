@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"gitlab.inn4science.com/vcg/go-common/api/render"
-	"gitlab.inn4science.com/vcg/go-common/log"
+	"gitlab.inn4science.com/gophers/service-kit/api/render"
+	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 type ReturnAuthStruct struct {

@@ -1,7 +1,7 @@
 # sender
 
 ---
-    import "gitlab.inn4science.com/vcg/go-common/sender"
+    import "gitlab.inn4science.com/gophers/service-kit/sender"
 
 *sender* is a client package for sender service. It allow to make and send emails.
 `Message` can be sent through the HTTP or NATS.

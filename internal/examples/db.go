@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"gitlab.inn4science.com/vcg/go-common/db"
+	"gitlab.inn4science.com/gophers/service-kit/db"
 )
 
 type User struct {

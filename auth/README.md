@@ -1,6 +1,6 @@
 # auth
 --
-    import "gitlab.inn4science.com/vcg/go-common/auth"
+    import "gitlab.inn4science.com/gophers/service-kit/auth"
 
 
 ## Usage

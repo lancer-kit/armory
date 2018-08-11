@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"gitlab.inn4science.com/vcg/go-common/log"
 	"github.com/sirupsen/logrus"
+	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 // CtxKey is the type of context keys for the values placed by`Chief`.

@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 
 	"github.com/pkg/errors"
-	"gitlab.inn4science.com/vcg/go-common/crypto"
+	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 const (

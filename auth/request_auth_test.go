@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/vcg/go-common/crypto"
+	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 type TestModel struct {

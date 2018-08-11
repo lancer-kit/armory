@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"gitlab.inn4science.com/vcg/go-common/log"
-	"gitlab.inn4science.com/vcg/go-common/routines"
+	"gitlab.inn4science.com/gophers/service-kit/log"
+	"gitlab.inn4science.com/gophers/service-kit/routines"
 )
 
 // Keeper is a service that verifies the connection
