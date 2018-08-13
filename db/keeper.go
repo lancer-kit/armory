@@ -43,6 +43,11 @@ func (s *Keeper) Init(parentCtx context.Context) routines.Worker {
 	return s
 }
 
+// RestartOnFail determines the need to restart the worker, if it stopped.
+func (s *Keeper) RestartOnFail() bool {
+	return true
+}
+
 // Run starts worker execution.
 func (s *Keeper) Run() {
 	ticker := time.NewTicker(s.Interval)

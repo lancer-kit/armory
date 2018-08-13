@@ -6,15 +6,6 @@ import (
 	"time"
 )
 
-// Worker is an interface for async workers
-// which launches and manages by the `Chief`.
-type Worker interface {
-	// Init initializes new instance of the `Worker` implementation.
-	Init(context.Context) Worker
-	// Run starts the `Worker` instance execution.
-	Run()
-}
-
 // DummyWorker is a simple realization of the Worker interface.
 type DummyWorker struct {
 	tickDuration time.Duration
@@ -27,6 +18,11 @@ func (*DummyWorker) Init(parentCtx context.Context) Worker {
 		ctx:          parentCtx,
 		tickDuration: time.Second,
 	}
+}
+
+// RestartOnFail determines the need to restart the worker, if it stopped
+func (s *DummyWorker) RestartOnFail() bool {
+	return true
 }
 
 // Run start job execution.

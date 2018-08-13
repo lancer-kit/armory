@@ -8,7 +8,7 @@ import (
 	"bytes"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/vcg/go-common/crypto"
+	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 func TestXClient_Auth(t *testing.T) {
