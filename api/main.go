@@ -34,6 +34,7 @@ func (c *Config) TCPAddr() string {
 type Server struct {
 	Name      string
 	Config    Config
+	GetConfig func() Config
 	GetRouter func(*logrus.Entry, Config) http.Handler
 
 	ctx    context.Context
@@ -65,10 +66,16 @@ func (s *Server) Init(parentCtx context.Context) routines.Worker {
 }
 
 func (s *Server) RestartOnFail() bool {
+	if s.GetConfig != nil {
+		return s.GetConfig().RestartOnFail
+	}
 	return s.Config.RestartOnFail
 }
 
 func (s *Server) Run() {
+	if s.GetConfig != nil {
+		s.Config = s.GetConfig()
+	}
 	addr := fmt.Sprintf("%s:%d", s.Config.Host, s.Config.Port)
 
 	server := &http.Server{
