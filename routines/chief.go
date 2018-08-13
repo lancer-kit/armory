@@ -2,8 +2,13 @@ package routines
 
 import (
 	"context"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
+	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"gitlab.inn4science.com/gophers/service-kit/log"
 )
@@ -15,6 +20,9 @@ const (
 	// CtxKeyLog is a context key for a `*logrus.Entry` value.
 	CtxKeyLog CtxKey = "chief-log"
 )
+
+// ForceStopTimeout is a timeout for killing all workers.
+var ForceStopTimeout = 45 * time.Second
 
 // Chief is a head of workers, it must be used to register, initialize
 // and correctly start and stop asynchronous executors of the type `Worker`.
@@ -98,6 +106,42 @@ func (chief *Chief) Start(parentCtx context.Context) {
 
 	chief.wg.Wait()
 	chief.logger.Info("Workers stopped")
+}
+
+// RunAll start worker pool and lock context
+// until it intercepts `syscall.SIGTERM`, `syscall.SIGINT`.
+// NOTE: Use this method ONLY  as a top-level action.
+func (chief *Chief) RunAll(appName string, workers ...string) error {
+	done := make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
+	chief.EnableWorkers(workers...)
+
+	chief.InitWorkers(log.Default)
+	go func() {
+		defer close(done)
+		chief.Start(ctx)
+	}()
+
+	chief.logger.Info(appName + " started")
+
+	var gracefulStop = make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM, syscall.SIGINT)
+
+	exitSignal := <-gracefulStop
+	chief.logger.WithField("signal", exitSignal).
+		Info("Received signal. Terminating service...")
+
+	cancel()
+
+	select {
+	case <-done:
+		chief.logger.Info("Graceful exit.")
+		return nil
+	case <-time.NewTimer(ForceStopTimeout).C:
+		chief.logger.Warn("Graceful exit timeout exceeded. Force exit.")
+		return errors.New("Graceful exit timeout exceeded")
+	}
 }
 
 func (chief *Chief) runWorker(name string, worker Worker) {
