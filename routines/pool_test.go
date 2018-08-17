@@ -2,38 +2,39 @@ package routines
 
 import (
 	"context"
-	"testing"
-	"gitlab.inn4science.com/gophers/service-kit/log"
-	"github.com/stretchr/testify/require"
 	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 type test struct {
-	name string
-	pool *WorkerPool
+	name       string
+	pool       *WorkerPool
 	workerName string
-	want WorkerState
+	want       WorkerState
 }
 
 //wrapper for WorkerPool methods
-type wrapper func (wp *WorkerPool, name string)
+type wrapper func(wp *WorkerPool, name string)
 
 // mockWorker is an implementation
 type mockWorker struct {
 }
 
-func (m mockWorker)Init(context.Context) Worker{
+func (m mockWorker) Init(context.Context) Worker {
 	return m
 }
-func (m mockWorker)RestartOnFail() bool{
+func (m mockWorker) RestartOnFail() bool {
 	return false
 }
-func (m mockWorker)Run(){
+func (m mockWorker) Run() {
 
 }
 
 // initPool returns WorkerPool instance suitable for most tests
-func initPool() *WorkerPool{
+func initPool() *WorkerPool {
 	newPool := new(WorkerPool)
 	newPool.workers = make(map[string]Worker)
 	newPool.workers["test"] = mockWorker{}
@@ -58,31 +59,30 @@ func TestWorkerPool_DisableWorker(t *testing.T) {
 	testPool := initPool()
 	tests := []test{
 		{
-			name: "Disable worker test",
-			pool:	testPool,
+			name:       "Disable worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerDisabled,
+			want:       WorkerDisabled,
 		},
 	}
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.DisableWorker(name)
 	})
 
 }
-
 
 func TestWorkerPool_EnableWorker(t *testing.T) {
 	testPool := initPool()
 
 	tests := []test{
 		{
-			name: "Enable worker test",
-			pool:	testPool,
+			name:       "Enable worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerEnabled,
+			want:       WorkerEnabled,
 		},
 	}
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.EnableWorker(name)
 	})
 }
@@ -92,14 +92,14 @@ func TestWorkerPool_StartWorker(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "Start worker test",
-			pool:	testPool,
+			name:       "Start worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerRun,
+			want:       WorkerRun,
 		},
 	}
 
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.StartWorker(name)
 	})
 }
@@ -109,14 +109,14 @@ func TestWorkerPool_StopWorker(t *testing.T) {
 
 	tests := []test{
 		{
-			name:"Stop worker test",
-			pool:	testPool,
+			name:       "Stop worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerStopped,
+			want:       WorkerStopped,
 		},
 	}
 
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.StopWorker(name)
 	})
 }
@@ -126,14 +126,14 @@ func TestWorkerPool_FailWorker(t *testing.T) {
 
 	tests := []test{
 		{
-			name:"Fail worker test",
-			pool:	testPool,
+			name:       "Fail worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerFailed,
+			want:       WorkerFailed,
 		},
 	}
 
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.FailWorker(name)
 	})
 }
@@ -149,33 +149,29 @@ func TestWorkerPool_IsEnabled(t *testing.T) {
 	testPoolOk.states["test"] = WorkerEnabled
 
 	tests := []struct {
-		name string
-		pool *WorkerPool
+		name       string
+		pool       *WorkerPool
 		workerName string
-		want bool
+		want       bool
 	}{
 		{
-			name :"Test with nil states",
-			pool: testPoolNil,
+			name:       "Test with nil states",
+			pool:       testPoolNil,
 			workerName: "test",
-			want: false,
-
+			want:       false,
 		},
 		{
-			name :"Test with non existing worker",
-			pool: testPoolNotExist,
+			name:       "Test with non existing worker",
+			pool:       testPoolNotExist,
 			workerName: "notExists",
-			want: false,
-
+			want:       false,
 		},
 		{
-			name :"Test with correct data",
-			pool: testPoolOk,
+			name:       "Test with correct data",
+			pool:       testPoolOk,
 			workerName: "test",
-			want: true,
-
+			want:       true,
 		},
-
 	}
 
 	for _, tt := range tests {
@@ -199,33 +195,29 @@ func TestWorkerPool_IsAlive(t *testing.T) {
 	testPoolOk.states["test"] = WorkerRun
 
 	tests := []struct {
-		name string
-		pool *WorkerPool
+		name       string
+		pool       *WorkerPool
 		workerName string
-		want bool
+		want       bool
 	}{
 		{
-			name :"Test with nil states",
-			pool: testPoolNil,
+			name:       "Test with nil states",
+			pool:       testPoolNil,
 			workerName: "test",
-			want: false,
-
+			want:       false,
 		},
 		{
-			name :"Test with non existing worker",
-			pool: testPoolNotExist,
+			name:       "Test with non existing worker",
+			pool:       testPoolNotExist,
 			workerName: "notExists",
-			want: false,
-
+			want:       false,
 		},
 		{
-			name :"Test with correct data",
-			pool: testPoolOk,
+			name:       "Test with correct data",
+			pool:       testPoolOk,
 			workerName: "test",
-			want: true,
-
+			want:       true,
 		},
-
 	}
 
 	for _, tt := range tests {
@@ -248,20 +240,20 @@ func TestWorkerPool_InitWorker(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "Test with status disabled",
-			pool:	testPoolDisabled,
+			name:       "Test with status disabled",
+			pool:       testPoolDisabled,
 			workerName: "test",
-			want: WorkerDisabled,
+			want:       WorkerDisabled,
 		},
 		{
-			name: "Test with status present",
-			pool:	testPoolPresent,
+			name:       "Test with status present",
+			pool:       testPoolPresent,
 			workerName: "test",
-			want: WorkerInitialized,
+			want:       WorkerInitialized,
 		},
 	}
 
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.InitWorker(name, nil)
 	})
 }
@@ -270,16 +262,16 @@ func TestWorkerPool_SetState(t *testing.T) {
 	testPool := initPool()
 	tests := []test{
 		{
-			name: `Set "disabled" state test`,
-			pool:	testPool,
+			name:       `Set "disabled" state test`,
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerDisabled,
+			want:       WorkerDisabled,
 		},
 		{
-			name: `Set "enabled" state test`,
-			pool:	testPool,
+			name:       `Set "enabled" state test`,
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerEnabled,
+			want:       WorkerEnabled,
 		},
 	}
 
@@ -291,7 +283,6 @@ func TestWorkerPool_SetState(t *testing.T) {
 
 		log.Default.Info(fmt.Sprintf("%s finished successfully", tt.name))
 	}
-
 
 }
 
@@ -306,14 +297,14 @@ func TestWorkerPool_SetWorker(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "Set worker test",
-			pool: testPool,
+			name:       "Set worker test",
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerPresent,
+			want:       WorkerPresent,
 		},
 	}
 
-	runTestCases(t,tests, func(wp *WorkerPool, name string){
+	runTestCases(t, tests, func(wp *WorkerPool, name string) {
 		wp.SetWorker(name, mockWorker{})
 	})
 
@@ -323,10 +314,10 @@ func TestWorkerPool_RunWorkerExec(t *testing.T) {
 	testPool := initPool()
 	tests := []test{
 		{
-			name: `Set "disabled" state test`,
-			pool:	testPool,
+			name:       `Set "disabled" state test`,
+			pool:       testPool,
 			workerName: "test",
-			want: WorkerStopped,
+			want:       WorkerStopped,
 		},
 	}
 
@@ -335,7 +326,7 @@ func TestWorkerPool_RunWorkerExec(t *testing.T) {
 
 		err := tt.pool.RunWorkerExec(tt.workerName)
 
-		require.NoError(t,err,fmt.Sprintf("Error in: %s", tt.name))
+		require.NoError(t, err, fmt.Sprintf("Error in: %s", tt.name))
 		require.Equalf(t, tt.want, tt.pool.states[tt.workerName], fmt.Sprintf("Error in: %s", tt.name))
 
 		log.Default.Info(fmt.Sprintf("%s finished successfully", tt.name))

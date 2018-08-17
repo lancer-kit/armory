@@ -3,11 +3,12 @@ package routines
 import (
 	"context"
 	"fmt"
+	"syscall"
 	"testing"
 	"time"
-	"gitlab.inn4science.com/gophers/service-kit/log"
+
 	"github.com/stretchr/testify/require"
-	"syscall"
+	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 // DummyWorker is a simple realization of the Worker interface.
@@ -58,7 +59,7 @@ func TestChief_InitWorkers(t *testing.T) {
 		chief *Chief
 	}{
 		{
-			name: "Test init workers",
+			name:  "Test init workers",
 			chief: testChief,
 		},
 	}
@@ -66,9 +67,9 @@ func TestChief_InitWorkers(t *testing.T) {
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
 		tt.chief.InitWorkers(nil)
-		require.NotNilf(tt.chief.logger,"Chief.logger is not initialized")
-		require.NotNilf(tt.chief.ctx,"Chief.ctx is not initialized")
-		require.NotNilf(tt.chief.cancel,"Chief.cansel is not initialized")
+		require.NotNilf(tt.chief.logger, "Chief.logger is not initialized")
+		require.NotNilf(tt.chief.ctx, "Chief.ctx is not initialized")
+		require.NotNilf(tt.chief.cancel, "Chief.cansel is not initialized")
 		require.Truef(tt.chief.active, "Chief not active")
 
 		log.Default.Info(fmt.Sprintf("%s finished successfully", tt.name))
@@ -88,15 +89,15 @@ func TestChief_Start(t *testing.T) {
 	ctx, cansel := context.WithCancel(context.Background())
 
 	tests := []struct {
-		name  string
-		chief *Chief
-		parentCtx context.Context
+		name       string
+		chief      *Chief
+		parentCtx  context.Context
 		canselFunc context.CancelFunc
 	}{
 		{
-			name: "Test start chief",
-			chief: testChief,
-			parentCtx: ctx,
+			name:       "Test start chief",
+			chief:      testChief,
+			parentCtx:  ctx,
 			canselFunc: cansel,
 		},
 	}
@@ -133,9 +134,9 @@ func TestChief_RunAll(t *testing.T) {
 	ctx, cansel := context.WithCancel(context.Background())
 
 	tests := []struct {
-		name  string
-		chief *Chief
-		parentCtx context.Context
+		name       string
+		chief      *Chief
+		parentCtx  context.Context
 		canselFunc context.CancelFunc
 	}{
 		{
@@ -150,7 +151,7 @@ func TestChief_RunAll(t *testing.T) {
 
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
-		go func(){
+		go func() {
 			time.Sleep(20 * time.Second)
 			syscall.Kill(syscall.Getpid(), syscall.SIGINT)
 		}()
@@ -215,25 +216,25 @@ func TestRestartOnFailWorker(t *testing.T) {
 	ctxNoRest, canselNoRest := context.WithCancel(context.Background())
 
 	tests := []struct {
-		name  string
-		chief *Chief
-		parentCtx context.Context
+		name       string
+		chief      *Chief
+		parentCtx  context.Context
 		canselFunc context.CancelFunc
-		ifRestart bool
+		ifRestart  bool
 	}{
 		{
-			name: "Run with restart on fail",
-			chief: testChief,
-			parentCtx: ctxRest,
+			name:       "Run with restart on fail",
+			chief:      testChief,
+			parentCtx:  ctxRest,
 			canselFunc: canselRest,
-			ifRestart: true,
+			ifRestart:  true,
 		},
 		{
-			name: "Run with no restart on fail",
-			chief: testChief,
-			parentCtx: ctxNoRest,
+			name:       "Run with no restart on fail",
+			chief:      testChief,
+			parentCtx:  ctxNoRest,
 			canselFunc: canselNoRest,
-			ifRestart: false,
+			ifRestart:  false,
 		},
 	}
 
