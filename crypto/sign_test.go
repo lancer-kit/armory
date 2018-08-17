@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/gophers/service-kit/types/currency"
 )
 
 func TestVerifySignature(t *testing.T) {
@@ -13,7 +12,7 @@ func TestVerifySignature(t *testing.T) {
 	fmt.Println("Private Key: ", privKey)
 	fmt.Println("Public  Key: ", pubKey)
 
-	message := fmt.Sprintf("%s:%s", currency.Amount(4212340000).String(), "test 42")
+	message := fmt.Sprintf("%s:%s", "4212340000", "test 42")
 	fmt.Println(message)
 	sig, err := SignMessage(privKey, message)
 	assert.Equal(t, nil, err)
