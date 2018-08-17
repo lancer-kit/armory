@@ -9,6 +9,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
+	"github.com/go-chi/chi"
+	"github.com/stretchr/testify/require"
+	"fmt"
+	"gitlab.inn4science.com/gophers/service-kit/log"
+	"io/ioutil"
+	"time"
+	"io"
+	"encoding/json"
 )
 
 func TestXClient_Auth(t *testing.T) {
@@ -92,3 +100,189 @@ func TestXClient_SignRequest(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, ok)
 }
+
+func TestXClient(t *testing.T) {
+	type fakeData struct {
+		dat string
+	}
+
+	kp := crypto.RandomKP()
+
+	server1, client1 := createFakeService(t, "test server 1", kp)
+	server2, _ := createFakeService(t,"test server 2", kp)
+
+	go func(){
+		log.Default.Info("Starting test server 1")
+		if err := http.ListenAndServe(":3030", server1); err != nil {
+			log.Default.WithError(err).Error("Unable to start test server 1")
+		}
+	}()
+
+	go func(){
+		log.Default.Info("Starting test server 2")
+		if err := http.ListenAndServe(":4040", server2); err != nil {
+			log.Default.WithError(err).Error("Unable to start test server 1")
+		}
+	}()
+
+	time.Sleep(5 * time.Second)
+
+	data := fakeData{"Fake data"}
+	sendCorrectRequests(t, client1, 4040, data)
+	sendCorrectRequests(t, client1, 4040, nil)
+
+	sendBadRequests(t, client1, 4040, data)
+
+
+}
+
+func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, *XClient){
+	require := require.New(t)
+
+	r := chi.NewRouter()
+	client := NewXClient()
+	client.SetAuth(name, kp)
+	r.Route("/test", func(r chi.Router) {
+
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			ok, err := client.VerifyRequest(r, kp.Public.String())
+			require.NoErrorf(err,"Wrong auth headers in GET request")
+
+			if !ok {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("GET: Wrong request headers"))
+				log.Default.Infof("Get request to: \"%s\" has failed", name)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("GET was successful"))
+			log.Default.Infof("Get request to: \"%s\" was successfull", name)
+		})
+
+		r.Get("/bad", func(w http.ResponseWriter, r *http.Request) {
+			_, err := client.VerifyRequest(r, kp.Public.String())
+			require.Errorf(err,"Error with bad header OK ")
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Error evoked, success"))
+			log.Default.Infof("Get request to: \"%s\", was successfull", name)
+		})
+
+
+		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
+			ok, err := client.VerifyRequest(r, kp.Public.String())
+			require.NoErrorf(err,"Wrong auth headers in POST request")
+
+			if !ok {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("POST: Wrong request headers"))
+				log.Default.Infof("POST request to: \"%s\" has failed", name)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("POST was successful"))
+
+			log.Default.Infof("POST request to: \"%s\" was successfull", name)
+		})
+
+	})
+
+	return r, client
+}
+
+func sendCorrectRequests(t *testing.T, client *XClient, port int, data interface{}) {
+	require := require.New(t)
+
+	url := fmt.Sprintf("http://127.0.0.1:%d/test", port)
+
+	if data != nil {
+		log.Default.WithField("Testing client requests with data", data).Info("Happy flow")
+	} else {
+		log.Default.Infof("%s Testing client requests without data", "Happy flow")
+	}
+
+	res, err := client.GetJSON(url, nil)
+	require.NoErrorf(err,"Error when trying to send GET request")
+	resBody, _ := ioutil.ReadAll(res.Body)
+	log.Default.WithField("GET response: ", string(resBody)).Info("Happy flow")
+
+	res, err = client.PostJSON(url, data, nil)
+	require.NoErrorf(err,"Error when trying to send POST request")
+	resBody, _ = ioutil.ReadAll(res.Body)
+	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
+
+}
+
+func sendBadRequests(t *testing.T, client *XClient, port int, data interface{}){
+	require := require.New(t)
+	var body io.Reader = nil
+	var err error
+	var rawData []byte
+
+	if data != nil {
+		log.Default.WithField("Testing client requests with data", data).Info("Bad flow")
+	} else {
+		log.Default.Infof("%s Testing client requests without data", "Bad flow")
+	}
+
+	if data != nil {
+		rawData, err = json.Marshal(data)
+		if err != nil {
+			return
+		}
+		body = bytes.NewBuffer(rawData)
+	}
+
+	url := fmt.Sprintf("http://127.0.0.1:%d/test", port)
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://127.0.0.1:%d/test/bad", port), body)
+	_ = err
+
+	req, err = client.SignRequest(req, nil)
+	require.NoErrorf(err,"Error when trying to sign GET request")
+	req.Header.Set(HeaderSignature, "bad sign")
+
+	res, err := client.Do(req)
+	require.NoErrorf(err,"Error when trying to send GET request")
+	resBody, _ := ioutil.ReadAll(res.Body)
+	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
+
+
+	req, err = http.NewRequest(http.MethodPost, url, body)
+	_ = err
+
+	req, err = client.SignRequest(req, rawData)
+	require.NoErrorf(err,"Error when trying to sign POST request")
+	req.Header.Set(HeaderBodyHash, "bad body hash")
+
+	res, err = client.Do(req)
+	require.NoErrorf(err,"Error when trying to send POST request")
+	resBody, _ = ioutil.ReadAll(res.Body)
+	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

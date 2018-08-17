@@ -77,12 +77,12 @@ func (client *XClient) PostJSON(url string, body interface{}, headers Headers) (
 
 // PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
 func (client *XClient) PutJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPut, url, nil, headers)
+	return client.RequestJSON(http.MethodPut, url, body, headers)
 }
 
 // PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
 func (client *XClient) PatchJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPatch, url, nil, headers)
+	return client.RequestJSON(http.MethodPatch, url, body, headers)
 }
 
 // GetJSON, sets passed `headers` and executes RequestJSON with GET method.
