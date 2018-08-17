@@ -45,5 +45,5 @@ func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 func (j *URL) Validate() error {
 	return validation.ValidateStruct(j,
-		validation.Field(j.Str, validation.Required))
+		validation.Field(&j.Str, validation.Required))
 }
