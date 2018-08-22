@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-ozzo/ozzo-validation"
 	"github.com/sirupsen/logrus"
 	"gitlab.inn4science.com/gophers/service-kit/log"
 	"gitlab.inn4science.com/gophers/service-kit/routines"
@@ -23,6 +24,14 @@ type Config struct {
 	EnableCORS        bool `json:"enable_cors" yaml:"enable_cors"`
 
 	RestartOnFail bool `json:"restart_on_fail" yaml:"restart_on_fail"`
+}
+
+//Validate - Validate config required fields
+func (c *Config) Validate() error {
+	return validation.ValidateStruct(c,
+		validation.Field(&c.Host, validation.Required),
+		validation.Field(&c.Port, validation.Required),
+	)
 }
 
 // TCPAddr returns tcp address for server.
