@@ -4,18 +4,26 @@ import (
 	"context"
 	"fmt"
 	"sync"
+
+	"github.com/pkg/errors"
 )
 
 type WorkerState int32
 
 const (
-	WorkerDisabled WorkerState = iota
+	WorkerWrongStateChange WorkerState = -1
+	WorkerNull             WorkerState = iota
+	WorkerDisabled
 	WorkerPresent
 	WorkerEnabled
 	WorkerInitialized
 	WorkerRun
 	WorkerStopped
 	WorkerFailed
+)
+
+var (
+	ErrWorkerNotInitialized = errors.New("worker not initialized")
 )
 
 // WorkerPool is
@@ -32,16 +40,29 @@ func (pool *WorkerPool) DisableWorker(name string) {
 
 // EnableWorker sets state `WorkerEnabled` for workers with the specified `name`.
 func (pool *WorkerPool) EnableWorker(name string) {
+	if s := pool.states[name]; s != WorkerPresent {
+		pool.SetState(name, WorkerWrongStateChange)
+		return
+	}
 	pool.SetState(name, WorkerEnabled)
 }
 
 // StartWorker sets state `WorkerEnabled` for workers with the specified `name`.
 func (pool *WorkerPool) StartWorker(name string) {
+	if s := pool.states[name]; s != WorkerStopped &&
+		s != WorkerInitialized && s != WorkerFailed {
+		pool.SetState(name, WorkerWrongStateChange)
+		return
+	}
 	pool.SetState(name, WorkerRun)
 }
 
 // StopWorker sets state `WorkerStopped` for workers with the specified `name`.
 func (pool *WorkerPool) StopWorker(name string) {
+	if s := pool.states[name]; s != WorkerRun && s != WorkerFailed {
+		pool.SetState(name, WorkerWrongStateChange)
+		return
+	}
 	pool.SetState(name, WorkerStopped)
 }
 
@@ -56,8 +77,8 @@ func (pool *WorkerPool) IsEnabled(name string) bool {
 		return false
 	}
 
-	state, ok := pool.states[name]
-	return ok && state > WorkerDisabled
+	state := pool.states[name]
+	return state >= WorkerEnabled
 }
 
 // IsAlive checks is active worker with passed `name`.
@@ -66,8 +87,8 @@ func (pool *WorkerPool) IsAlive(name string) bool {
 		return false
 	}
 
-	state, ok := pool.states[name]
-	return ok && state == WorkerRun
+	state := pool.states[name]
+	return state == WorkerRun
 }
 
 // InitWorker initializes all present workers.
@@ -76,7 +97,7 @@ func (pool *WorkerPool) InitWorker(name string, ctx context.Context) {
 	defer pool.rw.Unlock()
 	pool.check()
 
-	if pool.states[name] < WorkerPresent {
+	if pool.states[name] < WorkerEnabled {
 		return
 	}
 
@@ -118,6 +139,10 @@ func (pool *WorkerPool) RunWorkerExec(name string) (err error) {
 			err = fmt.Errorf("%v", rec)
 		}
 	}()
+
+	if s := pool.states[name]; s != WorkerInitialized {
+		return ErrWorkerNotInitialized
+	}
 
 	pool.StartWorker(name)
 	pool.workers[name].Run()
