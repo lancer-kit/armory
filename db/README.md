@@ -29,7 +29,7 @@ This is a database connector. **SQLConn** supports *database transactions*.
 # Usage 
 
 - Connect and execute some query:
-``` go
+```go
 package main
 
 import (
