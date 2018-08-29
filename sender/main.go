@@ -3,8 +3,13 @@
 // `Message` can be sent through the HTTP or NATS.
 package sender
 
+import "github.com/go-ozzo/ozzo-validation"
+
 // LetterType is an enum of predefined letter templates.
 type LetterType int
+
+// Provider is an enum of predefined providers for OTP.
+type Provider int
 
 const (
 	LetterUniversal LetterType = 1 + iota
@@ -14,8 +19,19 @@ const (
 	LetterUserNewDevice
 )
 
+const (
+	ViberProvider Provider = 1 + iota
+	WAProvider
+	SMSProvider
+	TelegramProvider
+	TestProvider Provider = 100
+)
+
 // NATSTopic is a topic in NATS, through which the sender receives new messages.
 const NATSTopic = "sender.letters"
+
+// OTPTopic is a topic in NATS, through which the sender receives new otp messages.
+const OTPTopic = "sender.otp"
 
 // HTTPURL is URL path in which the sender receives new messages.
 const HTTPURL = "/v1/email"
@@ -59,4 +75,20 @@ type Universal struct {
 	Subject string `json:"subject"`
 	Text    string `json:"text"`
 	HTML    string `json:"html"`
+}
+
+// OTPMessage is a structure for message sent through NATS used to send an OTP.
+type OTPMessage struct {
+	Phone    string   `json:"phone,omitempty"`
+	Code     string   `json:"code,omitempty"`
+	Provider Provider `json:"provider,omitempty"`
+}
+
+// Validate() function returns an error if the data in an OTPMessage is invalid.
+func (otpm OTPMessage) Validate() error {
+	return validation.ValidateStruct(&otpm,
+		validation.Field(&otpm.Phone, validation.Required),
+		validation.Field(&otpm.Code, validation.Required),
+		validation.Field(&otpm.Provider, validation.Required),
+	)
 }

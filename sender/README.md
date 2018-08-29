@@ -100,3 +100,23 @@ type Universal struct {
 
 Universal is a message that does not have a template in the sender and must be
 sent as is. Data from the another fields of the MsgData will be ignored.
+
+
+
+#### type OTPMessage
+
+```go
+type OTPMessage struct {
+	Phone    string   `json:"phone,omitempty"`
+	Code     string   `json:"code,omitempty"`
+	Provider Provider `json:"provider,omitempty"`
+}
+```
+
+OTPMessage is a structure for message sent through NATS used to send an OTP.
+
+
+
+#### func (OTPMessage) Validate() error
+
+Validate() function returns an error if the data in an OTPMessage is invalid.
