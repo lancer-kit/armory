@@ -52,6 +52,14 @@ type MsgData struct {
 	Universal Universal `json:"universal,omitempty"`
 }
 
+func (ms MsgData) Validate() error {
+	return validation.ValidateStruct(&ms,
+		validation.Field(&ms.Device),
+		validation.Field(&ms.Universal),
+		validation.Field(&ms.Base),
+	)
+}
+
 // Base is a structure for the base letter template.
 type Base struct {
 	// Email is a addressee of the letter.
@@ -60,11 +68,27 @@ type Base struct {
 	Link     string `json:"link"`
 }
 
+func (b Base) Validate() error {
+	return validation.ValidateStruct(&b,
+		validation.Field(&b.Email, validation.Required),
+		validation.Field(&b.Username, validation.Required),
+		validation.Field(&b.Link, validation.Required),
+	)
+}
+
 // Device is a data extension for the `new device` letter.
 type Device struct {
 	Device   string `json:"device"`
 	Location string `json:"location"`
 	Ip       string `json:"ip"`
+}
+
+func (dv Device) Validate() error {
+	return validation.ValidateStruct(&dv,
+		validation.Field(&dv.Device, validation.Required),
+		validation.Field(&dv.Location, validation.Required),
+		validation.Field(&dv.Ip, validation.Required),
+	)
 }
 
 // Universal is a message that does not have a template
@@ -75,6 +99,15 @@ type Universal struct {
 	Subject string `json:"subject"`
 	Text    string `json:"text"`
 	HTML    string `json:"html"`
+}
+
+func (un Universal) Validate() error {
+	return validation.ValidateStruct(&un,
+		validation.Field(&un.Email, validation.Required),
+		validation.Field(&un.HTML, validation.Required),
+		validation.Field(&un.Text, validation.Required),
+		validation.Field(&un.Subject, validation.Required),
+	)
 }
 
 // OTPMessage is a structure for message sent through NATS used to send an OTP.
