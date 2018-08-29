@@ -45,6 +45,13 @@ type Message struct {
 	Data MsgData `json:"data"`
 }
 
+func (m Message) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Type, validation.Required),
+		validation.Field(&m.Data),
+	)
+}
+
 // MsgData data for letter templates.
 type MsgData struct {
 	Base      Base      `json:"base,omitempty"`
