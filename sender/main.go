@@ -45,11 +45,24 @@ type Message struct {
 	Data MsgData `json:"data"`
 }
 
-func (m Message) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.Type, validation.Required),
-		validation.Field(&m.Data),
-	)
+func (m Message) Validate() (err error) {
+	switch m.Type {
+	case LetterUniversal:
+		err = m.Data.Universal.Validate()
+	case LetterAdminSignUp:
+		err = m.Data.Base.Validate()
+	case LetterUserEmailVerify:
+		err = m.Data.Base.Validate()
+	case LetterUserRecovery:
+		err = m.Data.Base.Validate()
+	case LetterUserNewDevice:
+		err = m.Data.Base.Validate()
+		if err != nil {
+			return
+		}
+		err = m.Data.Device.Validate()
+	}
+	return
 }
 
 // MsgData data for letter templates.
@@ -78,7 +91,6 @@ type Base struct {
 func (b Base) Validate() error {
 	return validation.ValidateStruct(&b,
 		validation.Field(&b.Email, validation.Required),
-		validation.Field(&b.Username, validation.Required),
 		validation.Field(&b.Link, validation.Required),
 	)
 }
@@ -111,8 +123,6 @@ type Universal struct {
 func (un Universal) Validate() error {
 	return validation.ValidateStruct(&un,
 		validation.Field(&un.Email, validation.Required),
-		validation.Field(&un.HTML, validation.Required),
-		validation.Field(&un.Text, validation.Required),
 		validation.Field(&un.Subject, validation.Required),
 	)
 }
