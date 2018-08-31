@@ -32,8 +32,10 @@ type Chief struct {
 	logger *logrus.Entry
 	active bool
 	wg     sync.WaitGroup
-
-	wPool WorkerPool
+	wPool  WorkerPool
+	// EnableByDefault sets all the working `Enabled`
+	// if none of the workers is passed on to enable.
+	EnableByDefault bool
 }
 
 // AddWorker register a new `Worker` to the `Chief` worker pool.
@@ -47,6 +49,12 @@ func (chief *Chief) AddWorker(name string, worker Worker) {
 func (chief *Chief) EnableWorkers(names ...string) {
 	for _, name := range names {
 		chief.wPool.EnableWorker(name)
+	}
+
+	if len(names) == 0 && chief.EnableByDefault {
+		for name := range chief.wPool.workers {
+			chief.wPool.EnableWorker(name)
+		}
 	}
 }
 
@@ -110,7 +118,7 @@ func (chief *Chief) Start(parentCtx context.Context) {
 
 // RunAll start worker pool and lock context
 // until it intercepts `syscall.SIGTERM`, `syscall.SIGINT`.
-// NOTE: Use this method ONLY  as a top-level action.
+// NOTE: Use this method ONLY as a top-level action.
 func (chief *Chief) RunAll(appName string, workers ...string) error {
 	done := make(chan struct{})
 	ctx, cancel := context.WithCancel(context.Background())
@@ -164,6 +172,7 @@ startWorker:
 			Error("Worker failed")
 
 		if worker.RestartOnFail() && chief.active {
+			time.Sleep(time.Second)
 			goto startWorker
 		}
 	}

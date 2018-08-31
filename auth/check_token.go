@@ -11,21 +11,35 @@ import (
 )
 
 type ReturnAuthStruct struct {
-	Jti     int64 `json:"jti,string"`
-	IsAdmin bool  `json:"isAdmin,bool"`
+	Jti          int64 `json:"jti,string"`
+	IsAdmin      bool  `json:"isAdmin"`
+	Is2PassValid bool  `json:"is2PassValid"`
 }
 
-// Header name of the `Authorization` header.
+func (a ReturnAuthStruct) SetContext(r *http.Request) *http.Request {
+	rCtx := context.WithValue(r.Context(), KeyUID, a.Jti)
+	rCtx = context.WithValue(rCtx, KeyIsAdmin, a.IsAdmin)
+	rCtx = context.WithValue(rCtx, KeyIs2PassValid, a.Is2PassValid)
+	return r.WithContext(rCtx)
+}
+
+// HeaderAuthorization name of the `Authorization` header.
 const (
-	Header    = "Authorization"
-	JWTHeader = "jwt"
+	// DEPRECATED
+	Header = "Authorization"
+	// DEPRECATED
+	JWTHeader           = "jwt"
+	HeaderAuthorization = "Authorization"
+	HeaderJWT           = "jwt"
+	Header2Password     = "X-2Pass"
 )
 
 type CtxKey string
 
 const (
-	KeyUID     CtxKey = "key_uid"
-	KeyIsAdmin CtxKey = "key_isAdmin"
+	KeyUID          CtxKey = "key_uid"
+	KeyIsAdmin      CtxKey = "key_isAdmin"
+	KeyIs2PassValid CtxKey = "key_is2PassValid"
 )
 
 var userApiLink string
@@ -36,7 +50,7 @@ func Init(usrApiLink string) {
 
 // AuthtokenHeader extracts from the `http.Request` Authorization header.
 func AuthtokenHeader(r *http.Request) string {
-	return r.Header.Get(Header)
+	return r.Header.Get(HeaderAuthorization)
 }
 
 // GetUID extracts User-ID  from the `http.Request` ctx.
@@ -49,6 +63,12 @@ func GetUID(r *http.Request) int64 {
 func IsAdmin(r *http.Request) bool {
 	isAdmin, _ := r.Context().Value(KeyIsAdmin).(bool)
 	return isAdmin
+}
+
+// Is2PassValid return `true` if user used to 2nd password for request auth.
+func Is2PassValid(r *http.Request) bool {
+	is2PassValid, _ := r.Context().Value(KeyIs2PassValid).(bool)
+	return is2PassValid
 }
 
 // CheckToken checks `Authorization` token if it valid return nil.
@@ -65,7 +85,7 @@ func CheckToken(authtoken string) (int, []byte, error) {
 			nil, errors.Wrap(err, "failed to create auth check request")
 	}
 
-	req.Header.Set(Header, authtoken)
+	req.Header.Set(HeaderAuthorization, authtoken)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -95,7 +115,7 @@ func CheckToken(authtoken string) (int, []byte, error) {
 func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			authtoken := r.Header.Get(Header)
+			authtoken := r.Header.Get(HeaderAuthorization)
 			if authtoken == "" || !required {
 				next.ServeHTTP(w, r)
 				return
@@ -117,39 +137,36 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 	}
 }
 
-// Method reads JWT Header and fill KeyUID and KeyIsAdmin in the context
+// Method reads JWT HeaderAuthorization and fill KeyUID and KeyIsAdmin in the context
 // Use ExtractUserID() if jwt required
 // Use ExtractUserID(false) if jwt not required
 func ExtractUserID(required ...bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			rawJwt := r.Header.Get(JWTHeader)
+			jwt := ReturnAuthStruct{}
+			rawJwt := r.Header.Get(HeaderJWT)
 			if rawJwt == "" {
 				if len(required) == 0 || (len(required) > 0 && required[0]) {
 					render.ResultBadRequest.
-						SetError("JWT Header must not bee empty").
+						SetError("JWT HeaderAuthorization must not bee empty").
 						Render(w)
 					return
 				}
 
-				rCtx := context.WithValue(r.Context(), KeyUID, int64(0))
-				rCtx = context.WithValue(rCtx, KeyIsAdmin, false)
-				r = r.WithContext(rCtx)
+				r = jwt.SetContext(r)
 				next.ServeHTTP(w, r)
 				return
 			}
-			jwt := ReturnAuthStruct{}
+
 			err := json.Unmarshal([]byte(rawJwt), &jwt)
 			if err != nil {
 				render.ResultBadRequest.
-					SetError("JWT Header is invalid json").
+					SetError("JWT HeaderAuthorization is invalid json").
 					Render(w)
 				return
 			}
 
-			rCtx := context.WithValue(r.Context(), KeyUID, jwt.Jti)
-			rCtx = context.WithValue(rCtx, KeyIsAdmin, jwt.IsAdmin)
-			r = r.WithContext(rCtx)
+			r = jwt.SetContext(r)
 			next.ServeHTTP(w, r)
 			return
 
