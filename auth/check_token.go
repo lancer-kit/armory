@@ -53,6 +53,18 @@ func AuthtokenHeader(r *http.Request) string {
 	return r.Header.Get(HeaderAuthorization)
 }
 
+// ExtractAuthData extracts `ReturnAuthStruct` from request.
+func ExtractAuthData(r *http.Request) (res ReturnAuthStruct, ok bool) {
+	jwtData := r.Header.Get(HeaderJWT)
+	if jwtData == "" {
+		return
+	}
+
+	err := json.Unmarshal([]byte(jwtData), &res)
+	ok = err == nil
+	return
+}
+
 // GetUID extracts User-ID  from the `http.Request` ctx.
 func GetUID(r *http.Request) int64 {
 	uid, _ := r.Context().Value(KeyUID).(int64)
