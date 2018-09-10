@@ -180,7 +180,7 @@ startWorker:
 	chief.wPool.StopWorker(name)
 }
 
-func (chief *Chief) GetRunningWorkers() []string {
+func (chief *Chief) GetRunningWorkers() map[string]string {
 	runWorkers := chief.wPool.GetRunningWorkers()
 
 	return runWorkers

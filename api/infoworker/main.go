@@ -24,23 +24,37 @@ type Info struct {
 	Build   string `json:"build"`
 }
 
+type Conf struct {
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	Profiler bool   `json:"profiler" yaml:"profiler"`
+	Prefix   string `json:"prefix" yaml:"prefix"`
+}
+
 type InfoWorker struct {
 	ParentCtx context.Context
 	Info      Info
+	Config    Conf
 	api.Server
 }
 
-func GetInfoWorker(cfg api.Config, ctx context.Context, info Info) *InfoWorker {
+func GetInfoWorker(cfg Conf, ctx context.Context, info Info) *InfoWorker {
+	apiConf := new(api.Config)
+	apiConf.Host = cfg.Host
+	apiConf.Port = cfg.Port
+
 	res := &InfoWorker{
 		ParentCtx: ctx,
 		Info:      info,
+		Config:    cfg,
 		Server: api.Server{
 			Name: "info-server",
 			GetConfig: func() api.Config {
-				return cfg
+				return *apiConf
 			},
 		},
 	}
+
 	res.GetRouter = res.GetInfoRouter
 	return res
 }
@@ -52,7 +66,16 @@ func (iw *InfoWorker) GetInfoRouter(logger *logrus.Entry, cfg api.Config) http.H
 	r.Use(middleware.Recoverer)
 	r.Use(log.NewRequestLogger(logger.Logger))
 
-	r.Route("/debug", func(r chi.Router) {
+	if iw.Config.Profiler {
+		r.Mount("/debug", middleware.Profiler())
+	}
+
+	prefix := "/"
+	if iw.Config.Prefix != "" {
+		prefix = iw.Config.Prefix
+	}
+
+	r.Route(prefix, func(r chi.Router) {
 		r.Route("/stats", func(r chi.Router) {
 			r.Get("/version", iw.Version)
 			r.Get("/workers", iw.Workers)

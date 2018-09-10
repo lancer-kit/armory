@@ -8,20 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type WorkerState int32
-
-const (
-	WorkerWrongStateChange WorkerState = -1
-	WorkerNull             WorkerState = iota
-	WorkerDisabled
-	WorkerPresent
-	WorkerEnabled
-	WorkerInitialized
-	WorkerRun
-	WorkerStopped
-	WorkerFailed
-)
-
 var (
 	ErrWorkerNotInitialized = errors.New("worker not initialized")
 )
@@ -160,12 +146,12 @@ func (pool *WorkerPool) check() {
 	}
 }
 
-func (pool *WorkerPool) GetRunningWorkers() []string {
-	res := make([]string, 0)
+func (pool *WorkerPool) GetRunningWorkers() map[string]string {
+	res := make(map[string]string, 0)
 
 	for i, v := range pool.states {
 		if v == WorkerRun {
-			res = append(res, i)
+			res[i] = v.String()
 		}
 	}
 
