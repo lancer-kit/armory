@@ -159,3 +159,15 @@ func (pool *WorkerPool) check() {
 		pool.workers = make(map[string]Worker)
 	}
 }
+
+func (pool *WorkerPool) GetRunningWorkers() []string {
+	res := make([]string, 0)
+
+	for i, v := range pool.states {
+		if v == WorkerRun {
+			res = append(res, i)
+		}
+	}
+
+	return res
+}

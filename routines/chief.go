@@ -179,3 +179,9 @@ startWorker:
 
 	chief.wPool.StopWorker(name)
 }
+
+func (chief *Chief) GetRunningWorkers() []string {
+	runWorkers := chief.wPool.GetRunningWorkers()
+
+	return runWorkers
+}

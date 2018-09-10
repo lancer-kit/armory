@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"gitlab.inn4science.com/gophers/service-kit/routines"
 
 	"github.com/go-chi/chi"
@@ -29,6 +31,11 @@ type InfoWorker struct {
 }
 
 func GetInfoWorker(cfg api.Config, ctx context.Context, info Info) *InfoWorker {
+	if cfg.DevMod == false {
+		log.Default.Info("This worker is allowed only in dev mode")
+		return nil
+	}
+
 	res := &InfoWorker{
 		ParentCtx: ctx,
 		Info:      info,
@@ -65,18 +72,32 @@ func (iw *InfoWorker) GetInfoRouter(logger *logrus.Entry, cfg api.Config) http.H
 }
 
 func (iw *InfoWorker) Version(w http.ResponseWriter, r *http.Request) {
-	parentChief := iw.ParentCtx.Value("chief").(*routines.Chief)
-	if parentChief == nil {
-		render.ResultServerError.Render(w)
+
+	if iw.Info == (Info{}) {
+		err := errors.New("Info must not be empty!")
+		log.Default.Error(err)
+		render.ResultServerError.SetError(err).Render(w)
 		return
 	}
 
+	render.Success(w, iw.Info)
 }
 
 func (iw *InfoWorker) Workers(w http.ResponseWriter, r *http.Request) {
 	parentChief := iw.ParentCtx.Value("chief").(*routines.Chief)
 	if parentChief == nil {
-		render.ResultServerError.Render(w)
+		err := errors.New("Context must not be empty!")
+		log.Default.Error(err)
+		render.ResultServerError.SetError(err).Render(w)
 		return
 	}
+
+	workers := parentChief.GetRunningWorkers()
+	if len(workers) == 0 {
+		log.Default.Info("No workers are currently running")
+		render.Success(w, "No workers are currently running")
+		return
+	}
+
+	render.Success(w, workers)
 }
