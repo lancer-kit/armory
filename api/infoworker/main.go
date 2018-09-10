@@ -40,7 +40,7 @@ func GetInfoWorker(cfg api.Config, ctx context.Context, info Info) *InfoWorker {
 		ParentCtx: ctx,
 		Info:      info,
 		Server: api.Server{
-			Name: "info worker",
+			Name: "info-server",
 			GetConfig: func() api.Config {
 				return cfg
 			},
