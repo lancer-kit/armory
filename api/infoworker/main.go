@@ -31,11 +31,6 @@ type InfoWorker struct {
 }
 
 func GetInfoWorker(cfg api.Config, ctx context.Context, info Info) *InfoWorker {
-	if cfg.DevMod == false {
-		log.Default.Info("This worker is allowed only in dev mode")
-		return nil
-	}
-
 	res := &InfoWorker{
 		ParentCtx: ctx,
 		Info:      info,

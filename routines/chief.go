@@ -185,3 +185,7 @@ func (chief *Chief) GetRunningWorkers() []string {
 
 	return runWorkers
 }
+
+func (chief *Chief) GetContext() context.Context {
+	return chief.ctx
+}
