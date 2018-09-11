@@ -9,41 +9,30 @@ import (
 	"fmt"
 )
 
-func init() {
-	// stub usage of json for situation when
-	// (Un)MarshalJSON methods will be omitted
-	_ = json.Delim('s')
-
-	// stub usage of sql/driver for situation when
-	// Scan/Value methods will be omitted
-	_ = driver.Bool
-	_ = sql.LevelDefault
-}
-
 var ErrWorkerStateInvalid = errors.New("WorkerState is invalid")
 
 var defWorkerStateNameToValue = map[string]WorkerState{
-	"WorkerWrongStateChange": WorkerWrongStateChange,
-	"WorkerNull":             WorkerNull,
-	"WorkerDisabled":         WorkerDisabled,
-	"WorkerPresent":          WorkerPresent,
-	"WorkerEnabled":          WorkerEnabled,
-	"WorkerInitialized":      WorkerInitialized,
-	"WorkerRun":              WorkerRun,
-	"WorkerStopped":          WorkerStopped,
-	"WorkerFailed":           WorkerFailed,
+	"wrong_state_change": WorkerWrongStateChange,
+	"null":               WorkerNull,
+	"disabled":           WorkerDisabled,
+	"present":            WorkerPresent,
+	"enabled":            WorkerEnabled,
+	"initialized":        WorkerInitialized,
+	"run":                WorkerRun,
+	"stopped":            WorkerStopped,
+	"failed":             WorkerFailed,
 }
 
 var defWorkerStateValueToName = map[WorkerState]string{
-	WorkerWrongStateChange: "WorkerWrongStateChange",
-	WorkerNull:             "WorkerNull",
-	WorkerDisabled:         "WorkerDisabled",
-	WorkerPresent:          "WorkerPresent",
-	WorkerEnabled:          "WorkerEnabled",
-	WorkerInitialized:      "WorkerInitialized",
-	WorkerRun:              "WorkerRun",
-	WorkerStopped:          "WorkerStopped",
-	WorkerFailed:           "WorkerFailed",
+	WorkerWrongStateChange: "wrong_state_change",
+	WorkerNull:             "null",
+	WorkerDisabled:         "disabled",
+	WorkerPresent:          "present",
+	WorkerEnabled:          "enabled",
+	WorkerInitialized:      "initialized",
+	WorkerRun:              "run",
+	WorkerStopped:          "stopped",
+	WorkerFailed:           "failed",
 }
 
 // String is generated so WorkerState satisfies fmt.Stringer.
