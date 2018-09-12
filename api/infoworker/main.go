@@ -15,6 +15,7 @@ import (
 	"gitlab.inn4science.com/gophers/service-kit/routines"
 )
 
+//structure with info about service
 type Info struct {
 	App     string `json:"app"`
 	Version string `json:"version"`
@@ -22,6 +23,7 @@ type Info struct {
 	Build   string `json:"build"`
 }
 
+//structure with configuration for worker
 type Conf struct {
 	Host     string `json:"host" yaml:"host"`
 	Port     int    `json:"port" yaml:"port"`
@@ -33,12 +35,13 @@ type InfoWorker struct {
 	api.Server
 
 	logger    *logrus.Entry
-	parentCtx context.Context
+	parentCtx context.Context // context with pointer to chief which started this worker
 
 	Info   Info
 	Config Conf
 }
 
+//GetInfoWorker returns initialized info worker struct. !Context must contain pointer to worker chief!
 func GetInfoWorker(cfg Conf, ctx context.Context, info Info) *InfoWorker {
 	res := &InfoWorker{
 		parentCtx: ctx,
@@ -60,6 +63,7 @@ func GetInfoWorker(cfg Conf, ctx context.Context, info Info) *InfoWorker {
 	return res
 }
 
+//GetInfoRouter returns workers api
 func (iw *InfoWorker) GetInfoRouter(logger *logrus.Entry, cfg api.Config) http.Handler {
 	r := chi.NewRouter()
 
@@ -90,6 +94,7 @@ func (iw *InfoWorker) GetInfoRouter(logger *logrus.Entry, cfg api.Config) http.H
 	return r
 }
 
+//Version is a handler which responses with Info structure
 func (iw *InfoWorker) Version(w http.ResponseWriter, r *http.Request) {
 	if iw.Info == (Info{}) {
 		err := errors.New("Info must not be empty!")
@@ -101,6 +106,7 @@ func (iw *InfoWorker) Version(w http.ResponseWriter, r *http.Request) {
 	render.Success(w, iw.Info)
 }
 
+//Workers is a handler which responses with JSON with all workers in parent chief
 func (iw *InfoWorker) Workers(w http.ResponseWriter, r *http.Request) {
 	parentChief := iw.parentCtx.Value("chief").(*routines.Chief)
 	if parentChief == nil {
