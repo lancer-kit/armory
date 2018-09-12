@@ -179,3 +179,11 @@ startWorker:
 
 	chief.wPool.StopWorker(name)
 }
+
+func (chief *Chief) GetWorkersStates() map[string]WorkerState {
+	return chief.wPool.GetWorkersStates()
+}
+
+func (chief *Chief) GetContext() context.Context {
+	return chief.ctx
+}
