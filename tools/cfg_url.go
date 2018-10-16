@@ -1,11 +1,19 @@
 package tools
 
 import (
+	"errors"
 	"net/url"
 	"strings"
 
 	"github.com/go-ozzo/ozzo-validation"
 )
+
+type requiredRule struct {
+	message string
+	skipNil bool
+}
+
+var Required = &requiredRule{message: "cannot be blank", skipNil: false}
 
 type URL struct {
 	URL      *url.URL
@@ -44,6 +52,22 @@ func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 func (j *URL) Validate() error {
-	return validation.ValidateStruct(j,
-		validation.Field(&j.Str, validation.Required))
+	return validation.Validate(j.Str, validation.Required)
+}
+
+// Validate checks if the given value is valid or not.
+func (v *requiredRule) Validate(value interface{}) error {
+	j, ok := value.(URL)
+	if !ok {
+		return errors.New("invalid type")
+	}
+	return j.Validate()
+}
+
+// Error sets the error message for the rule.
+func (v *requiredRule) Error(message string) *requiredRule {
+	return &requiredRule{
+		message: message,
+		skipNil: v.skipNil,
+	}
 }
