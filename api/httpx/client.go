@@ -143,17 +143,16 @@ func (client *XClient) RequestJSON(method string, url string, data interface{}, 
 // > `dest` must be a pointer value.
 func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 	defer r.Body.Close()
-	b, e := ioutil.ReadAll(r.Body)
-	if e != nil {
-		return errors.Wrap(e, "failed to unmarshal request body")
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal request body")
 	}
-	bf := bytes.NewBuffer(b)
 	if client.logger != nil {
 		client.logger.WithField("url", r.URL.String()).
 			WithField("method", r.Method).
 			WithField("body", string(b)).Debug()
 	}
-	err := json.NewDecoder(bf).Decode(dest)
+	err = json.Unmarshal(b, dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
@@ -168,7 +167,6 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
-	bf := bytes.NewBuffer(b)
 	if client.logger != nil {
 
 		client.logger.WithField("url", httpResp.Request.URL.String()).
@@ -176,7 +174,7 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 			WithField("body", string(b)).Debug()
 
 	}
-	err = json.NewDecoder(bf).Decode(dest)
+	err = json.Unmarshal(b, dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal response body")
 	}
