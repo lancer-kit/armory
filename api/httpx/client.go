@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
+
+	"gitlab.inn4science.com/gophers/service-kit/log"
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
@@ -25,10 +28,17 @@ type XClient struct {
 	auth    bool
 	kp      crypto.KP
 	service string
+
+	logger log.Entry
 }
 
 func NewXClient() *XClient {
 	return &XClient{Client: http.Client{Timeout: defaultTimeout}}
+}
+
+// SetLogger - Set logger to enable log requests
+func (client *XClient) SetLogger(l log.Entry) {
+	client.logger = l
 }
 
 // Auth returns current state of authentication flag.
@@ -108,7 +118,12 @@ func (client *XClient) RequestJSON(method string, url string, data interface{}, 
 		}
 		body = bytes.NewBuffer(rawData)
 	}
-
+	if client.logger != nil {
+		client.logger.
+			WithField("method", method).
+			WithField("url", method).
+			WithField("body", string(rawData)).Debug()
+	}
 	req, _ := http.NewRequest(method, url, body)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -128,7 +143,17 @@ func (client *XClient) RequestJSON(method string, url string, data interface{}, 
 // > `dest` must be a pointer value.
 func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 	defer r.Body.Close()
-	err := json.NewDecoder(r.Body).Decode(dest)
+	b, e := ioutil.ReadAll(r.Body)
+	if e != nil {
+		return errors.Wrap(e, "failed to unmarshal request body")
+	}
+	bf := bytes.NewBuffer(b)
+	if client.logger != nil {
+		client.logger.WithField("url", r.URL.String()).
+			WithField("method", r.Method).
+			WithField("body", string(b)).Debug()
+	}
+	err := json.NewDecoder(bf).Decode(dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
@@ -139,7 +164,19 @@ func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 // > `dest` must be a pointer value.
 func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}) error {
 	defer httpResp.Body.Close()
-	err := json.NewDecoder(httpResp.Body).Decode(dest)
+	b, err := ioutil.ReadAll(httpResp.Body)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal request body")
+	}
+	bf := bytes.NewBuffer(b)
+	if client.logger != nil {
+
+		client.logger.WithField("url", httpResp.Request.URL.String()).
+			WithField("method", httpResp.Request.Method).
+			WithField("body", string(b)).Debug()
+
+	}
+	err = json.NewDecoder(bf).Decode(dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal response body")
 	}
