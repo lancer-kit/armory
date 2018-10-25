@@ -65,7 +65,7 @@ func (m Message) Validate() (err error) {
 		}
 		err = m.Data.Device.Validate()
 	case LetterUserDeferredPaymentNotify:
-		err = m.Data.Validate()
+		err = m.Data.DeferredPaymentNotify.Validate()
 	}
 	return
 }
@@ -83,6 +83,7 @@ func (ms MsgData) Validate() error {
 		validation.Field(&ms.Device),
 		validation.Field(&ms.Universal),
 		validation.Field(&ms.Base),
+		validation.Field(&ms.DeferredPaymentNotify),
 	)
 }
 
