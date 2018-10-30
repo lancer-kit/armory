@@ -136,6 +136,7 @@ func (un Universal) Validate() error {
 
 // DefferedPaymentNotify is a data extension for `deferred payment` letter
 type DeferredPaymentNotify struct {
+	ExpDate          string
 	WalletID         string
 	Amount           string
 	ConfirmationLink string
