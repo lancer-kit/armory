@@ -12,9 +12,9 @@ type CustomError interface {
 }
 
 type DefaultError struct {
-	ErrCode string            `yaml:"errcode"`
-	ErrMsg  string            `yaml:"errmsg"`
-	ErrBody map[string]string `yaml:"errbody"`
+	ErrCode string            `json:"errcode"`
+	ErrMsg  string            `json:"errmsg"`
+	ErrBody map[string]string `json:"errbody"`
 }
 
 func (e *DefaultError) GetErrMessage() string {
