@@ -122,6 +122,7 @@ func (client *XClient) RequestJSON(method string, url string, data interface{}, 
 		client.logger.
 			WithField("method", method).
 			WithField("url", method).
+			WithField("headers", headers).
 			WithField("body", string(rawData)).Debug()
 	}
 	req, _ := http.NewRequest(method, url, body)
@@ -150,6 +151,7 @@ func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 	if client.logger != nil {
 		client.logger.WithField("url", r.URL.String()).
 			WithField("method", r.Method).
+			WithField("auth", r.Header.Get("Authorization")).
 			WithField("body", string(b)).Debug()
 	}
 	err = json.Unmarshal(b, dest)
@@ -171,6 +173,7 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 
 		client.logger.WithField("url", httpResp.Request.URL.String()).
 			WithField("method", httpResp.Request.Method).
+			WithField("auth", httpResp.Header.Get("Authorization")).
 			WithField("body", string(b)).Debug()
 
 	}
