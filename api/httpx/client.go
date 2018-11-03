@@ -113,7 +113,7 @@ func (client *XClient) RequestJSON(method string, url string, data interface{}, 
 	switch data.(type) {
 	case []byte:
 		rawData = data.([]byte)
-		body = bytes.NewBuffer(data.([]byte))
+		body = bytes.NewBuffer(rawData)
 	default:
 		if data != nil {
 			rawData, err = json.Marshal(data)
