@@ -81,18 +81,18 @@ func (client *XClient) SetAuth(service string, kp crypto.KP) Client {
 }
 
 // PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
-func (client *XClient) PostJSON(url string, structure interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPost, url, structure, headers)
+func (client *XClient) PostJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPost, url, bodyStruct, headers)
 }
 
 // PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
-func (client *XClient) PutJSON(url string, structure interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPut, url, structure, headers)
+func (client *XClient) PutJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPut, url, bodyStruct, headers)
 }
 
 // PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
-func (client *XClient) PatchJSON(url string, structure interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPatch, url, structure, headers)
+func (client *XClient) PatchJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPatch, url, bodyStruct, headers)
 }
 
 // GetJSON, sets passed `headers` and executes RequestJSON with GET method.
@@ -106,7 +106,7 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 }
 
 // RequestJSON creates and executes new request with JSON content type.
-func (client *XClient) RequestJSON(method string, url string, structure interface{}, headers Headers) (*http.Response, error) {
+func (client *XClient) RequestJSON(method string, url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	var body io.Reader = nil
 	var err error
 	var rawData []byte
