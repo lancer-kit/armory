@@ -110,13 +110,13 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 	var body io.Reader = nil
 	var err error
 	var rawData []byte
-	switch data.(type) {
+	switch bodyStruct.(type) {
 	case []byte:
-		rawData = data.([]byte)
+		rawData = bodyStruct.([]byte)
 		body = bytes.NewBuffer(rawData)
 	default:
-		if data != nil {
-			rawData, err = json.Marshal(data)
+		if bodyStruct != nil {
+			rawData, err = json.Marshal(bodyStruct)
 			if err != nil {
 				return nil, errors.Wrap(err, "unable to marshal body")
 			}
