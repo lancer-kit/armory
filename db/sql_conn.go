@@ -120,6 +120,22 @@ func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id interface{}, err error) {
 	return id, errors.Wrap(err, "failed to insert")
 }
 
+func (conn *SQLConn) SetMaxIdleConns(n int) {
+	conn.db.SetMaxIdleConns(n)
+}
+
+func (conn *SQLConn) SetMaxOpenConns(n int) {
+	conn.db.SetMaxOpenConns(n)
+}
+
+func (conn *SQLConn) SetConnMaxLifetime(d int64) {
+	conn.db.SetConnMaxLifetime(time.Duration(d))
+}
+
+func (conn *SQLConn) Stats() sql.DBStats {
+	return conn.db.Stats()
+}
+
 func (conn *SQLConn) conn() сonn {
 	if conn.tx != nil {
 		return conn.tx
