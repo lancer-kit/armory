@@ -147,6 +147,50 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 	}
 	return client.Do(req)
 }
+func (client *XClient) RequestJSONAndCookie(method string, url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	var body io.Reader = nil
+	var err error
+	var rawData []byte
+	switch bodyStruct.(type) {
+	case []byte:
+		rawData = bodyStruct.([]byte)
+		body = bytes.NewBuffer(rawData)
+	default:
+		if bodyStruct != nil {
+			rawData, err = json.Marshal(bodyStruct)
+			if err != nil {
+				return nil, errors.Wrap(err, "unable to marshal body")
+			}
+			body = bytes.NewBuffer(rawData)
+		}
+	}
+	if client.logger != nil {
+		client.logger.
+			WithField("method", method).
+			WithField("url", method).
+			WithField("headers", headers).
+			WithField("body", string(rawData)).Debug()
+	}
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	if len(cookies) != 0 {
+		createCookieResponse(req, cookies)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	for key, value := range headers {
+		req.Header.Set(key, value)
+	}
+	if client.auth {
+		req, err = client.SignRequest(req, rawData)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to sign request")
+		}
+	}
+	return client.Do(req)
+}
 
 // ParseJSONBody decodes `json` body from the `http.Request`.
 // > `dest` must be a pointer value.
@@ -246,4 +290,9 @@ func (client *XClient) VerifyRequest(r *http.Request, publicKey string) (bool, e
 func messageForSigning(service, method, url, body, authHeaders string) string {
 	return fmt.Sprintf("service:%s;method:%s;path:%s;authHeaders:%s;body:%s;",
 		service, method, url, authHeaders, body)
+}
+func createCookieResponse(r *http.Request, cookies []*http.Cookie) {
+	for _, k := range cookies {
+		r.AddCookie(k)
+	}
 }
