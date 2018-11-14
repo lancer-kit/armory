@@ -130,7 +130,10 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 			WithField("headers", headers).
 			WithField("body", string(rawData)).Debug()
 	}
-	req, _ := http.NewRequest(method, url, body)
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	for key, value := range headers {
