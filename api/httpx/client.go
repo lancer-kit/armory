@@ -105,6 +105,31 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 	return client.RequestJSON(http.MethodDelete, url, nil, headers)
 }
 
+// PostJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with POST method.
+func (client *XClient) PostJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return client.RequestJSONAndCookie(http.MethodPost, url, bodyStruct, headers, cookies)
+}
+
+// PutJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PUT method.
+func (client *XClient) PutJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return client.RequestJSONAndCookie(http.MethodPut, url, bodyStruct, headers, cookies)
+}
+
+// PatchJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PATCH method.
+func (client *XClient) PatchJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return client.RequestJSONAndCookie(http.MethodPatch, url, bodyStruct, headers, cookies)
+}
+
+// GetJSON, sets passed `headers`,`cookies` and executes RequestJSON with GET method.
+func (client *XClient) GetJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return client.RequestJSONAndCookie(http.MethodGet, url, nil, headers, cookies)
+}
+
+// DeleteJSON, sets passed `headers`,`cookies` and executes RequestJSON with DELETE method.
+func (client *XClient) DeleteJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return client.RequestJSONAndCookie(http.MethodDelete, url, nil, headers, cookies)
+}
+
 // RequestJSON creates and executes new request with JSON content type.
 func (client *XClient) RequestJSON(method string, url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	var body io.Reader = nil

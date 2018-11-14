@@ -52,6 +52,18 @@ type JSONClient interface {
 	ParseJSONBody(r *http.Request, dest interface{}) error
 	// ParseJSONResult decodes `json` body from the `http.Response`.
 	ParseJSONResult(httpResp *http.Response, dest interface{}) error
+	// PostJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with POST method.
+	PostJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error)
+	// PutJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PUT method.
+	PutJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error)
+	// PatchJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PATCH method.
+	PatchJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error)
+	// GetJSON, sets passed `headers`,`cookies` and executes RequestJSON with GET method.
+	GetJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error)
+	// DeleteJSON, sets passed `headers`,`cookies` and executes RequestJSON with DELETE method.
+	DeleteJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error)
+	// RequestJSONAndCookie creates and executes new request with JSON content type.
+	RequestJSONAndCookie(method string, url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error)
 }
 
 const defaultTimeout = time.Second * 15
@@ -114,4 +126,32 @@ func ParseJSONBody(r *http.Request, dest interface{}) error {
 // ParseJSONResult decodes `json` body from the `http.Response`.
 func ParseJSONResult(httpResp *http.Response, dest interface{}) error {
 	return DefaultXClient.ParseJSONResult(httpResp, dest)
+}
+
+// PostJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with POST method.
+func PostJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(http.MethodPost, url, bodyStruct, headers, cookies)
+}
+
+// PutJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PUT method.
+func PutJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(http.MethodPut, url, bodyStruct, headers, cookies)
+}
+
+// PatchJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PATCH method.
+func PatchJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(http.MethodPatch, url, bodyStruct, headers, cookies)
+}
+
+// GetJSON, sets passed `headers`,`cookies` and executes RequestJSON with GET method.
+func GetJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(http.MethodGet, url, nil, headers, cookies)
+}
+
+// DeleteJSON, sets passed `headers`,`cookies` and executes RequestJSON with DELETE method.
+func DeleteJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(http.MethodDelete, url, nil, headers, cookies)
+}
+func RequestJSONAndCookie(method string, url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
+	return DefaultXClient.RequestJSONAndCookie(method, url, bodyStruct, headers, cookies)
 }
