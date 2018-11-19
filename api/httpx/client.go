@@ -239,6 +239,38 @@ func (client *XClient) VerifyRequest(r *http.Request, publicKey string) (bool, e
 	return crypto.VerifySignature(publicKey, msg, sign)
 }
 
+func (client *XClient) PostSignedWithHeaders(reg *http.Request, data interface{}, headers map[string]string) (*http.Response, error) {
+	rawData, err := json.Marshal(data)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to marshal body")
+	}
+
+	rg, err := client.SignRequest(reg, rawData)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create request")
+	}
+	for key, value := range headers {
+		rg.Header.Set(key, value)
+	}
+
+	return client.Do(rg)
+}
+
+func (client *XClient) GetSignedWithHeaders(req *http.Request, headers map[string]string) (*http.Response, error) {
+
+	rq, err := client.SignRequest(req, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create request")
+	}
+	if headers != nil {
+		for key, value := range headers {
+			rq.Header.Set(key, value)
+		}
+	}
+
+	return client.Do(req)
+}
+
 // messageForSigning concatenates passed request data in a fixed format.
 func messageForSigning(service, method, url, body, authHeaders string) string {
 	return fmt.Sprintf("service:%s;method:%s;path:%s;authHeaders:%s;body:%s;",
