@@ -12,7 +12,6 @@ import (
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
-	"gitlab.inn4science.com/gophers/service-kit/auth"
 )
 
 const (
@@ -246,7 +245,11 @@ func (client *XClient) PostSignedWithHeaders(url string, data interface{}, heade
 		return nil, errors.Wrap(err, "unable to marshal body")
 	}
 
-	rg, err := auth.NewSignedPostRequest(client.kp.Private.String(), url, rawData, "application/json", client.service)
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(rawData))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new http request")
+	}
+	rg, err := client.SignRequest(req, rawData)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
 	}
@@ -259,7 +262,11 @@ func (client *XClient) PostSignedWithHeaders(url string, data interface{}, heade
 
 func (client *XClient) GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error) {
 
-	rq, err := auth.NewSignedGetRequest(client.kp.Private.String(), url, client.service)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new http request")
+	}
+	rq, err := client.SignRequest(req, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
 	}
