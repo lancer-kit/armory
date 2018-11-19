@@ -12,6 +12,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
+	"gitlab.inn4science.com/gophers/service-kit/auth"
 )
 
 const (
@@ -239,13 +240,13 @@ func (client *XClient) VerifyRequest(r *http.Request, publicKey string) (bool, e
 	return crypto.VerifySignature(publicKey, msg, sign)
 }
 
-func (client *XClient) PostSignedWithHeaders(reg *http.Request, data interface{}, headers map[string]string) (*http.Response, error) {
+func (client *XClient) PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error) {
 	rawData, err := json.Marshal(data)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to marshal body")
 	}
 
-	rg, err := client.SignRequest(reg, rawData)
+	rg, err := auth.NewSignedPostRequest(client.kp.Private.String(), url, rawData, "application/json", client.service)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
 	}
@@ -256,9 +257,9 @@ func (client *XClient) PostSignedWithHeaders(reg *http.Request, data interface{}
 	return client.Do(rg)
 }
 
-func (client *XClient) GetSignedWithHeaders(req *http.Request, headers map[string]string) (*http.Response, error) {
+func (client *XClient) GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error) {
 
-	rq, err := client.SignRequest(req, nil)
+	rq, err := auth.NewSignedGetRequest(client.kp.Private.String(), url, client.service)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
 	}
