@@ -268,7 +268,7 @@ func (client *XClient) GetSignedWithHeaders(req *http.Request, headers map[strin
 		}
 	}
 
-	return client.Do(req)
+	return client.Do(rq)
 }
 
 // messageForSigning concatenates passed request data in a fixed format.
