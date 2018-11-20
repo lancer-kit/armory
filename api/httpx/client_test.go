@@ -209,6 +209,11 @@ func sendCorrectRequests(t *testing.T, client *XClient, port int, data interface
 	resBody, _ = ioutil.ReadAll(res.Body)
 	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
 
+	res, err = client.PostJSONWithCookies(url, data, nil, []*http.Cookie{})
+	require.NoErrorf(err, "Error when trying to send POST request")
+	resBody, _ = ioutil.ReadAll(res.Body)
+	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
+
 }
 
 func sendBadRequests(t *testing.T, client *XClient, port int, data interface{}) {
