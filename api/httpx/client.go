@@ -12,14 +12,17 @@ import (
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
+	"sort"
+	"strings"
 )
 
 const (
-	HeaderBodyHash  = "X-Auth-BHash"
-	HeaderSignature = "X-Auth-Signature"
-	HeaderSigner    = "X-Auth-Signer"
-	HeaderService   = "X-Auth-Service"
-	HeaderJWTParsed = "jwt"
+	HeaderBodyHash    = "X-Auth-BHash"
+	HeaderSignature   = "X-Auth-Signature"
+	HeaderSigner      = "X-Auth-Signer"
+	HeaderService     = "X-Auth-Service"
+	HeaderJWTParsed   = "jwt"
+	HeaderPassHeaders = "X-Custom-Headers"
 )
 
 type XClient struct {
@@ -137,7 +140,7 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 		req.Header.Set(key, value)
 	}
 	if client.auth {
-		req, err = client.SignRequest(req, rawData)
+		req, err = client.SignRequest(req, rawData, headers)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to sign request")
 		}
@@ -191,21 +194,23 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 
 // SignRequest takes body hash, some headers and full URL path,
 // sings this request details using the `client.privateKey` and adds the auth headers.
-func (client *XClient) SignRequest(req *http.Request, body []byte) (*http.Request, error) {
+func (client *XClient) SignRequest(req *http.Request, body []byte, headers map[string]string) (*http.Request, error) {
 	bodyHash, err := crypto.HashData(body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to hash body")
 	}
 
 	fullPath := req.URL.Path + req.URL.RawQuery
+	signHeadrs := headersForSigning(headers)
 	msg := messageForSigning(client.service, req.Method, fullPath,
-		bodyHash, req.Header.Get(HeaderJWTParsed))
+		bodyHash, signHeadrs)
 
 	sign, err := client.kp.Sign([]byte(msg))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to sign message")
 	}
 
+	req.Header.Set(HeaderPassHeaders, signHeadrs)
 	req.Header.Set(HeaderBodyHash, bodyHash)
 	req.Header.Set(HeaderSignature, sign)
 	req.Header.Set(HeaderService, client.service)
@@ -231,16 +236,68 @@ func (client *XClient) VerifyRequest(r *http.Request, publicKey string) (bool, e
 	bodyHash := r.Header.Get(HeaderBodyHash)
 	service := r.Header.Get(HeaderService)
 	sign := r.Header.Get(HeaderSignature)
-	authHeader := r.Header.Get(HeaderJWTParsed)
+	headers := r.Header.Get(HeaderPassHeaders)
 
 	fullPath := r.URL.Path + r.URL.RawQuery
-	msg := messageForSigning(service, r.Method, fullPath, bodyHash, authHeader)
+	msg := messageForSigning(service, r.Method, fullPath, bodyHash, headers)
 
 	return crypto.VerifySignature(publicKey, msg, sign)
+}
+
+// PostSignedWithHeaders create new POST signed request with headers
+func (client *XClient) PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+	rawData, err := json.Marshal(data)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to marshal body")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(rawData))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new http request")
+	}
+	rg, err := client.SignRequest(req, rawData, headers)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create request")
+	}
+	for key, value := range headers {
+		rg.Header.Set(key, value)
+	}
+
+	return client.Do(rg)
+}
+
+// PostSignedWithHeaders create new signed GET request with headers
+func (client *XClient) GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error) {
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new http request")
+	}
+	rq, err := client.SignRequest(req, nil, headers)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create request")
+	}
+	if headers != nil {
+		for key, value := range headers {
+			rq.Header.Set(key, value)
+		}
+	}
+
+	return client.Do(rq)
 }
 
 // messageForSigning concatenates passed request data in a fixed format.
 func messageForSigning(service, method, url, body, authHeaders string) string {
 	return fmt.Sprintf("service:%s;method:%s;path:%s;authHeaders:%s;body:%s;",
 		service, method, url, authHeaders, body)
+}
+
+//headersForSigning concatenates passed keys from headers map
+func headersForSigning(headers map[string]string) string {
+	var keys []string
+	for key, _ := range headers {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return strings.Join(keys, ":")
 }

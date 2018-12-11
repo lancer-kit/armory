@@ -28,7 +28,7 @@ type Client interface {
 	SetAuth(service string, kp crypto.KP) Client
 	// SignRequest takes body hash, some headers and full URL path,
 	// sings this request details using the `client.privateKey` and adds the auth headers.
-	SignRequest(req *http.Request, body []byte) (*http.Request, error)
+	SignRequest(req *http.Request, body []byte, headers map[string]string) (*http.Request, error)
 	// VerifyBody checks the request body match with it hash.
 	VerifyBody(r *http.Request, body []byte) (bool, error)
 	// VerifyRequest checks the request auth headers.
