@@ -95,7 +95,7 @@ func (client *XClient) DefaultCookies() []*http.Cookie {
 	return client.cookies
 }
 
-// SetCookies sets a default cookies to a client.
+// SetCookies sets a default cookies to the client.
 func (client *XClient) SetDefaultCookies(cookies []*http.Cookie) Client {
 	if client == nil {
 		client = NewXClient()
@@ -113,7 +113,7 @@ func (client *XClient) RemoveDefaultCookies() Client {
 	return client
 }
 
-// WithCookies append cookies to a client and return new instance.
+// WithCookies append cookies to the client and return new instance.
 func (client *XClient) WithCookies(cookies []*http.Cookie) Client {
 	if client == nil {
 		client = NewXClient()
@@ -132,7 +132,7 @@ func (client *XClient) DefaultHeaders() Headers {
 	return client.defaultHeaders
 }
 
-// SetDefaultHeaders sets a default headers to a client.
+// SetDefaultHeaders sets a default headers to the client.
 func (client *XClient) SetDefaultHeaders(headers Headers) Client {
 	if client == nil {
 		client = NewXClient()
@@ -146,6 +146,12 @@ func (client *XClient) SetDefaultHeaders(headers Headers) Client {
 	return client
 }
 
+// SetHeader sets new default header to the client.
+func (client *XClient) SetHeader(key, val string) Client {
+	client.defaultHeaders[key] = val
+	return client
+}
+
 // RemoveDefaultHeaders removes a default client's headers.
 func (client *XClient) RemoveDefaultHeaders() Client {
 	if client == nil {
@@ -155,7 +161,7 @@ func (client *XClient) RemoveDefaultHeaders() Client {
 	return client
 }
 
-// WithHeaders append headers to a client and return new instance.
+// WithHeaders append headers to the client and return new instance.
 func (client *XClient) WithHeaders(headers Headers) Client {
 	if client == nil {
 		client = NewXClient()
