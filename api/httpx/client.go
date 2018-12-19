@@ -3,7 +3,6 @@ package httpx
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,8 +11,6 @@ import (
 
 	"github.com/pkg/errors"
 	"gitlab.inn4science.com/gophers/service-kit/crypto"
-	"sort"
-	"strings"
 )
 
 const (
@@ -32,11 +29,18 @@ type XClient struct {
 	kp      crypto.KP
 	service string
 
+	defaultHeaders Headers
+	cookies        []*http.Cookie
+
 	logger log.Entry
 }
 
 func NewXClient() *XClient {
-	return &XClient{Client: http.Client{Timeout: defaultTimeout}}
+	return &XClient{
+		Client:         http.Client{Timeout: defaultTimeout},
+		defaultHeaders: map[string]string{},
+		cookies:        []*http.Cookie{},
+	}
 }
 
 // SetLogger - Set logger to enable log requests
@@ -73,7 +77,7 @@ func (client *XClient) PublicKey() crypto.Key {
 // SetAuth sets the auth credentials.
 func (client *XClient) SetAuth(service string, kp crypto.KP) Client {
 	if client == nil {
-		client = &XClient{Client: http.Client{Timeout: defaultTimeout}}
+		client = NewXClient()
 	}
 
 	client.kp = kp
@@ -81,6 +85,87 @@ func (client *XClient) SetAuth(service string, kp crypto.KP) Client {
 	client.service = service
 
 	return client
+}
+
+// DefaultCookies returns a client's default cookies.
+func (client *XClient) DefaultCookies() []*http.Cookie {
+	if client == nil {
+		client = NewXClient()
+	}
+	return client.cookies
+}
+
+// SetCookies sets a default cookies to a client.
+func (client *XClient) SetDefaultCookies(cookies []*http.Cookie) Client {
+	if client == nil {
+		client = NewXClient()
+	}
+	client.cookies = append(client.cookies, cookies...)
+	return client
+}
+
+// RemoveDefaultCookies removes a default client's cookies.
+func (client *XClient) RemoveDefaultCookies() Client {
+	if client == nil {
+		client = NewXClient()
+	}
+	client.cookies = nil
+	return client
+}
+
+// WithCookies append cookies to a client and return new instance.
+func (client *XClient) WithCookies(cookies []*http.Cookie) Client {
+	if client == nil {
+		client = NewXClient()
+
+	}
+	newClient := *client
+	newClient.cookies = append(client.cookies, cookies...)
+	return &newClient
+}
+
+// DefaultHeaders returns a client's default headers.
+func (client *XClient) DefaultHeaders() Headers {
+	if client == nil {
+		client = NewXClient()
+	}
+	return client.defaultHeaders
+}
+
+// SetDefaultHeaders sets a default headers to a client.
+func (client *XClient) SetDefaultHeaders(headers Headers) Client {
+	if client == nil {
+		client = NewXClient()
+	}
+	if client.defaultHeaders == nil {
+
+	}
+	for key := range headers {
+		client.defaultHeaders[key] = headers[key]
+	}
+	return client
+}
+
+// RemoveDefaultHeaders removes a default client's headers.
+func (client *XClient) RemoveDefaultHeaders() Client {
+	if client == nil {
+		client = NewXClient()
+	}
+	client.defaultHeaders = nil
+	return client
+}
+
+// WithHeaders append headers to a client and return new instance.
+func (client *XClient) WithHeaders(headers Headers) Client {
+	if client == nil {
+		client = NewXClient()
+
+	}
+	newClient := *client
+	for key := range headers {
+		newClient.defaultHeaders[key] = headers[key]
+	}
+	return &newClient
 }
 
 // PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
@@ -108,36 +193,12 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 	return client.RequestJSON(http.MethodDelete, url, nil, headers)
 }
 
-// PostJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with POST method.
-func (client *XClient) PostJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	return client.RequestJSONAndCookie(http.MethodPost, url, bodyStruct, headers, cookies)
-}
-
-// PutJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PUT method.
-func (client *XClient) PutJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	return client.RequestJSONAndCookie(http.MethodPut, url, bodyStruct, headers, cookies)
-}
-
-// PatchJSON, sets passed `headers`,`cookies` and `body` and executes RequestJSON with PATCH method.
-func (client *XClient) PatchJSONWithCookies(url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	return client.RequestJSONAndCookie(http.MethodPatch, url, bodyStruct, headers, cookies)
-}
-
-// GetJSON, sets passed `headers`,`cookies` and executes RequestJSON with GET method.
-func (client *XClient) GetJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	return client.RequestJSONAndCookie(http.MethodGet, url, nil, headers, cookies)
-}
-
-// DeleteJSON, sets passed `headers`,`cookies` and executes RequestJSON with DELETE method.
-func (client *XClient) DeleteJSONWithCookies(url string, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	return client.RequestJSONAndCookie(http.MethodDelete, url, nil, headers, cookies)
-}
-
 // RequestJSON creates and executes new request with JSON content type.
 func (client *XClient) RequestJSON(method string, url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	var body io.Reader = nil
 	var err error
 	var rawData []byte
+
 	switch bodyStruct.(type) {
 	case []byte:
 		rawData = bodyStruct.([]byte)
@@ -151,6 +212,7 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 			body = bytes.NewBuffer(rawData)
 		}
 	}
+
 	if client.logger != nil {
 		client.logger.
 			WithField("method", method).
@@ -158,59 +220,25 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 			WithField("headers", headers).
 			WithField("body", string(rawData)).Debug()
 	}
+
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
+
+	if len(client.cookies) != 0 {
+		req = addCookies(req, client.cookies)
+	}
+
 	req.Header.Set("Content-Type", "application/json")
 
+	for key, value := range client.defaultHeaders {
+		headers[key] = value
+	}
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-	if client.auth {
-		req, err = client.SignRequest(req, rawData)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to sign request")
-		}
-	}
-	return client.Do(req)
-}
-func (client *XClient) RequestJSONAndCookie(method string, url string, bodyStruct interface{}, headers Headers, cookies []*http.Cookie) (*http.Response, error) {
-	var body io.Reader = nil
-	var err error
-	var rawData []byte
-	switch bodyStruct.(type) {
-	case []byte:
-		rawData = bodyStruct.([]byte)
-		body = bytes.NewBuffer(rawData)
-	default:
-		if bodyStruct != nil {
-			rawData, err = json.Marshal(bodyStruct)
-			if err != nil {
-				return nil, errors.Wrap(err, "unable to marshal body")
-			}
-			body = bytes.NewBuffer(rawData)
-		}
-	}
-	if client.logger != nil {
-		client.logger.
-			WithField("method", method).
-			WithField("url", method).
-			WithField("headers", headers).
-			WithField("body", string(rawData)).Debug()
-	}
-	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		return nil, err
-	}
-	if len(cookies) != 0 {
-		createCookieResponse(req, cookies)
-	}
-	req.Header.Set("Content-Type", "application/json")
 
-	for key, value := range headers {
-		req.Header.Set(key, value)
-	}
 	if client.auth {
 		req, err = client.SignRequest(req, rawData, headers)
 		if err != nil {
@@ -221,7 +249,7 @@ func (client *XClient) RequestJSONAndCookie(method string, url string, bodyStruc
 }
 
 // ParseJSONBody decodes `json` body from the `http.Request`.
-// > `dest` must be a pointer value.
+// !> `dest` must be a pointer value.
 func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 	defer r.Body.Close()
 	b, err := ioutil.ReadAll(r.Body)
@@ -250,7 +278,6 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
 	if client.logger != nil {
-
 		client.logger.WithField("url", httpResp.Request.URL.String()).
 			WithField("method", httpResp.Request.Method).
 			WithField("auth", httpResp.Header.Get("Authorization")).
@@ -356,25 +383,4 @@ func (client *XClient) GetSignedWithHeaders(url string, headers map[string]strin
 	}
 
 	return client.Do(rq)
-}
-
-// messageForSigning concatenates passed request data in a fixed format.
-func messageForSigning(service, method, url, body, authHeaders string) string {
-	return fmt.Sprintf("service:%s;method:%s;path:%s;authHeaders:%s;body:%s;",
-		service, method, url, authHeaders, body)
-}
-func createCookieResponse(r *http.Request, cookies []*http.Cookie) {
-	for _, k := range cookies {
-		r.AddCookie(k)
-	}
-}
-
-//headersForSigning concatenates passed keys from headers map
-func headersForSigning(headers map[string]string) string {
-	var keys []string
-	for key, _ := range headers {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	return strings.Join(keys, ":")
 }
