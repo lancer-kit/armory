@@ -23,6 +23,10 @@ type URL struct {
 
 const slash = "/"
 
+func (j *URL) SetBasePath(path string) {
+	j.basePath = path
+}
+
 func (j *URL) WithPath(path string) string {
 	ur := *j.URL
 	ur.Path = j.basePath + slash + strings.TrimPrefix(path, slash)

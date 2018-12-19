@@ -13,6 +13,7 @@ type Headers map[string]string
 // Client is a interface of extended http.Client which support signed request.
 type Client interface {
 	CookiesSupport
+	CustomHeadersSupport
 	JSONClient
 
 	// Auth returns current state of authentication flag.
@@ -52,6 +53,8 @@ type CustomHeadersSupport interface {
 	DefaultHeaders() Headers
 	// SetDefaultHeaders sets a default headers to a client.
 	SetDefaultHeaders(headers Headers) Client
+	// SetHeader sets new default header to the client.
+	SetHeader(key, val string) Client
 	// RemoveDefaultHeaders removes a default client's headers.
 	RemoveDefaultHeaders() Client
 	// WithHeaders append headers to a client and return new instance.
