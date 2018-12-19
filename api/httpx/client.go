@@ -238,10 +238,10 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 
 	req.Header.Set("Content-Type", "application/json")
 
-	for key, value := range client.defaultHeaders {
-		headers[key] = value
-	}
 	for key, value := range headers {
+		client.defaultHeaders[key] = value
+	}
+	for key, value := range client.defaultHeaders {
 		req.Header.Set(key, value)
 	}
 
