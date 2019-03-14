@@ -187,3 +187,7 @@ func (chief *Chief) GetWorkersStates() map[string]WorkerState {
 func (chief *Chief) GetContext() context.Context {
 	return chief.ctx
 }
+
+func (chief *Chief) AddValueToContext(key, value interface{}) {
+	chief.ctx = context.WithValue(chief.ctx, key, value)
+}
