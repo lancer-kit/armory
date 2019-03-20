@@ -17,6 +17,19 @@ type SQLConn struct {
 	logger *logrus.Entry
 }
 
+// NewSQLConn create new connector by passed connection params
+func NewSQLConn(db *sqlx.DB, logger *logrus.Entry) *SQLConn {
+	return &SQLConn{
+		db:     db,
+		logger: logger,
+	}
+}
+
+// SetTx set new sqlx.Tx
+func (conn *SQLConn) SetTx(tx *sqlx.Tx) {
+	conn.tx = tx
+}
+
 // Clone clones the receiver, returning a new instance backed by the same
 // context and db. The result will not be bound to any transaction that the
 // source is currently within.
