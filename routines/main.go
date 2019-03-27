@@ -12,5 +12,5 @@ type Worker interface {
 	// RestartOnFail determines the need to restart the worker, if it stopped.
 	RestartOnFail() bool
 	// Run starts the `Worker` instance execution.
-	Run() //todo(mike): add result or error
+	Run() // todo(mike): add exit code result
 }

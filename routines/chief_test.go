@@ -11,27 +11,27 @@ import (
 	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
-// DummyWorker is a simple realization of the Worker interface.
-type DummyWorker struct {
+// dummyWorker is a simple realization of the Worker interface.
+type dummyWorker struct {
 	tickDuration time.Duration
 	ctx          context.Context
 }
 
-// Init returns new instance of the `DummyWorker`.
-func (*DummyWorker) Init(parentCtx context.Context) Worker {
-	return &DummyWorker{
+// Init returns new instance of the `dummyWorker`.
+func (*dummyWorker) Init(parentCtx context.Context) Worker {
+	return &dummyWorker{
 		ctx:          parentCtx,
 		tickDuration: time.Second,
 	}
 }
 
 // RestartOnFail determines the need to restart the worker, if it stopped
-func (s *DummyWorker) RestartOnFail() bool {
+func (s *dummyWorker) RestartOnFail() bool {
 	return true
 }
 
 // Run start job execution.
-func (s *DummyWorker) Run() {
+func (s *dummyWorker) Run() {
 	ticker := time.NewTicker(15 * time.Second)
 	for {
 		select {
@@ -48,7 +48,7 @@ func TestChief_InitWorkers(t *testing.T) {
 	require := require.New(t)
 
 	wp := WorkerPool{}
-	worker := new(DummyWorker)
+	worker := new(dummyWorker)
 	wp.SetWorker("dummyWorker", worker)
 
 	testChief := new(Chief)
@@ -66,11 +66,10 @@ func TestChief_InitWorkers(t *testing.T) {
 	for _, tt := range tests {
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
-		tt.chief.InitWorkers(nil)
+		//tt.chief.InitWorkers(nil)
 		require.NotNilf(tt.chief.logger, "Chief.logger is not initialized")
 		require.NotNilf(tt.chief.ctx, "Chief.ctx is not initialized")
-		require.NotNilf(tt.chief.cancel, "Chief.cansel is not initialized")
-		require.Truef(tt.chief.active, "Chief not active")
+		require.Truef(tt.chief.initialized, "Workers is not initialized")
 
 		log.Default.Info(fmt.Sprintf("%s finished successfully", tt.name))
 	}
@@ -80,7 +79,7 @@ func TestChief_Start(t *testing.T) {
 	require := require.New(t)
 
 	wp := WorkerPool{}
-	worker := new(DummyWorker)
+	worker := new(dummyWorker)
 	wp.SetWorker("dummyWorker", worker)
 
 	testChief := new(Chief)
@@ -106,11 +105,9 @@ func TestChief_Start(t *testing.T) {
 
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
-		tt.chief.InitWorkers(nil)
+		//tt.chief.InitWorkers(nil)
 
-		go tt.chief.Start(tt.parentCtx)
-
-		require.NotNilf(tt.chief.wg, "Error chief is not active")
+		go tt.chief.StartPool(tt.parentCtx)
 
 		time.Sleep(20 * time.Second)
 		tt.canselFunc()
@@ -125,7 +122,7 @@ func TestChief_RunAll(t *testing.T) {
 	require := require.New(t)
 
 	workerPool := WorkerPool{}
-	worker := new(DummyWorker)
+	worker := new(dummyWorker)
 	workerPool.SetWorker("dummyWorker", worker)
 
 	testChief := new(Chief)
@@ -166,26 +163,26 @@ func TestChief_RunAll(t *testing.T) {
 //restart indicates if worker is need to be restarted or not
 var restart bool
 
-type RestartWorker struct {
+type restartWorker struct {
 	tickDuration time.Duration
 	ctx          context.Context
 }
 
-// Init returns new instance of the `RestartWorker`.
-func (*RestartWorker) Init(parentCtx context.Context) Worker {
-	return &RestartWorker{
+// Init returns new instance of the `restartWorker`.
+func (*restartWorker) Init(parentCtx context.Context) Worker {
+	return &restartWorker{
 		ctx:          parentCtx,
 		tickDuration: time.Second,
 	}
 }
 
 // RestartOnFail determines the need to restart the worker, if it stopped
-func (s *RestartWorker) RestartOnFail() bool {
+func (s *restartWorker) RestartOnFail() bool {
 	return restart
 }
 
 // Run start job execution.
-func (s *RestartWorker) Run() {
+func (s *restartWorker) Run() {
 	ticker := time.NewTicker(10 * time.Second)
 
 	for {
@@ -206,7 +203,7 @@ func TestRestartOnFailWorker(t *testing.T) {
 	require := require.New(t)
 
 	wp := WorkerPool{}
-	worker := new(RestartWorker)
+	worker := new(restartWorker)
 	wp.SetWorker("restartWorker", worker)
 
 	testChief := new(Chief)
@@ -239,15 +236,14 @@ func TestRestartOnFailWorker(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
-		tt.chief.InitWorkers(nil)
+		//tt.chief.InitWorkers(nil)
 		restart = tt.ifRestart
 
-		go tt.chief.Start(tt.parentCtx)
+		go tt.chief.StartPool(tt.parentCtx)
 
-		require.NotNilf(tt.chief.wg, "Error chief is not active")
+		require.True(tt.chief.active, "Error chief is not active")
 
 		time.Sleep(30 * time.Second)
 		tt.canselFunc()

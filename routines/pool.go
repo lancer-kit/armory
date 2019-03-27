@@ -29,7 +29,7 @@ func (pool *WorkerPool) GetWorker(name string) Worker {
 	return nil
 }
 
-//GetState -  get Worker state by name
+// GetState returns current state for workers with the specified `name`.
 func (pool *WorkerPool) GetState(name string) WorkerState {
 	pool.rw.Lock()
 	defer pool.rw.Unlock()
@@ -39,42 +39,9 @@ func (pool *WorkerPool) GetState(name string) WorkerState {
 	return WorkerDisabled
 }
 
-// DisableWorker sets state `WorkerDisabled` for workers with the specified `name`.
-func (pool *WorkerPool) DisableWorker(name string) {
-	pool.SetState(name, WorkerDisabled)
-}
-
-// EnableWorker sets state `WorkerEnabled` for workers with the specified `name`.
-func (pool *WorkerPool) EnableWorker(name string) {
-	if s := pool.states[name]; s != WorkerPresent {
-		pool.SetState(name, WorkerWrongStateChange)
-		return
-	}
-	pool.SetState(name, WorkerEnabled)
-}
-
-// StartWorker sets state `WorkerEnabled` for workers with the specified `name`.
-func (pool *WorkerPool) StartWorker(name string) {
-	if s := pool.GetState(name); s != WorkerStopped &&
-		s != WorkerInitialized && s != WorkerFailed {
-		pool.SetState(name, WorkerWrongStateChange)
-		return
-	}
-	pool.SetState(name, WorkerRun)
-}
-
-// StopWorker sets state `WorkerStopped` for workers with the specified `name`.
-func (pool *WorkerPool) StopWorker(name string) {
-	if s := pool.GetState(name); s != WorkerRun && s != WorkerFailed {
-		pool.SetState(name, WorkerWrongStateChange)
-		return
-	}
-	pool.SetState(name, WorkerStopped)
-}
-
-// FailWorker sets state `WorkerFailed` for workers with the specified `name`.
-func (pool *WorkerPool) FailWorker(name string) {
-	pool.SetState(name, WorkerFailed)
+// GetWorkersStates returns current state of all workers.
+func (pool *WorkerPool) GetWorkersStates() map[string]WorkerState {
+	return pool.states
 }
 
 // IsEnabled checks is enable worker with passed `name`.
@@ -97,18 +64,52 @@ func (pool *WorkerPool) IsAlive(name string) bool {
 	return state == WorkerRun
 }
 
-// InitWorker initializes all present workers.
-func (pool *WorkerPool) InitWorker(name string, ctx context.Context) {
-	pool.rw.Lock()
-	defer pool.rw.Unlock()
-	pool.check()
+// DisableWorker sets state `WorkerDisabled` for workers with the specified `name`.
+func (pool *WorkerPool) DisableWorker(name string) {
+	pool.SetState(name, WorkerDisabled)
+}
 
-	if pool.states[name] < WorkerEnabled {
+// EnableWorker sets state `WorkerEnabled` for workers with the specified `name`.
+func (pool *WorkerPool) EnableWorker(name string) {
+	if s := pool.states[name]; s != WorkerPresent {
+		pool.SetState(name, WorkerWrongStateChange)
 		return
 	}
+	pool.SetState(name, WorkerEnabled)
+}
 
-	pool.workers[name] = pool.workers[name].Init(ctx)
-	pool.states[name] = WorkerInitialized
+// InitWorker initializes all present workers.
+func (pool *WorkerPool) InitWorker(name string, ctx context.Context) {
+	if s := pool.GetState(name); s < WorkerEnabled {
+		return
+	}
+	w := pool.GetWorker(name)
+	w.Init(ctx)
+	pool.ReplaceWorker(name, w)
+	pool.SetState(name, WorkerRun)
+}
+
+// StartWorker sets state `WorkerEnabled` for workers with the specified `name`.
+func (pool *WorkerPool) StartWorker(name string) {
+	if s := pool.GetState(name); s != WorkerStopped && s != WorkerInitialized && s != WorkerFailed {
+		pool.SetState(name, WorkerWrongStateChange)
+		return
+	}
+	pool.SetState(name, WorkerRun)
+}
+
+// StopWorker sets state `WorkerStopped` for workers with the specified `name`.
+func (pool *WorkerPool) StopWorker(name string) {
+	if s := pool.GetState(name); s != WorkerRun && s != WorkerFailed {
+		pool.SetState(name, WorkerWrongStateChange)
+		return
+	}
+	pool.SetState(name, WorkerStopped)
+}
+
+// FailWorker sets state `WorkerFailed` for workers with the specified `name`.
+func (pool *WorkerPool) FailWorker(name string) {
+	pool.SetState(name, WorkerFailed)
 }
 
 // SetState updates state of specified worker.
@@ -130,6 +131,14 @@ func (pool *WorkerPool) SetWorker(name string, worker Worker) {
 	pool.states[name] = WorkerPresent
 }
 
+func (pool *WorkerPool) ReplaceWorker(name string, worker Worker) {
+	pool.rw.Lock()
+	defer pool.rw.Unlock()
+
+	pool.check()
+	pool.workers[name] = worker
+}
+
 // RunWorkerExec adds worker into pool.
 func (pool *WorkerPool) RunWorkerExec(name string) (err error) {
 	defer func() {
@@ -139,11 +148,11 @@ func (pool *WorkerPool) RunWorkerExec(name string) (err error) {
 		}
 		pool.FailWorker(name)
 
-		var ok bool
-		err, ok = rec.(error)
+		e, ok := rec.(error)
 		if !ok {
-			err = fmt.Errorf("%v", rec)
+			e = fmt.Errorf("%v", rec)
 		}
+		err = errors.WithStack(e)
 	}()
 
 	if s := pool.GetState(name); s != WorkerInitialized {
@@ -164,8 +173,4 @@ func (pool *WorkerPool) check() {
 	if pool.workers == nil {
 		pool.workers = make(map[string]Worker)
 	}
-}
-
-func (pool *WorkerPool) GetWorkersStates() map[string]WorkerState {
-	return pool.states
 }

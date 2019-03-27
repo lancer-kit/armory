@@ -36,8 +36,7 @@ func (m mockWorker) Run() {
 // initPool returns WorkerPool instance suitable for most tests
 func initPool() *WorkerPool {
 	newPool := new(WorkerPool)
-	newPool.workers = make(map[string]Worker)
-	newPool.workers["test"] = mockWorker{}
+	newPool.SetWorker("test", mockWorker{})
 
 	return newPool
 }
@@ -100,6 +99,7 @@ func TestWorkerPool_StartWorker(t *testing.T) {
 	}
 
 	runTestCases(t, tests, func(wp *WorkerPool, name string) {
+		wp.InitWorker(name, context.Background())
 		wp.StartWorker(name)
 	})
 }
@@ -117,6 +117,8 @@ func TestWorkerPool_StopWorker(t *testing.T) {
 	}
 
 	runTestCases(t, tests, func(wp *WorkerPool, name string) {
+		wp.InitWorker(name, context.Background())
+		wp.StartWorker(name)
 		wp.StopWorker(name)
 	})
 }
@@ -322,6 +324,9 @@ func TestWorkerPool_RunWorkerExec(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt.pool.EnableWorker(tt.workerName)
+		tt.pool.InitWorker(tt.workerName, context.Background())
+
 		log.Default.Info(fmt.Sprintf("Started %s", tt.name))
 
 		err := tt.pool.RunWorkerExec(tt.workerName)
