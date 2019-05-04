@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.inn4science.com/vcg/go-common/crypto"
 	"github.com/stretchr/testify/assert"
+	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
+
+type TestModel struct {
+	TestData string `json:"testData"`
+}
 
 func TestVerifyRequestSignature(t *testing.T) {
 	privateKey, publicKey := crypto.GenKeyPair()
@@ -26,6 +30,21 @@ func TestVerifyRequestSignature(t *testing.T) {
 	ok, err = VerifyRequestSignature(testRequest, publicKey)
 	fmt.Println(err)
 
+	assert.Equal(t, true, ok)
+
+}
+func TestNewSignedDataRequest(t *testing.T) {
+	privateKey, publicKey := crypto.GenKeyPair()
+	println("[", privateKey, ",", publicKey, "]")
+	x := &TestModel{
+		TestData: "Vegas",
+	}
+	testRequest, err := NewSignedDataRequest("POST", privateKey,
+		"https://localhost:8080/test/42?que=ctulhu", x, "dummy")
+
+	assert.NoError(t, err)
+	ok, err := VerifyRequestSignature(testRequest, publicKey)
+	assert.NoError(t, err)
 	assert.Equal(t, true, ok)
 
 }

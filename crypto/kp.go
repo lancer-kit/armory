@@ -29,8 +29,28 @@ func RandomKP() KP {
 func GenKeyPair() (privateKey, publicKey string) {
 	pubk, pk, _ := ed25519.GenerateKey(rand.Reader)
 
-	privateKey = base32Encode(pk)
-	publicKey = base32Encode(pubk)
+	privateKey = Base32Encode(pk)
+	publicKey = Base32Encode(pubk)
+	return
+}
+
+//SetPubKeyFromString - set public key from string
+func (kp *KP) SetPubKeyFromString(publicKey string) (err error) {
+	pbKey, err := FromString(publicKey)
+	if err != nil {
+		return
+	}
+	kp.Public = *pbKey
+	return
+}
+
+//SetPrivKeyFromString - set private key from string
+func (kp *KP) SetPrivKeyFromString(privateKey string) (err error) {
+	prKey, err := FromString(privateKey)
+	if err != nil {
+		return
+	}
+	kp.Private = *prKey
 	return
 }
 
@@ -42,18 +62,18 @@ func (kp *KP) SignData(data interface{}) (string, error) {
 	}
 
 	sig := ed25519.Sign(kp.Private.ToPrivate(), message)
-	return base32Encode(sig), nil
+	return Base32Encode(sig), nil
 }
 
 // Sign signs the `data`.
 func (kp *KP) Sign(data []byte) (string, error) {
 	sig := ed25519.Sign(kp.Private.ToPrivate(), data)
-	return base32Encode(sig), nil
+	return Base32Encode(sig), nil
 }
 
 // VerifySignature checks is valid `signature` of `message`.
 func (kp *KP) VerifySignature(message, signature string) (bool, error) {
-	rawSignature, err := base32Decode(signature)
+	rawSignature, err := Base32Decode(signature)
 	if err != nil {
 		return false, err
 	}

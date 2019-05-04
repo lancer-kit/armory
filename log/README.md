@@ -9,7 +9,7 @@ To start use the `log` package add import:
 ``` go
 ...
 import (
-  "gitlab.inn4science.com/vcg/go-common/log" // imports as package "log"
+  "gitlab.inn4science.com/gophers/service-kit/log" // imports as package "log"
 )
 ...
 ```
@@ -43,7 +43,7 @@ package main
 
 import (
     "fmt"
-    "gitlab.inn4science.com/vcg/go-common/log" // imports as package "log"
+    "gitlab.inn4science.com/gophers/service-kit/log" // imports as package "log"
 )
 
 var config = log.Config{

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/vcg/go-common/currency"
 )
 
 func TestVerifySignature(t *testing.T) {
@@ -13,7 +12,7 @@ func TestVerifySignature(t *testing.T) {
 	fmt.Println("Private Key: ", privKey)
 	fmt.Println("Public  Key: ", pubKey)
 
-	message := fmt.Sprintf("%s:%s", currency.Amount(4212340000).String(), "test 42")
+	message := fmt.Sprintf("%s:%s", "4212340000", "test 42")
 	fmt.Println(message)
 	sig, err := SignMessage(privKey, message)
 	assert.Equal(t, nil, err)
@@ -23,4 +22,22 @@ func TestVerifySignature(t *testing.T) {
 	ok, err := VerifySignature(pubKey, message, sig)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, true, ok)
+}
+
+func TestBase64EncodeNP(t *testing.T) {
+	key := "this is key"
+	out := Base64EncodeNP([]byte(key))
+	println(out)
+	in, err := Base64DecodeNP(out)
+	assert.NoError(t, err)
+	assert.Equal(t, string(in), key)
+}
+
+func TestBase32EncodeNP(t *testing.T) {
+	key := "this is key"
+	out := Base32EncodeNP([]byte(key))
+	println(out)
+	in, err := Base32DecodeNP(out)
+	assert.NoError(t, err)
+	assert.Equal(t, string(in), key)
 }

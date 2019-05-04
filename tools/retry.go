@@ -1,4 +1,4 @@
-package vcgtools
+package tools
 
 import "time"
 
@@ -24,6 +24,34 @@ func RetryIncrementally(interval time.Duration, call func() bool) {
 			return
 		}
 		time.Sleep(incrementInterval(interval, counter))
+	}
+}
+
+// RetryIncrementallyUntil retries passed function `call` until it end with
+// success (returns true), else repeat again and increments retrying interval
+// up to 2 hour until function `call` succeeded (returns true) or until `until`
+// time reached (returns false).
+func RetryIncrementallyUntil(interval time.Duration, until time.Duration, call func() bool) bool {
+	var counter int64
+	untilTimer := time.NewTimer(until)
+
+	counter++
+	if ok := call(); ok {
+		return true
+	}
+	intervalTimer := time.NewTimer(incrementInterval(interval, counter))
+
+	for {
+		select {
+		case <-untilTimer.C:
+			return false
+		case <-intervalTimer.C:
+			counter++
+			if ok := call(); ok {
+				return true
+			}
+			intervalTimer.Reset(incrementInterval(interval, counter))
+		}
 	}
 }
 
