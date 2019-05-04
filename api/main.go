@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/go-ozzo/ozzo-validation"
+	"github.com/lancer-kit/armory/log"
+	"github.com/lancer-kit/armory/routines"
 	"github.com/sirupsen/logrus"
-	"gitlab.inn4science.com/gophers/service-kit/log"
-	"gitlab.inn4science.com/gophers/service-kit/routines"
 )
 
 var ForceStopTimeout = 5 * time.Second

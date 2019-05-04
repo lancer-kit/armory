@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lancer-kit/armory/log"
 	"github.com/stretchr/testify/require"
-	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 // DummyWorker is a simple realization of the Worker interface.

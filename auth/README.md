@@ -1,6 +1,6 @@
 # auth
 --
-    import "gitlab.inn4science.com/gophers/service-kit/auth"
+    import "github.com/lancer-kit/armory/auth"
 
 
 ## Usage

@@ -8,7 +8,7 @@ package main
 
 import (
     "net/http"
-    "gitlab.inn4science.com/gophers/service-kit/api/render"
+    "github.com/lancer-kit/armory/api/render"
 )
 
 func Get(w http.ResponseWriter, r *http.Request) {

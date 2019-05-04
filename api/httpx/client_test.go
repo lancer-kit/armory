@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/lancer-kit/armory/crypto"
+	"github.com/lancer-kit/armory/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gitlab.inn4science.com/gophers/service-kit/crypto"
-	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 func TestXClient_Auth(t *testing.T) {

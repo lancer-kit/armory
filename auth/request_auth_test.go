@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/lancer-kit/armory/crypto"
 	"github.com/stretchr/testify/assert"
-	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 type TestModel struct {

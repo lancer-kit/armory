@@ -7,10 +7,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"gitlab.inn4science.com/gophers/service-kit/log"
-
+	"github.com/lancer-kit/armory/crypto"
+	"github.com/lancer-kit/armory/log"
 	"github.com/pkg/errors"
-	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 const (

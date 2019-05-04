@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/lancer-kit/armory/crypto"
 	"github.com/pkg/errors"
-	"gitlab.inn4science.com/gophers/service-kit/crypto"
 )
 
 const (

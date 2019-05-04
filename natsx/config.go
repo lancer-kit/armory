@@ -1,4 +1,4 @@
-package natswrap
+package natsx
 
 import (
 	"fmt"

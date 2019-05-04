@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/lancer-kit/armory/api/render"
+	"github.com/lancer-kit/armory/log"
 	"github.com/pkg/errors"
-	"gitlab.inn4science.com/gophers/service-kit/api/render"
-	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 type ReturnAuthStruct struct {

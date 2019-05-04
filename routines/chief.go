@@ -2,15 +2,16 @@ package routines
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
+	"github.com/lancer-kit/armory/log"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 // CtxKey is the type of context keys for the values placed by`Chief`.
@@ -154,20 +155,26 @@ func (chief *Chief) RunAll(appName string, workers ...string) error {
 
 func (chief *Chief) runWorker(name string, worker Worker) {
 	defer chief.wg.Done()
-
+	logger := chief.logger.WithField("worker", name)
 	defer func() {
-		err := recover()
-		if err == nil {
+		c := recover()
+		if c == nil {
 			return
 		}
+		err, ok := c.(error)
+		if !ok {
+			err = fmt.Errorf("panic: %v", c)
+		}
+
+		logger.WithError(errors.WithStack(err)).Error("Caught panic")
 	}()
 
 startWorker:
-	chief.logger.WithField("worker", name).Info("Starting worker")
+	logger.Info("Starting worker")
 
 	err := chief.wPool.RunWorkerExec(name)
 	if err != nil {
-		chief.logger.WithField("worker", name).
+		logger.
 			WithError(err).
 			Error("Worker failed")
 

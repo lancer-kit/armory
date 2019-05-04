@@ -1,15 +1,15 @@
 # Natswrap
 
-`natswrap` is a  simple wrapper for [nats.io](nats-io/go-nats) client. 
+`natsx` is a  simple wrapper for [nats.io](nats-io/go-nats) client. 
 
 ## Usage 
 
-To start use the `natswrap` package add import:
+To start use the `natsx` package add import:
 
 ``` go
 ...
 import (
-  "gitlab.inn4science.com/gophers/service-kit/natswrap"
+  "github.com/lancer-kit/armory/natsx"
 )
 ...
 ```
@@ -26,7 +26,7 @@ import (
 - Set config: 
 
 ``` go
-natswrap.SetCfg(cfg)
+natsx.SetCfg(cfg)
 ```
 
 Connect will be initialized at first try to push or subscribe a message
@@ -41,10 +41,10 @@ package main
 
 import (
     "fmt"
-    "gitlab.inn4science.com/gophers/service-kit/natswrap"
+    "github.com/lancer-kit/armory/natsx"
 )
 
-var config = natswrap.Config{
+var config = natsx.Config{
     Host: "127.0.0.1",
     Port: 4222,
     User: "user",
@@ -56,10 +56,10 @@ if err != nil {
     fmt.Println('invalid nats configuration')
 }
 
-natswrap.SetConfig(&config)
+natsx.SetConfig(&config)
 
 testMsg := []string {"1", "2"}
-err := natswrap.PublishMessage("Topic", testMsg)
+err := natsx.PublishMessage("Topic", testMsg)
 if err != nil {
     log.Default.Error(err)
 }

@@ -11,4 +11,4 @@ Common libraries for go services:
 - [Routines](./routines/README.md) - implementation, running and controlling workers.
 - **Api**
     - [Render](./api/render/README.md) - response helper, base responses
-    - [Natswrap](./natswrap/README.md) - simple wrapper for Nats
+    - [Natswrap](./natsx/README.md) - simple wrapper for Nats

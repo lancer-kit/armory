@@ -4,11 +4,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/lancer-kit/armory/log"
+	"github.com/lancer-kit/armory/tools"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-
-	"gitlab.inn4science.com/gophers/service-kit/log"
-	"gitlab.inn4science.com/gophers/service-kit/tools"
 )
 
 type Modules []Module

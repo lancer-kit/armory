@@ -142,8 +142,10 @@ func (pool *WorkerPool) RunWorkerExec(name string) (err error) {
 		var ok bool
 		err, ok = rec.(error)
 		if !ok {
-			err = fmt.Errorf("%v", rec)
+			err = fmt.Errorf("panic %v", rec)
 		}
+
+		err = errors.WithStack(err)
 	}()
 
 	if s := pool.GetState(name); s != WorkerInitialized {
