@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"gitlab.inn4science.com/gophers/service-kit/routines"
+	"github.com/lancer-kit/armory/routines"
 )
 
 const Separator = "."

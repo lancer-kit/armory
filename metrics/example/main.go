@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"gitlab.inn4science.com/gophers/service-kit/metrics"
+	"github.com/lancer-kit/armory/metrics"
 )
 
 var Metrics = new(metrics.SafeMetrics)

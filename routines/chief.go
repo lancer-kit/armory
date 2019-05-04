@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/lancer-kit/armory/log"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gitlab.inn4science.com/gophers/service-kit/log"
 )
 
 // CtxKey is the type of context keys for the values placed by`Chief`.
