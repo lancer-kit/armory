@@ -35,7 +35,7 @@ package main
 
 import (
     "log"
-    "gitlab.inn4science.com/gophers/service-kit/db"
+    "github.com/lancer-kit/armory/db"
 )
 
 func main() {

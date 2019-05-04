@@ -7,14 +7,15 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/lancer-kit/armory/api"
+	"github.com/lancer-kit/armory/api/render"
+	"github.com/lancer-kit/armory/log"
+	"github.com/lancer-kit/armory/routines"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gitlab.inn4science.com/gophers/service-kit/api"
-	"gitlab.inn4science.com/gophers/service-kit/api/render"
-	"gitlab.inn4science.com/gophers/service-kit/log"
-	"gitlab.inn4science.com/gophers/service-kit/routines"
 )
 
+// DEPRECATED
 //structure with info about service
 type Info struct {
 	App     string `json:"app"`

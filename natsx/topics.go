@@ -1,4 +1,4 @@
-package natswrap
+package natsx
 
 type Message struct {
 	EventID string      `json:"eventId"`

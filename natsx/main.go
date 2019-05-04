@@ -1,4 +1,4 @@
-package natswrap
+package natsx
 
 import (
 	"encoding/json"
@@ -7,8 +7,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-var natsConn *nats.Conn
-var cfg *Config
+var (
+	cfg      *Config
+	natsConn *nats.Conn
+)
 
 func SetConfig(config *Config) {
 	cfg = config

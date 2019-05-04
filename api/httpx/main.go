@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"gitlab.inn4science.com/gophers/service-kit/crypto"
+	"github.com/lancer-kit/armory/crypto"
 )
 
 // Headers is a type for request headers.
