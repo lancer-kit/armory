@@ -10,14 +10,6 @@
   version = "v1.1"
 
 [[projects]]
-  digest = "1:8722889ad027febfced94665914d1e7be8f1b703d31f2ef9461c59e4d40fe974"
-  name = "github.com/certifi/gocertifi"
-  packages = ["."]
-  pruneopts = ""
-  revision = "deb3ae2ef2610fde3330947281941c562861188b"
-  version = "2018.01.18"
-
-[[projects]]
   digest = "1:0deddd908b6b4b768cfc272c16ee61e7088a60f7fe2f06c547bd3d8e1f8b8e77"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -26,12 +18,12 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:40548207236a3c3d02b4dae094f5901d662a792e015948287dc3e9ea1bd50674"
-  name = "github.com/getsentry/raven-go"
+  digest = "1:e6995ad9094568f389974af73a70a48cf57dcab684185c9cf621d7ad6835f8ae"
+  name = "github.com/getsentry/sentry-go"
   packages = ["."]
   pruneopts = ""
-  revision = "f04e7487e9a6b9d9837d52743fb5f40576c56411"
-  version = "v0.2.0"
+  revision = "79cad3fec863752ea61059d4565f85b23da2d9d1"
+  version = "v0.1.1"
 
 [[projects]]
   digest = "1:55d7786e315a68ad27227a9800ebed9c48a23379de13358ab9a331ae8fe39283"
@@ -168,15 +160,14 @@
   version = "v6.2.16"
 
 [[projects]]
-  branch = "master"
-  digest = "1:c391701296c18128e544a6d0f8969c90ae896be3bd2604a8540386c0127271dc"
+  digest = "1:c68caf63043d5401f262309082d48dea2c930aec1df0b3fc2f2f767d716ffd11"
   name = "github.com/onrik/logrus"
   packages = [
     "filename",
     "sentry",
   ]
   pruneopts = ""
-  revision = "05335c5abaa99d4c7a3f36df162b483106ef38a8"
+  revision = "ebd9f98c04695283f8048c6a3cab3295090ba8ab"
 
 [[projects]]
   digest = "1:1d7e1867c49a6dd9856598ef7c3123604ea3daabf5b83f303ff457bcbc410b1d"
@@ -206,12 +197,12 @@
   revision = "1007f53448d75fe14190968f5de4d95ed63ebb83"
 
 [[projects]]
-  digest = "1:9a3c631555e0351fdc4e696577bb63afd90c399d782a8462dba9d100d7021db3"
+  digest = "1:1a405cddcf3368445051fb70ab465ae99da56ad7be8d8ca7fc52159d1c2d873c"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = ""
-  revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
-  version = "v1.3.0"
+  revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
+  version = "v1.4.2"
 
 [[projects]]
   digest = "1:c686b5040ec4be5005e10020ce3d1d7f888bfae796a039addf7d9071d8776be8"
@@ -255,7 +246,6 @@
   packages = [
     "ed25519",
     "ed25519/internal/edwards25519",
-    "ssh/terminal",
   ]
   pruneopts = ""
   revision = "8dd112bcdc25174059e45e07517d9fc663123347"
@@ -264,10 +254,7 @@
   branch = "master"
   digest = "1:74ce8329385730bb2d01e4e91b66183beceeb1512084e4253653ac2439f1ef8c"
   name = "golang.org/x/sys"
-  packages = [
-    "unix",
-    "windows",
-  ]
+  packages = ["unix"]
   pruneopts = ""
   revision = "a34e9553db1e492c9a76e60db2296ae7e5fbb772"
 

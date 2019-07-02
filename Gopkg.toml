@@ -21,7 +21,7 @@
 
 
 [[constraint]]
-  branch = "master"
+  revision = "ebd9f98c04695283f8048c6a3cab3295090ba8ab"
   name = "github.com/onrik/logrus"
 
 [[constraint]]
@@ -30,7 +30,7 @@
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
-  version = "1.0.4"
+  version = "1.4.2"
 
 [[constraint]]
   name = "github.com/stretchr/testify"
