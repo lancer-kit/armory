@@ -15,8 +15,12 @@ import (
 // AddSentryHook adds hook that sends all error,
 // fatal and panic log lines to the sentry service.
 func AddSentryHook(dsn string) {
-	sentryHook := sentry.NewHook(dsn,
+	sentryHook, err := sentry.NewHook(sentry.Options{Dsn: dsn},
 		logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
+	if err != nil {
+		Default.WithError(err).Error("unable to create new hook")
+		return
+	}
 	Default.Logger.AddHook(sentryHook)
 }
 
