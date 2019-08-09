@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-ozzo/ozzo-validation"
 	"github.com/lancer-kit/armory/log"
-	"github.com/lancer-kit/armory/routines"
+	"github.com/lancer-kit/uwe"
 	"github.com/sirupsen/logrus"
 )
 
@@ -46,7 +46,6 @@ type Server struct {
 	GetConfig func() Config
 	GetRouter func(*logrus.Entry, Config) http.Handler
 
-	ctx    context.Context
 	logger *logrus.Entry
 }
 
@@ -58,19 +57,18 @@ func NewServer(name string, config Config, rGetter func(*logrus.Entry, Config) h
 	}
 }
 
-func (s *Server) Init(parentCtx context.Context) routines.Worker {
+func (s *Server) Init(parentCtx context.Context) uwe.Worker {
 	var ok bool
-	s.logger, ok = parentCtx.Value(routines.CtxKeyLog).(*logrus.Entry)
+	s.logger, ok = parentCtx.Value(uwe.CtxKeyLog).(*logrus.Entry)
 	if !ok {
 		s.logger = log.Default
 	}
 
 	if s.Name == "" {
-		s.Name = "api-server"
+		s.Name = "http-server"
 	}
 
 	s.logger = s.logger.WithField("service", s.Name)
-	s.ctx = parentCtx
 	return s
 }
 
@@ -81,28 +79,41 @@ func (s *Server) RestartOnFail() bool {
 	return s.Config.RestartOnFail
 }
 
-func (s *Server) Run() {
+func (s *Server) Run(ctx uwe.WContext) uwe.ExitCode {
 	if s.GetConfig != nil {
 		s.Config = s.GetConfig()
 	}
-	addr := fmt.Sprintf("%s:%d", s.Config.Host, s.Config.Port)
 
+	addr := fmt.Sprintf("%s:%d", s.Config.Host, s.Config.Port)
 	server := &http.Server{
 		Addr:    addr,
 		Handler: s.GetRouter(s.logger, s.Config),
 	}
 
+	serverFailed := make(chan struct{})
 	go func() {
 		s.logger.Info("Starting API Server at: ", addr)
 
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			s.logger.WithError(err).Error("server failed")
+			close(serverFailed)
 		}
 	}()
 
-	<-s.ctx.Done()
-	s.logger.Info("Shutting down the API Server...")
-	serverCtx, _ := context.WithTimeout(context.Background(), ForceStopTimeout)
-	server.Shutdown(serverCtx)
-	s.logger.Info("Api Server gracefully stopped")
+	select {
+	case <-ctx.Done():
+		s.logger.Info("Shutting down the API Server...")
+		serverCtx, _ := context.WithTimeout(context.Background(), ForceStopTimeout)
+
+		err := server.Shutdown(serverCtx)
+		if err != nil {
+			s.logger.Info("Api Server gracefully stopped")
+		}
+
+		s.logger.Info("Api Server gracefully stopped")
+		return uwe.ExitCodeOk
+	case <-serverFailed:
+		return uwe.ExitCodeFailed
+	}
+
 }

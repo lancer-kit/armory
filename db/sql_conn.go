@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -54,7 +55,7 @@ func (conn *SQLConn) GetRaw(dest interface{}, query string, args ...interface{})
 	query = conn.conn().Rebind(query)
 	start := time.Now()
 	err := conn.conn().Get(dest, query, args...)
-	conn.log("select", start, query, args)
+	conn.log("get", start, query, args)
 
 	if err == nil {
 		return nil
@@ -177,7 +178,7 @@ func (conn *SQLConn) log(typ string, start time.Time, query string, args []inter
 	dur := time.Since(start)
 	lEntry := conn.logger.
 		WithFields(logrus.Fields{
-			"args": args,
+			"args": fmt.Sprintf("%v", args),
 			"sql":  query,
 			"dur":  dur.String(),
 		})

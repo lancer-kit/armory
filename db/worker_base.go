@@ -24,7 +24,7 @@ func (s *WBase) DBTxRollback() {
 		return
 	}
 
-	s.Logger.WithError(s.Err).Info("job failed, try to rollback db")
+	s.Logger.WithError(s.Err).Warn("job failed, try to rollback db")
 	rbErr := s.DB.Rollback()
 	if rbErr != nil {
 		s.Logger.WithError(rbErr).Fatal("failed to rollback db")

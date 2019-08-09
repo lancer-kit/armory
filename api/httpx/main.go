@@ -85,8 +85,7 @@ const defaultTimeout = time.Second * 15
 var DefaultXClient = NewXClient()
 
 func GetClient() Client {
-	client := *DefaultXClient
-	return &client
+	return DefaultXClient.clone()
 }
 
 // SetTimeout updated `DefaultXClient` default timeout (15s).

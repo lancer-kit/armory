@@ -81,6 +81,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:88b1d9af9167d881c26b10ef85f14e8f7c7d06893c7e864e5d1a823a1a4bc72d"
+  name = "github.com/lancer-kit/uwe"
+  packages = ["."]
+  pruneopts = ""
+  revision = "94670b93770f0c0053164255a892c7377dcec90e"
+
+[[projects]]
+  branch = "master"
   digest = "1:0fe2dd9762093b9d72e4c9eeb4f0832fb6582428cee2c62b074e1c9aa68564d8"
   name = "github.com/lann/builder"
   packages = ["."]
@@ -197,6 +205,14 @@
   revision = "1007f53448d75fe14190968f5de4d95ed63ebb83"
 
 [[projects]]
+  branch = "master"
+  digest = "1:4cb980014d4cff0e163140fe0e21acd3c4bfa3d453bc67c27da5a8fd31f12491"
+  name = "github.com/sheb-gregor/sam"
+  packages = ["."]
+  pruneopts = ""
+  revision = "8a13811ebaf9bb3b54cd5be42bdda48a1e27606c"
+
+[[projects]]
   digest = "1:1a405cddcf3368445051fb70ab465ae99da56ad7be8d8ca7fc52159d1c2d873c"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -283,6 +299,7 @@
     "github.com/go-chi/chi/middleware",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/jmoiron/sqlx",
+    "github.com/lancer-kit/uwe",
     "github.com/lib/pq",
     "github.com/nats-io/go-nats",
     "github.com/olivere/elastic",

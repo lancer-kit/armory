@@ -12,49 +12,52 @@ import (
 
 type Modules []Module
 
-func (mm Modules) Add(m *Module) Modules {
+func (modules Modules) Add(m *Module) Modules {
 	if m == nil {
-		return mm
+		return modules
 	}
-	return append(mm, *m)
+	return append(modules, *m)
 }
 
-func (mm Modules) InitAll() {
-	if err := mm.validate(); err != nil {
+func (modules Modules) InitAll() {
+	if err := modules.validate(); err != nil {
 		log.Default.Fatal(err)
 	}
 	wg := &sync.WaitGroup{}
+
 	locks := make(map[string]chan bool)
-	for i := range mm {
-		locks[mm[i].Name] = make(chan bool, 1)
+	for i := range modules {
+		locks[modules[i].Name] = make(chan bool, 1)
 	}
-	for i := range mm {
+
+	for i := range modules {
 		wg.Add(1)
-		go mm[i].Run(wg, locks)
+		go modules[i].Run(wg, locks)
 	}
+
 	wg.Wait()
-	for i := range mm {
-		close(locks[mm[i].Name])
+	for i := range modules {
+		close(locks[modules[i].Name])
 	}
 	return
 }
 
-func (mm Modules) validate() error {
-	if d, ok := mm.duplicates(); ok {
+func (modules Modules) validate() error {
+	if d, ok := modules.duplicates(); ok {
 		return errors.New("found duplicated modules: " + d)
 	}
 
-	if c, ok := mm.cycle(); ok {
+	if c, ok := modules.cycle(); ok {
 		return errors.New("found dependency cycle: " + c)
 	}
 
 	return nil
 }
 
-func (mm Modules) duplicates() (string, bool) {
-	duplicatesMap := make(map[string]int, len(mm))
-	for i := range mm {
-		duplicatesMap[mm[i].Name]++
+func (modules Modules) duplicates() (string, bool) {
+	duplicatesMap := make(map[string]int, len(modules))
+	for i := range modules {
+		duplicatesMap[modules[i].Name]++
 	}
 	for k, v := range duplicatesMap {
 		if v > 1 {
@@ -64,17 +67,17 @@ func (mm Modules) duplicates() (string, bool) {
 	return "", false
 }
 
-func (mm Modules) cycle() (string, bool) {
-	depsMap := make(map[string]string, len(mm))
-	for i := range mm {
-		depsMap[mm[i].Name] = mm[i].DependsOn
+func (modules Modules) cycle() (string, bool) {
+	depsMap := make(map[string]string, len(modules))
+	for i := range modules {
+		depsMap[modules[i].Name] = modules[i].DependsOn
 	}
-	for i := range mm {
-		current := mm[i].DependsOn
-		cycle := mm[i].Name
+	for i := range modules {
+		current := modules[i].DependsOn
+		cycle := modules[i].Name
 		for len(current) != 0 {
 			cycle = cycle + " -> " + current
-			if current == mm[i].Name {
+			if current == modules[i].Name {
 				return cycle, true
 			}
 			current = depsMap[current]
@@ -92,57 +95,59 @@ type Module struct {
 	Init         func(*logrus.Entry) error
 }
 
-func (m *Module) Run(wg *sync.WaitGroup, locks map[string]chan bool) {
-	if err := m.validate(); err != nil {
+func (mod *Module) Run(wg *sync.WaitGroup, locks map[string]chan bool) {
+	if err := mod.validate(); err != nil {
 		log.Default.Fatal(err)
 	}
 	defer wg.Done()
+
 	for {
-		if len(m.DependsOn) == 0 {
+		if len(mod.DependsOn) == 0 {
 			break
 		}
-		if ok := <-locks[m.DependsOn]; ok {
-			locks[m.DependsOn] <- true
+		if ok := <-locks[mod.DependsOn]; ok {
+			locks[mod.DependsOn] <- true
 			break
 		}
 	}
 
 	ok := tools.RetryIncrementallyUntil(
-		m.InitInterval,
-		m.Timeout,
-		m.initCall,
+		mod.InitInterval,
+		mod.Timeout,
+		mod.initCall,
 	)
 	if !ok {
-		log.Default.Fatalf("Can't init %s", m.Name)
+		log.Default.Fatalf("Can't init %s", mod.Name)
 	}
-	locks[m.Name] <- true
+
+	locks[mod.Name] <- true
 }
 
-func (m *Module) initCall() bool {
-	err := m.Init(log.Default.WithField("init", m.Name))
+func (mod *Module) initCall() bool {
+	err := mod.Init(log.Default.WithField("init", mod.Name))
 	if err != nil {
-		log.Default.WithError(err).Error("Can't init " + m.Name)
+		log.Default.WithError(err).Error("Can't init " + mod.Name)
 	}
 	return err == nil
 }
 
-func (m *Module) validate() error {
+func (mod *Module) validate() error {
 	err := errors.New("invalid module init")
 	ok := true
 	const notEmpty = "%s should not be empty"
-	if len(m.Name) == 0 {
+	if len(mod.Name) == 0 {
 		ok = false
 		err = errors.Wrapf(err, notEmpty, "Name")
 	}
-	if m.Timeout.Nanoseconds() == 0 {
+	if mod.Timeout.Nanoseconds() == 0 {
 		ok = false
 		err = errors.Wrapf(err, notEmpty, "Timeout")
 	}
-	if m.InitInterval.Nanoseconds() == 0 {
+	if mod.InitInterval.Nanoseconds() == 0 {
 		ok = false
 		err = errors.Wrapf(err, notEmpty, "Interval")
 	}
-	if m.Init == nil {
+	if mod.Init == nil {
 		ok = false
 		err = errors.Wrapf(err, notEmpty, "Init")
 	}

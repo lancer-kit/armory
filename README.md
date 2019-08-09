@@ -8,7 +8,7 @@ Common libraries for go services:
 - [TX](types/txst/README.md) - types and methods for all kind of values, that came from TX in our services.
 - [DB](./db/README.md) - connector for the ORMless interaction with the PostgreSQL databases. 
 - [Log](./log/README.md) - simple wrapper for logrus with some useful perks.
-- [Routines](./routines/README.md) - implementation, running and controlling workers.
+- [natsx](./natsx/README.md) - simple wrapper for NATS
 - **Api**
     - [Render](./api/render/README.md) - response helper, base responses
-    - [Natswrap](./natsx/README.md) - simple wrapper for Nats
+

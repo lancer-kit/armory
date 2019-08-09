@@ -32,6 +32,7 @@ func AddFilenameHook() {
 	Default.Logger.AddHook(filenameHook)
 }
 
+// DEPRECATED
 // AddElasticHook adds hook that sends all error,
 // logs to the ElasticSearch.
 func AddElasticHook(config ElasticConfig) {
