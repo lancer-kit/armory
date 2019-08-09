@@ -41,5 +41,5 @@
   name = "golang.org/x/crypto"
 
 [[constraint]]
-  version = "1.0.0"
+  version = "1.0.1"
   name = "github.com/lancer-kit/uwe"
