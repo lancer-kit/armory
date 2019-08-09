@@ -39,3 +39,7 @@
 [[constraint]]
   branch = "master"
   name = "golang.org/x/crypto"
+
+[[constraint]]
+  version = "1.0.0"
+  name = "github.com/lancer-kit/uwe"
