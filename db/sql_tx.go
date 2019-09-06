@@ -9,10 +9,13 @@ type Transactional interface {
 	Begin() error
 	// Commit commits the transaction.
 	Commit() error
-	//Rollback aborts the transaction.
+	// Rollback aborts the transaction.
 	Rollback() error
-	//IsInTx checks is transaction started.
+	// IsInTx checks is transaction started.
+	// DEPRECATED: IsInTx works wrong
 	IsInTx() bool
+	// InTx checks is transaction started. Return true if it is a transaction, and false if it is not a transaction
+	InTx() bool
 }
 
 // Transaction is generic helper method for specific Q's to implement Transaction capabilities
@@ -84,6 +87,12 @@ func (conn *SQLConn) Rollback() error {
 }
 
 // IsInTx checks is transaction started.
+// DEPRECATED: IsInTx works wrong
 func (conn *SQLConn) IsInTx() bool {
 	return conn.tx == nil
+}
+
+// InTx checks is transaction started. Return true if it is a transaction, and false if it is not a transaction
+func (conn *SQLConn) InTx() bool {
+	return conn.tx != nil
 }
