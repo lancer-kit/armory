@@ -20,7 +20,7 @@ func (s *WBase) DBTxRollback() {
 		return
 	}
 
-	if !s.DB.IsInTx() {
+	if !s.DB.InTx() {
 		return
 	}
 
@@ -38,7 +38,7 @@ func (s *WBase) Recover() {
 	}
 	s.Logger.WithField("panic", err).Error("Caught panic")
 
-	if s.DB.IsInTx() {
+	if s.DB.InTx() {
 		s.DBTxRollback()
 	}
 }
