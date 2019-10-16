@@ -80,12 +80,12 @@
   version = "v1.0.2"
 
 [[projects]]
-  digest = "1:0c63c62380a701fddbb8ddb79c6ddc5cc2acad1a7500b5348d70a57a92e1d0c0"
+  digest = "1:ed98df2a7bc3a5ed5affef952e5f3cdfd69ec78abb5c0b800e7ba8a577774cf4"
   name = "github.com/lancer-kit/uwe"
   packages = ["."]
   pruneopts = ""
-  revision = "da972cec8b017e2f00020ed04b1dd64e301d4ddc"
-  version = "v1.0.0"
+  revision = "0e1c13ce41e49b922784cbb688ba84e4ee5cb3bb"
+  version = "v1.0.1"
 
 [[projects]]
   branch = "master"

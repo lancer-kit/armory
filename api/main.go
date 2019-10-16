@@ -39,7 +39,7 @@ func (c *Config) TCPAddr() string {
 	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
-// Server
+// Server worker object
 type Server struct {
 	Name      string
 	Config    Config
@@ -47,8 +47,10 @@ type Server struct {
 	GetRouter func(*logrus.Entry, Config) http.Handler
 
 	logger *logrus.Entry
+	ctx    uwe.WContext
 }
 
+//NewServer constructor
 func NewServer(name string, config Config, rGetter func(*logrus.Entry, Config) http.Handler) Server {
 	return Server{
 		Name:      name,
@@ -57,6 +59,7 @@ func NewServer(name string, config Config, rGetter func(*logrus.Entry, Config) h
 	}
 }
 
+//Init worker implementation
 func (s *Server) Init(parentCtx context.Context) uwe.Worker {
 	var ok bool
 	s.logger, ok = parentCtx.Value(uwe.CtxKeyLog).(*logrus.Entry)
@@ -72,6 +75,7 @@ func (s *Server) Init(parentCtx context.Context) uwe.Worker {
 	return s
 }
 
+//RestartOnFail property for Chief
 func (s *Server) RestartOnFail() bool {
 	if s.GetConfig != nil {
 		return s.GetConfig().RestartOnFail
@@ -79,9 +83,11 @@ func (s *Server) RestartOnFail() bool {
 	return s.Config.RestartOnFail
 }
 
+//Run api-server
 func (s *Server) Run(ctx uwe.WContext) uwe.ExitCode {
 	if s.GetConfig != nil {
 		s.Config = s.GetConfig()
+		s.ctx = ctx
 	}
 
 	addr := fmt.Sprintf("%s:%d", s.Config.Host, s.Config.Port)
@@ -116,4 +122,9 @@ func (s *Server) Run(ctx uwe.WContext) uwe.ExitCode {
 		return uwe.ExitCodeFailed
 	}
 
+}
+
+//Context return application context
+func (s *Server) Context() uwe.WContext {
+	return s.ctx
 }
