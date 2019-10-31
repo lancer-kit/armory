@@ -12,7 +12,7 @@ var PrettyMarshal bool
 
 // ServerError renders default http.StatusInternalServerError.
 func ServerError(w http.ResponseWriter) {
-	WriteJSON(w, http.StatusInternalServerError, ResultServerError)
+	WriteJSON(w, http.StatusInternalServerError, nil)
 }
 
 // Success renders `result` as JSON with `http.StatusOK`.
@@ -45,6 +45,11 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 	var marshaled []byte
 	var err error
 
+	if data == nil {
+		w.WriteHeader(status)
+		return
+	}
+
 	if PrettyMarshal {
 		marshaled, err = json.MarshalIndent(data, "", "  ")
 	} else {
@@ -52,7 +57,7 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 
 	if err != nil {
-		http.Error(w, "error while render response", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
