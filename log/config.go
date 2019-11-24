@@ -13,20 +13,4 @@ type Config struct {
 	AddTrace bool `json:"add_trace" yaml:"add_trace"`
 	// JSON enable json formatted output.
 	JSON bool `json:"json" yaml:"json"`
-	//Elastic is a config for the ElasticSearch hook.
-	Elastic *ElasticConfig `json:"elastic" yaml:"elastic"`
-}
-
-// ElasticConfig is a set of params for the ElasticSearch node.
-type ElasticConfig struct {
-	// URL is endpoint of the ElasticSearch node.
-	URL string `json:"url" yaml:"url"`
-	// Username for HTTP Basic Auth for the ElasticSearch node.
-	Username string `json:"username" yaml:"username"`
-	// Password for HTTP Basic Auth for the ElasticSearch node.
-	Password string `json:"password" yaml:"password"`
-	// Index is name of the index in ElasticSearch.
-	Index string `json:"index" yaml:"index"`
-	// Level is a log level for ElasticSearch events.
-	Level string `json:"level" yaml:"level"`
 }

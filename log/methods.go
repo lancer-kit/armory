@@ -2,14 +2,11 @@ package log
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/middleware"
-	"github.com/olivere/elastic"
 	"github.com/onrik/logrus/filename"
 	"github.com/onrik/logrus/sentry"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/sohlich/elogrus.v3"
 )
 
 // AddSentryHook adds hook that sends all error,
@@ -30,36 +27,6 @@ func AddFilenameHook() {
 	filenameHook := filename.NewHook()
 	filenameHook.Field = "file"
 	Default.Logger.AddHook(filenameHook)
-}
-
-// DEPRECATED
-// AddElasticHook adds hook that sends all error,
-// logs to the ElasticSearch.
-func AddElasticHook(config ElasticConfig) {
-	client, err := elastic.NewClient(elastic.SetURL(config.URL),
-		elastic.SetSniff(false),
-		elastic.SetBasicAuth(config.Username, config.Password),
-	)
-	if err != nil {
-		Default.WithError(err).Error("unable to init elastic")
-		return
-	}
-	host, err := os.Hostname()
-	if err != nil {
-		Default.WithError(err).Error("unable to init ")
-		return
-	}
-	level, err := logrus.ParseLevel(config.Level)
-	if err != nil {
-		Default.WithError(err).Error("unable to init ")
-		return
-	}
-	hook, err := elogrus.NewElasticHook(client, host, level, config.Index)
-	if err != nil {
-		Default.WithError(err).Error("unable to init elastic hook")
-		return
-	}
-	Default.Logger.Hooks.Add(hook)
 }
 
 // DefaultForRequest returns default logger with included http.Request details.
