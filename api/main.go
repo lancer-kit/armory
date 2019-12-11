@@ -123,8 +123,3 @@ func (s *Server) Run(ctx uwe.WContext) uwe.ExitCode {
 	}
 
 }
-
-//Context return application context
-func (s *Server) Context() uwe.WContext {
-	return s.ctx
-}
