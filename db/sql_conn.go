@@ -182,12 +182,11 @@ func (conn *SQLConn) log(typ string, start time.Time, query string, args []inter
 	}
 
 	dur := time.Since(start)
-	lEntry := conn.logger.
+	conn.logger.
 		WithFields(logrus.Fields{
-			"args": fmt.Sprintf("%v", args),
 			"sql":  query,
 			"dur":  dur.String(),
-		})
-
-	lEntry.Debugf("sql: %s", typ)
+			"args": fmt.Sprintf("%+v", args),
+		}).
+		Tracef("sql: %s", typ)
 }
