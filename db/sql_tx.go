@@ -81,7 +81,7 @@ func (conn *SQLConn) Rollback() error {
 	}
 
 	err := conn.tx.Rollback()
-	//conn.logRollback()
+	// conn.logRollback()
 	conn.tx = nil
 	return err
 }

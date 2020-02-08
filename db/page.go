@@ -53,6 +53,7 @@ func (pq *PageQuery) FromRQuery(query url.Values) error {
 	if err != nil {
 		return errors.Wrap(err, "page")
 	}
+
 	pageSize := query.Get("pageSize")
 	if pageSize == "" {
 		pageSize = "0"
@@ -62,6 +63,7 @@ func (pq *PageQuery) FromRQuery(query url.Values) error {
 	if err != nil {
 		return errors.Wrap(err, "pageSize")
 	}
+
 	pq.Order = query.Get("order")
 
 	return pq.Validate()

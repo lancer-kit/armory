@@ -47,9 +47,13 @@ func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err != nil {
 		return err
 	}
-	j.Str = s
 
 	u, err := url.Parse(s)
+	if err != nil {
+		return err
+	}
+
+	j.Str = s
 	j.URL = u
 	j.basePath = strings.TrimSuffix(u.Path, slash)
 	return err

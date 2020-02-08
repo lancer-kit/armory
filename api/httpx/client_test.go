@@ -65,7 +65,7 @@ func TestXClient_SignRequest(t *testing.T) {
 	client.SetAuth(service, kp)
 
 	req, err := http.NewRequest(http.MethodGet, "http://example.com/test?user=foo", nil)
-	_ = err
+	assert.Nil(t, err)
 
 	req, err = client.SignRequest(req, nil, nil)
 	assert.Nil(t, err)
@@ -238,7 +238,7 @@ func sendBadRequests(t *testing.T, client *XClient, port int, data interface{}) 
 	url := fmt.Sprintf("http://127.0.0.1:%d/test", port)
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://127.0.0.1:%d/test/bad", port), body)
-	_ = err
+	assert.Nil(t, err)
 
 	req, err = client.SignRequest(req, nil, nil)
 	require.NoErrorf(err, "Error when trying to sign GET request")
