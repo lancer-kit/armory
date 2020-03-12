@@ -80,14 +80,6 @@
   version = "v1.0.2"
 
 [[projects]]
-  digest = "1:ed98df2a7bc3a5ed5affef952e5f3cdfd69ec78abb5c0b800e7ba8a577774cf4"
-  name = "github.com/lancer-kit/uwe"
-  packages = ["."]
-  pruneopts = ""
-  revision = "0e1c13ce41e49b922784cbb688ba84e4ee5cb3bb"
-  version = "v1.0.1"
-
-[[projects]]
   branch = "master"
   digest = "1:0fe2dd9762093b9d72e4c9eeb4f0832fb6582428cee2c62b074e1c9aa68564d8"
   name = "github.com/lann/builder"
@@ -113,19 +105,6 @@
   pruneopts = ""
   revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
   version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:02e7e5941a0607565391047b76eabdfff2c83285813b6d0479dfc63c36c21820"
-  name = "github.com/mailru/easyjson"
-  packages = [
-    ".",
-    "buffer",
-    "jlexer",
-    "jwriter",
-  ]
-  pruneopts = ""
-  revision = "6243d8e04c3f819e79757e8bc3faa15c3cb27003"
 
 [[projects]]
   digest = "1:2b5ed2cf6e8623bddd5653cffb8c6e462c2390b70186eb01546539aa177bb194"
@@ -154,18 +133,6 @@
   pruneopts = ""
   revision = "289cccf02c178dc782430d534e3c1f5b72af807f"
   version = "v1.0.0"
-
-[[projects]]
-  digest = "1:15904bf2ce6c7115ecea6ab1c33a40ac4fe7ca085973ed20fa9cd9d11b72484c"
-  name = "github.com/olivere/elastic"
-  packages = [
-    ".",
-    "config",
-    "uritemplates",
-  ]
-  pruneopts = ""
-  revision = "407a1d940dcc89e279c579eb393d0bdde8fd9ac4"
-  version = "v6.2.16"
 
 [[projects]]
   digest = "1:c68caf63043d5401f262309082d48dea2c930aec1df0b3fc2f2f767d716ffd11"
@@ -203,14 +170,6 @@
   ]
   pruneopts = ""
   revision = "1007f53448d75fe14190968f5de4d95ed63ebb83"
-
-[[projects]]
-  branch = "master"
-  digest = "1:4cb980014d4cff0e163140fe0e21acd3c4bfa3d453bc67c27da5a8fd31f12491"
-  name = "github.com/sheb-gregor/sam"
-  packages = ["."]
-  pruneopts = ""
-  revision = "8a13811ebaf9bb3b54cd5be42bdda48a1e27606c"
 
 [[projects]]
   digest = "1:1a405cddcf3368445051fb70ab465ae99da56ad7be8d8ca7fc52159d1c2d873c"
@@ -282,14 +241,6 @@
   revision = "6a667da9c028871f98598d85413e3fc4c6daa52e"
   version = "v1.7.2"
 
-[[projects]]
-  branch = "v3"
-  digest = "1:acfe2a927fdf4e96021bcd73d58764e49dfbb6cb6271b0f97c8f3ea0f1a4a54b"
-  name = "gopkg.in/sohlich/elogrus.v3"
-  packages = ["."]
-  pruneopts = ""
-  revision = "1fa29e2f2009c129693c7079e5f6361bfbd34080"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -299,10 +250,8 @@
     "github.com/go-chi/chi/middleware",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/jmoiron/sqlx",
-    "github.com/lancer-kit/uwe",
     "github.com/lib/pq",
     "github.com/nats-io/go-nats",
-    "github.com/olivere/elastic",
     "github.com/onrik/logrus/filename",
     "github.com/onrik/logrus/sentry",
     "github.com/pkg/errors",
@@ -312,7 +261,6 @@
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/require",
     "golang.org/x/crypto/ed25519",
-    "gopkg.in/sohlich/elogrus.v3",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

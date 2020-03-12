@@ -132,27 +132,29 @@ func (mod *Module) initCall() bool {
 }
 
 func (mod *Module) validate() error {
-	err := errors.New("invalid module init")
-	ok := true
+	var err error
+	baseErr := errors.New("invalid module init")
+
 	const notEmpty = "%s should not be empty"
 	if len(mod.Name) == 0 {
-		ok = false
-		err = errors.Wrapf(err, notEmpty, "Name")
+		err = errors.Wrapf(baseErr, notEmpty, "Name")
 	}
+
 	if mod.Timeout.Nanoseconds() == 0 {
-		ok = false
-		err = errors.Wrapf(err, notEmpty, "Timeout")
+		err = errors.Wrapf(baseErr, notEmpty, "Timeout")
 	}
+
 	if mod.InitInterval.Nanoseconds() == 0 {
-		ok = false
-		err = errors.Wrapf(err, notEmpty, "Interval")
+		err = errors.Wrapf(baseErr, notEmpty, "Interval")
 	}
+
 	if mod.Init == nil {
-		ok = false
-		err = errors.Wrapf(err, notEmpty, "Init")
+		err = errors.Wrapf(baseErr, notEmpty, "Init")
 	}
-	if !ok {
+
+	if err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -45,18 +45,6 @@ func Init(config Config) (*logrus.Entry, error) {
 		AddSentryHook(config.Sentry)
 	}
 
-	if config.Elastic != nil {
-		if config.Elastic.Index == "" {
-			config.Elastic.Index = config.AppName
-		}
-
-		if config.Elastic.Level == "" {
-			config.Elastic.Level = config.Level
-		}
-
-		AddElasticHook(*config.Elastic)
-	}
-
 	return Default, nil
 }
 

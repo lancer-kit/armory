@@ -3,7 +3,7 @@ package natsx
 import (
 	"encoding/json"
 
-	"github.com/nats-io/go-nats"
+	"github.com/nats-io/nats.go"
 	"github.com/pkg/errors"
 )
 

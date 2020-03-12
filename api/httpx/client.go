@@ -243,6 +243,7 @@ func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
+
 	if client.logger != nil {
 		client.logger.WithFields(logrus.Fields{
 			"method":      r.Method,
@@ -317,6 +318,7 @@ func (client *XClient) VerifyBody(r *http.Request, body []byte) (bool, error) {
 	if err != nil {
 		return false, errors.Wrap(err, "failed to hash body")
 	}
+
 	return bodyHash == r.Header.Get(HeaderBodyHash), nil
 }
 
@@ -348,10 +350,12 @@ func (client *XClient) PostSignedWithHeaders(url string, data interface{}, heade
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new http request")
 	}
+
 	rg, err := client.SignRequest(req, rawData, headers)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
 	}
+
 	for key, value := range headers {
 		rg.Header.Set(key, value)
 	}
@@ -366,6 +370,7 @@ func (client *XClient) GetSignedWithHeaders(url string, headers map[string]strin
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new http request")
 	}
+
 	rq, err := client.SignRequest(req, nil, headers)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create request")
