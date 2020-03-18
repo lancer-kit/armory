@@ -70,7 +70,7 @@ func (pq *PageQuery) FromRQuery(query url.Values) error {
 }
 
 // Validate checks is correct values and set default values if `PageQuery` empty.
-func (pq *PageQuery) Validate() error {
+func (pq PageQuery) Validate() error {
 	switch strings.ToLower(pq.Order) {
 	case "":
 		pq.Order = OrderAscending
