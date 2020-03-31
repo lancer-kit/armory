@@ -17,11 +17,13 @@ const (
 	MigrateDown MigrateDir = "down"
 )
 
+// nolint:gochecknoglobals
 var directions = map[MigrateDir]migrate.MigrationDirection{
 	MigrateUp:   migrate.Up,
 	MigrateDown: migrate.Down,
 }
 
+// nolint:gochecknoglobals
 // migrations represents all of the schema migration for service
 var migrations *migrate.AssetMigrationSource
 

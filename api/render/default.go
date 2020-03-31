@@ -2,6 +2,7 @@ package render
 
 import "net/http"
 
+// nolint:gochecknoglobals
 var (
 	// ResultServerError predefined response for `http.StatusInternalServerError`.
 	ResultServerError = &R{

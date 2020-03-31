@@ -8,7 +8,6 @@ func initQueue() {
 	}
 
 	sq = sq.Init()
-	return
 }
 
 func NewQueue() (q *Queue) {

@@ -42,10 +42,10 @@ const (
 	KeyIs2PassValid CtxKey = "key_is2PassValid"
 )
 
-var userApiLink string
+var userAPILink string
 
-func Init(usrApiLink string) {
-	userApiLink = usrApiLink
+func Init(usrAPILink string) {
+	userAPILink = usrAPILink
 }
 
 // AuthtokenHeader extracts from the `http.Request` Authorization header.
@@ -85,11 +85,11 @@ func Is2PassValid(r *http.Request) bool {
 
 // CheckToken checks `Authorization` token if it valid return nil.
 func CheckToken(authtoken string) (int, []byte, error) {
-	if userApiLink == "" {
+	if userAPILink == "" {
 		log.Default.Error("auth didn't init")
 	}
 	client := http.DefaultClient
-	path := userApiLink + "/v1/auth"
+	path := userAPILink + "/v1/auth"
 
 	req, err := http.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
@@ -180,8 +180,6 @@ func ExtractUserID(required ...bool) func(http.Handler) http.Handler {
 
 			r = jwt.SetContext(r)
 			next.ServeHTTP(w, r)
-			return
-
 		})
 	}
 }

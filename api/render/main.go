@@ -7,6 +7,7 @@ import (
 	"github.com/lancer-kit/armory/db"
 )
 
+// nolint:gochecknoglobals
 // PrettyMarshal is a flag that enable marshalling with indent
 var PrettyMarshal bool
 

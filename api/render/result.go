@@ -38,24 +38,24 @@ type R struct {
 
 // SetError adds error details to response.
 func (r *R) SetError(val interface{}) *R {
-	nr := *r
+	clone := *r
 
-	switch val.(type) {
+	switch casted := val.(type) {
 	case nil:
 		break
 	case error:
-		nr.Error = val.(error).Error()
+		clone.Error = casted.Error()
 	case string:
-		nr.Error = val
+		clone.Error = casted
 	case R:
-		nr.Error = val.(R).Error
+		clone.Error = casted.Error
 	case *R:
-		nr.Error = val.(*R).Error
+		clone.Error = casted.Error
 	default:
-		nr.Error = val
+		clone.Error = val
 	}
 
-	return &nr
+	return &clone
 }
 
 // SetData sets response data.
