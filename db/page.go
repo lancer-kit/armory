@@ -42,7 +42,7 @@ func ParsePageQuery(values url.Values) (pq PageQuery, err error) {
 	return
 }
 
-// FromRQuery extracts `PageQuery` from the url Query Values and validate.
+// FromRQuery extracts `PageQuery` from the url Query Values and validates.
 func (pq *PageQuery) FromRQuery(query url.Values) error {
 	page := query.Get("page")
 	if page == "" {
@@ -69,8 +69,10 @@ func (pq *PageQuery) FromRQuery(query url.Values) error {
 	return pq.Validate()
 }
 
-// Validate checks is correct values and set default values if `PageQuery` empty.
-func (pq PageQuery) Validate() error {
+// Validate checks is correct values and
+// sets default values if `PageQuery` empty.
+// WARN: the receiver MUST be a pointer so that the default values works
+func (pq *PageQuery) Validate() error {
 	switch strings.ToLower(pq.Order) {
 	case "":
 		pq.Order = OrderAscending
