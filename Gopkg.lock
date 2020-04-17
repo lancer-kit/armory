@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:eccd869de771cf2a53cd564b2e163be6f46d789a898d7576f7982b6d5e61f840"
+  digest = "1:f9d3fa56ab5efbcf9a912b532e3f3167fb59e9c193c22b94c42eb80c588040c5"
   name = "github.com/Masterminds/squirrel"
   packages = ["."]
   pruneopts = ""
-  revision = "fa735ea14f09f8685fcf5e75db091feb5a410730"
-  version = "v1.1"
+  revision = "59c11a6b2dd511b675939075e5d34d461a4f9f6d"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:0deddd908b6b4b768cfc272c16ee61e7088a60f7fe2f06c547bd3d8e1f8b8e77"
@@ -18,39 +18,47 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:e6995ad9094568f389974af73a70a48cf57dcab684185c9cf621d7ad6835f8ae"
+  digest = "1:98821f112f8df55aa478b541a6c9b98263b31d72ebaeca493a1643b10eda76df"
   name = "github.com/getsentry/sentry-go"
   packages = ["."]
   pruneopts = ""
-  revision = "79cad3fec863752ea61059d4565f85b23da2d9d1"
-  version = "v0.1.1"
+  revision = "93b68f59e483f3eede43c3212220a9f6689f8812"
+  version = "v0.5.1"
 
 [[projects]]
-  digest = "1:55d7786e315a68ad27227a9800ebed9c48a23379de13358ab9a331ae8fe39283"
+  digest = "1:2108e88d0b965cc3f8fad3acce3b4f1c30e8c41a44f031370b9a991f62e0a2ca"
   name = "github.com/go-chi/chi"
   packages = [
     ".",
     "middleware",
   ]
   pruneopts = ""
-  revision = "da24bba8dcd4021cafac38724bf10dccc97c3e36"
-  version = "v4.0.2"
+  revision = "1fafc30c1d76663042337e150b02fbacdce3466c"
+  version = "v4.1.1"
 
 [[projects]]
-  digest = "1:e9d5b80e1c25c1c79a2b2cfa97bf114456345d3c7c345a875c7b7badc70aa975"
+  digest = "1:064a75c03849d243919a93a8560b85970e9d40756a8f628dc451ff9e077285b8"
   name = "github.com/go-ozzo/ozzo-validation"
   packages = ["."]
   pruneopts = ""
-  revision = "106681dbb37bfa3e7683c4c8129cb7f5925ea3e9"
-  version = "v3.5.0"
+  revision = "4f1796586b575fc958294ba3f47d4baf972bff27"
+  version = "v4.1.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:a674a495dd0b522b9f6d4339e0fc4f1424ac3177ceca2c0882af85e65be05499"
+  digest = "1:9e073a7d4cd77a697a86d38725a12a84782df2208373916e1eeb11337e2d0fc4"
   name = "github.com/gopherjs/gopherjs"
   packages = ["js"]
   pruneopts = ""
-  revision = "d547d1d9531ed93dbdebcbff7f83e7c876a1e0ee"
+  revision = "fce0ec30dd00773d3fa974351d04ce2737b5c4d9"
+
+[[projects]]
+  digest = "1:fa4fc0747e5d97478a303f0540a7e1207b286cad68e5b0009114814444e6c174"
+  name = "github.com/gorilla/schema"
+  packages = ["."]
+  pruneopts = ""
+  revision = "124d17ef95858a10835ce95502446cb5a9e9f715"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:4611e727460d3634059cbe6e0a4799aaeb426ef8150e3b26056c83e1106831c4"
@@ -96,43 +104,52 @@
   revision = "62de8c46ede02a7675c4c79c84883eb164cb71e3"
 
 [[projects]]
-  digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
+  digest = "1:b424ab60bdff8b8899fa0b27c9b35083f2607fbbaa7b6430617c53ca4501d286"
   name = "github.com/lib/pq"
   packages = [
     ".",
     "oid",
+    "scram",
   ]
   pruneopts = ""
-  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
-  version = "v1.0.0"
+  revision = "99274577be97ac9b1d95a2d61d566dc9b7cc6a54"
+  version = "v1.3.0"
 
 [[projects]]
-  digest = "1:2b5ed2cf6e8623bddd5653cffb8c6e462c2390b70186eb01546539aa177bb194"
-  name = "github.com/nats-io/go-nats"
+  digest = "1:dbf1231f9a80d866f1a6380fe0d0f1cf6d2964864226e78d329d33f8e8d68d00"
+  name = "github.com/nats-io/jwt"
+  packages = ["."]
+  pruneopts = ""
+  revision = "0c3fc7aed8bb2534e7bfdf0968a75890402d48cd"
+  version = "v0.3.2"
+
+[[projects]]
+  digest = "1:c19684ecbc672b3dcc4cf6a6c9dfb42811dcf7878668f663f988907d5bb0ae32"
+  name = "github.com/nats-io/nats.go"
   packages = [
     ".",
     "encoders/builtin",
     "util",
   ]
   pruneopts = ""
-  revision = "70fe06cee50d4b6f98248d9675fb55f2a3aa7228"
-  version = "v1.7.2"
+  revision = "4d5d5d17e7df8f8e3bf3c1426a5ed759012faab8"
+  version = "v1.9.2"
 
 [[projects]]
-  digest = "1:0006112541eed60bdfa279c8965c038865f05a677d980305dae7a0eec5bd133c"
+  digest = "1:9dbbb0e6bac62bf0fe2503529c73277636e8f83799498761c26b73e7a00a52ac"
   name = "github.com/nats-io/nkeys"
   packages = ["."]
   pruneopts = ""
-  revision = "1546a3320a8f195a5b5c84aef8309377c2e411d5"
-  version = "v0.0.2"
+  revision = "b5fd77f98a683853cab7313d1263093d2c0d4113"
+  version = "v0.1.4"
 
 [[projects]]
-  digest = "1:be61e8224b84064109eaba8157cbb4bbe6ca12443e182b6624fdfa1c0dcf53d9"
+  digest = "1:9abd194bb617fe4df66607ca59812ca91caeb2053c8c9869d3507939bb63cc0b"
   name = "github.com/nats-io/nuid"
   packages = ["."]
   pruneopts = ""
-  revision = "289cccf02c178dc782430d534e3c1f5b72af807f"
-  version = "v1.0.0"
+  revision = "4b96681fa6d28dd0ab5fe79bac63b3a493d9ee94"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:c68caf63043d5401f262309082d48dea2c930aec1df0b3fc2f2f767d716ffd11"
@@ -162,37 +179,38 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:83f3e6cbdffc82aae856cb9738a5651aacf8d5c5b490e75f8f23b8cdb1abe10e"
+  digest = "1:a4042daa1f6751bfad301c1de48eefbc11fdc19d7656d951304c7ba2462440d0"
   name = "github.com/rubenv/sql-migrate"
   packages = [
     ".",
     "sqlparse",
   ]
   pruneopts = ""
-  revision = "1007f53448d75fe14190968f5de4d95ed63ebb83"
+  revision = "435005d389bca2772a52390602ff27a8e3d338d2"
 
 [[projects]]
-  digest = "1:1a405cddcf3368445051fb70ab465ae99da56ad7be8d8ca7fc52159d1c2d873c"
+  digest = "1:5907d0ddc26b262088060c6d0fbfd1d07088e71b476dc16d26780c8e335bf088"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = ""
-  revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
-  version = "v1.4.2"
+  revision = "d417be0fe654de640a82370515129985b407c7e3"
+  version = "v1.5.0"
 
 [[projects]]
-  digest = "1:c686b5040ec4be5005e10020ce3d1d7f888bfae796a039addf7d9071d8776be8"
+  digest = "1:08c30218d7d91abe41f45d1e6d6f8e297ba4c790d24427b9f63fe02e79ae67b1"
   name = "github.com/smartystreets/assertions"
   packages = [
     ".",
+    "internal/go-diff/diffmatchpatch",
     "internal/go-render/render",
     "internal/oglematchers",
   ]
   pruneopts = ""
-  revision = "7678a5452ebea5b7090a6b163f844c133f523da2"
-  version = "1.8.3"
+  revision = "f487f9de1cd36ebab28235b9373028812fb47cbd"
+  version = "1.10.1"
 
 [[projects]]
-  digest = "1:dd808f0f1628ff85a1b54424d3e6a61c54a87353d5063b9b5c82ad360f0346d5"
+  digest = "1:0fdc052fcdfe4b1d42d7e925518a9ca9c157be75ec790c409411e5a818586cb1"
   name = "github.com/smartystreets/goconvey"
   packages = [
     "convey",
@@ -200,38 +218,38 @@
     "convey/reporting",
   ]
   pruneopts = ""
-  revision = "9e8dc3f972df6c8fcc0375ef492c24d0bb204857"
-  version = "1.6.3"
+  revision = "505e419363375c0dc132d3ac02632a4ee32199ca"
+  version = "v1.6.4"
 
 [[projects]]
-  digest = "1:381bcbeb112a51493d9d998bbba207a529c73dbb49b3fd789e48c63fac1f192c"
+  digest = "1:cc4eb6813da8d08694e557fcafae8fcc24f47f61a0717f952da130ca9a486dfc"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
     "require",
   ]
   pruneopts = ""
-  revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
-  version = "v1.3.0"
+  revision = "3ebf1ddaeb260c4b1ae502a01c7844fa8c1fa0e9"
+  version = "v1.5.1"
 
 [[projects]]
   branch = "master"
-  digest = "1:7a77b79efe106f3304dcf50dc86836151758f246169b527722552a5eb2ae14fc"
+  digest = "1:cadec9f74ad2027612c018d3f55e90a3bcb07e0b249fb91ce0724abb572d54d9"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
     "ed25519/internal/edwards25519",
   ]
   pruneopts = ""
-  revision = "8dd112bcdc25174059e45e07517d9fc663123347"
+  revision = "0848c9571904fcbcb24543358ca8b5a7dbfde875"
 
 [[projects]]
   branch = "master"
-  digest = "1:74ce8329385730bb2d01e4e91b66183beceeb1512084e4253653ac2439f1ef8c"
+  digest = "1:bec9c788e5357887ac914cbdec8cf6f2962661a852b902734f0fc90bbc58b08e"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = ""
-  revision = "a34e9553db1e492c9a76e60db2296ae7e5fbb772"
+  revision = "669c56c373c468cbe0f0c12b7939832b26088d33"
 
 [[projects]]
   digest = "1:cf14a5ea75b0cdb3eed3315839a120110068dce6df03edbe8c3bf4bd642a6024"
@@ -241,6 +259,14 @@
   revision = "6a667da9c028871f98598d85413e3fc4c6daa52e"
   version = "v1.7.2"
 
+[[projects]]
+  digest = "1:2efc9662a6a1ff28c65c84fc2f9030f13d3afecdb2ecad445f3b0c80e75fc281"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  pruneopts = ""
+  revision = "53403b58ad1b561927d19068c655246f2db79d48"
+  version = "v2.2.8"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -249,9 +275,10 @@
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/go-ozzo/ozzo-validation",
+    "github.com/gorilla/schema",
     "github.com/jmoiron/sqlx",
     "github.com/lib/pq",
-    "github.com/nats-io/go-nats",
+    "github.com/nats-io/nats.go",
     "github.com/onrik/logrus/filename",
     "github.com/onrik/logrus/sentry",
     "github.com/pkg/errors",
