@@ -58,22 +58,22 @@ func (t *Table) ApplyPage(orderColumn string) {
 }
 
 func (t *Table) CountQuery() (string, []interface{}, error) {
-	rawSQL, args, err := t.QBuilder.ToSql()
+	rawSQL, args, err := t.QBuilder.RemoveLimit().ToSql()
 	if err != nil {
 		return "", nil, err
 	}
 
-	countQuery := strings.Replace(rawSQL, t.Columns, "count(*) as count", 1)
+	countQuery := strings.Replace(rawSQL, t.Columns, "count(1) as count", 1)
 	return countQuery, args, nil
 }
 
 func (t *Table) GetCount(sqlConn *SQLConn) (int64, error) {
-	rawSQL, args, err := t.QBuilder.ToSql()
+	rawSQL, args, err := t.QBuilder.RemoveLimit().ToSql()
 	if err != nil {
 		return 0, err
 	}
 
-	countQuery := strings.Replace(rawSQL, t.Columns, "count(*) as count", 1)
+	countQuery := strings.Replace(rawSQL, t.Columns, "count(1) as count", 1)
 
 	dest := new(Count)
 	err = sqlConn.GetRaw(dest, countQuery, args...)

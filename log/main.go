@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DEPRECATED
 // Entry is a type alias for `*logrus.Entry`,
 // can be used to avoid direct import of the `logrus` package.
 type Entry = *logrus.Entry
