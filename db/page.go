@@ -46,6 +46,7 @@ func ParsePageQuery(values url.Values) (pq PageQuery, err error) {
 // FromRQuery extracts `PageQuery` from the url Query Values and validates.
 func (pq *PageQuery) FromRQuery(query url.Values) error {
 	urlValuesEncoder := schema.NewDecoder()
+	urlValuesEncoder.IgnoreUnknownKeys(true)
 	err := urlValuesEncoder.Decode(pq, query)
 	if err != nil {
 		return errors.Wrap(err, "failed to decode PageQuery from url.Values")
