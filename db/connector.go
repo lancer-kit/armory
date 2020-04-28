@@ -18,6 +18,7 @@ type connector interface {
 	Select(dest interface{}, query string, args ...interface{}) error
 }
 
+// nolint:gochecknoglobals
 var conn *SQLConn
 
 // Init initializes new connector with database.

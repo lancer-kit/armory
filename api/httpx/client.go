@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/lancer-kit/armory/crypto"
-	"github.com/lancer-kit/armory/log"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -19,20 +17,15 @@ const (
 	HeaderSigner      = "X-Auth-Signer"
 	HeaderService     = "X-Auth-Service"
 	HeaderJWTParsed   = "jwt"
-	HeaderPassHeaders = "X-Custom-Headers"
+	HeaderHeadersList = "X-Custom-Headers"
 )
 
 type XClient struct {
 	http.Client
 
-	auth    bool
-	kp      crypto.KP
-	service string
-
 	defaultHeaders Headers
 	cookies        []*http.Cookie
-
-	logger log.Entry
+	logger         *logrus.Entry
 }
 
 func NewXClient() *XClient {
@@ -43,45 +36,17 @@ func NewXClient() *XClient {
 	}
 }
 
-// SetLogger - Set logger to enable log requests
-func (client *XClient) SetLogger(l log.Entry) {
-	client.logger = l
-}
-
-// Auth returns current state of authentication flag.
-func (client *XClient) Auth() bool {
-	return client.auth
-}
-
-func (client *XClient) OffAuth() Client {
-	client.auth = false
-	return client
-}
-
-// OnAuth enables request authentication.
-func (client *XClient) OnAuth() Client {
-	client.auth = true
-	return client
-}
-
-// Service returns auth service name.
-func (client *XClient) Service() string {
-	return client.service
-}
-
-// PublicKey returns client public key.
-func (client *XClient) PublicKey() crypto.Key {
-	return client.kp.Public
-}
-
-// SetAuth sets the auth credentials.
-func (client *XClient) SetAuth(service string, kp crypto.KP) Client {
+// SetHTTP - Set customized instance of http.Client
+func (client *XClient) SetHTTP(hc http.Client) Client {
 	newClient := client.clone()
+	newClient.Client = hc
+	return newClient
+}
 
-	newClient.kp = kp
-	newClient.auth = true
-	newClient.service = service
-
+// SetLogger - Set logger to enable log requests
+func (client *XClient) SetLogger(logger *logrus.Entry) Client {
+	newClient := client.clone()
+	newClient.logger = logger
 	return newClient
 }
 
@@ -107,7 +72,7 @@ func (client *XClient) RemoveDefaultCookies() Client {
 // WithCookies append cookies to the client and return new instance.
 func (client *XClient) WithCookies(cookies []*http.Cookie) Client {
 	newClient := client.clone()
-	newClient.cookies = append(client.cookies, cookies...)
+	newClient.cookies = append(newClient.cookies, cookies...)
 	return newClient
 }
 
@@ -158,18 +123,18 @@ func (client *XClient) WithHeaders(headers Headers) Client {
 }
 
 // PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
-func (client *XClient) PostJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPost, url, bodyStruct, headers)
+func (client *XClient) PostJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPost, url, body, headers)
 }
 
 // PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
-func (client *XClient) PutJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPut, url, bodyStruct, headers)
+func (client *XClient) PutJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPut, url, body, headers)
 }
 
 // PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
-func (client *XClient) PatchJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
-	return client.RequestJSON(http.MethodPatch, url, bodyStruct, headers)
+func (client *XClient) PatchJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
+	return client.RequestJSON(http.MethodPatch, url, body, headers)
 }
 
 // GetJSON, sets passed `headers` and executes RequestJSON with GET method.
@@ -183,21 +148,17 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 }
 
 // RequestJSON creates and executes new request with JSON content type.
-func (client *XClient) RequestJSON(method string, url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
-	var body io.Reader = nil
-	var err error
+func (client *XClient) RequestJSON(method string, url string, body interface{}, headers Headers) (*http.Response, error) {
 	var rawData []byte
-
-	switch bodyStruct.(type) {
+	switch v := body.(type) {
 	case []byte:
-		rawData = bodyStruct.([]byte)
-		body = bytes.NewBuffer(rawData)
+		rawData = v
 	default:
-		rawData, err = json.Marshal(bodyStruct)
+		var err error
+		rawData, err = json.Marshal(body)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to marshal body")
 		}
-		body = bytes.NewBuffer(rawData)
 	}
 
 	if client.logger != nil {
@@ -205,33 +166,32 @@ func (client *XClient) RequestJSON(method string, url string, bodyStruct interfa
 			"method":  method,
 			"url":     url,
 			"headers": headers,
-			"body":    string(rawData)}).Debug("do json request")
+			"body":    string(rawData),
+		}).Trace("do json request")
 	}
 
-	req, err := http.NewRequest(method, url, body)
+	var bodyBuf io.Reader
+	bodyBuf = bytes.NewBuffer(rawData)
+
+	req, err := http.NewRequest(method, url, bodyBuf)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(client.cookies) != 0 {
-		req = addCookies(req, client.cookies)
-	}
-
 	req.Header.Set("Content-Type", "application/json")
 
-	for key, value := range headers {
-		client.defaultHeaders[key] = value
+	for _, k := range client.cookies {
+		req.AddCookie(k)
 	}
+
 	for key, value := range client.defaultHeaders {
 		req.Header.Set(key, value)
 	}
 
-	if client.auth {
-		req, err = client.SignRequest(req, rawData, headers)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to sign request")
-		}
+	for key, value := range headers {
+		req.Header.Set(key, value)
 	}
+
 	return client.Do(req)
 }
 
@@ -249,8 +209,7 @@ func (client *XClient) ParseJSONBody(r *http.Request, dest interface{}) error {
 			"method":      r.Method,
 			"remote_url":  r.RemoteAddr,
 			"request_url": r.RequestURI,
-			"auth":        r.Header.Get("Authorization"),
-			"body":        string(b)}).Debug("parse json request")
+			"body":        string(b)}).Trace("parse json request")
 	}
 
 	err = json.Unmarshal(b, dest)
@@ -269,14 +228,13 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 		return errors.Wrap(err, "failed to unmarshal request body")
 	}
 
-	if client.logger != nil {
+	if client != nil && client.logger != nil {
 		client.logger.WithFields(logrus.Fields{
 			"method":      httpResp.Request.Method,
 			"remote_url":  httpResp.Request.RemoteAddr,
 			"request_url": httpResp.Request.RequestURI,
 			"status":      httpResp.StatusCode,
-			"auth":        httpResp.Header.Get("Authorization"),
-			"body":        string(b)}).Debug("parse json response")
+			"body":        string(b)}).Trace("parse json response")
 	}
 
 	err = json.Unmarshal(b, dest)
@@ -286,108 +244,28 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 	return nil
 }
 
-// SignRequest takes body hash, some headers and full URL path,
-// sings this request details using the `client.privateKey` and adds the auth headers.
-func (client *XClient) SignRequest(req *http.Request, body []byte, headers map[string]string) (*http.Request, error) {
-	bodyHash, err := crypto.HashData(body)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to hash body")
-	}
-
-	fullPath := req.URL.Path + req.URL.RawQuery
-	signHeaders := headersForSigning(headers)
-	msg := messageForSigning(client.service, req.Method, fullPath,
-		bodyHash, signHeaders)
-
-	sign, err := client.kp.Sign([]byte(msg))
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to sign message")
-	}
-
-	req.Header.Set(HeaderPassHeaders, signHeaders)
-	req.Header.Set(HeaderBodyHash, bodyHash)
-	req.Header.Set(HeaderSignature, sign)
-	req.Header.Set(HeaderService, client.service)
-	req.Header.Set(HeaderSigner, client.kp.Public.String())
-	return req, nil
-}
-
-// VerifyBody checks the request body match with it hash.
-func (client *XClient) VerifyBody(r *http.Request, body []byte) (bool, error) {
-	bodyHash, err := crypto.HashData(body)
-	if err != nil {
-		return false, errors.Wrap(err, "failed to hash body")
-	}
-
-	return bodyHash == r.Header.Get(HeaderBodyHash), nil
-}
-
-// VerifyRequest checks the request auth headers.
-func (client *XClient) VerifyRequest(r *http.Request, publicKey string) (bool, error) {
-	if publicKey != r.Header.Get(HeaderSigner) {
-		return false, errors.New("signer mismatch with passed public key")
-	}
-
-	bodyHash := r.Header.Get(HeaderBodyHash)
-	service := r.Header.Get(HeaderService)
-	sign := r.Header.Get(HeaderSignature)
-	headers := r.Header.Get(HeaderPassHeaders)
-
-	fullPath := r.URL.Path + r.URL.RawQuery
-	msg := messageForSigning(service, r.Method, fullPath, bodyHash, headers)
-
-	return crypto.VerifySignature(publicKey, msg, sign)
-}
-
-// PostSignedWithHeaders create new POST signed request with headers
-func (client *XClient) PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error) {
-	rawData, err := json.Marshal(data)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to marshal body")
-	}
-
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(rawData))
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new http request")
-	}
-
-	rg, err := client.SignRequest(req, rawData, headers)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to create request")
-	}
-
-	for key, value := range headers {
-		rg.Header.Set(key, value)
-	}
-
-	return client.Do(rg)
-}
-
-// PostSignedWithHeaders create new signed GET request with headers
-func (client *XClient) GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error) {
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new http request")
-	}
-
-	rq, err := client.SignRequest(req, nil, headers)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to create request")
-	}
-	if headers != nil {
-		for key, value := range headers {
-			rq.Header.Set(key, value)
-		}
-	}
-
-	return client.Do(rq)
+func (client *XClient) Clone() Client {
+	return client.clone()
 }
 
 func (client *XClient) clone() *XClient {
 	var clone = NewXClient()
-	if client != nil {
-		*clone = *client
+	if client == nil {
+		return clone
+	}
+
+	if client.logger != nil {
+		clone.logger = client.logger.WithField("", "")
+	}
+
+	if len(client.cookies) > 0 {
+		copy(clone.cookies, client.cookies)
+	}
+
+	if len(client.defaultHeaders) > 0 {
+		for name := range client.defaultHeaders {
+			clone.defaultHeaders[name] = client.defaultHeaders[name]
+		}
 	}
 
 	return clone

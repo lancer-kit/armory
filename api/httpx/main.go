@@ -1,10 +1,11 @@
 package httpx
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/lancer-kit/armory/crypto"
+	"github.com/sirupsen/logrus"
 )
 
 // Headers is a type for request headers.
@@ -12,29 +13,16 @@ type Headers map[string]string
 
 // Client is a interface of extended http.Client which support signed request.
 type Client interface {
+	JSONClient
 	CookiesSupport
 	CustomHeadersSupport
-	JSONClient
 
-	// Auth returns current state of authentication flag.
-	Auth() bool
-	// OnAuth disables request authentication.
-	OffAuth() Client
-	// OnAuth enables request authentication.
-	OnAuth() Client
-	// PublicKey returns client public key.
-	PublicKey() crypto.Key
-	// Service returns auth service name.
-	Service() string
-	// SetAuth sets the auth credentials.
-	SetAuth(service string, kp crypto.KP) Client
-	// SignRequest takes body hash, some headers and full URL path,
-	// sings this request details using the `client.privateKey` and adds the auth headers.
-	SignRequest(req *http.Request, body []byte, headers map[string]string) (*http.Request, error)
-	// VerifyBody checks the request body match with it hash.
-	VerifyBody(r *http.Request, body []byte) (bool, error)
-	// VerifyRequest checks the request auth headers.
-	VerifyRequest(r *http.Request, publicKey string) (bool, error)
+	Clone() Client
+
+	// SetHTTP - Set customized instance of http.Client
+	SetHTTP(hc http.Client) Client
+	// SetLogger - Set logger to enable log requests
+	SetLogger(logger *logrus.Entry) Client
 }
 
 type CookiesSupport interface {
@@ -82,16 +70,8 @@ type JSONClient interface {
 
 const defaultTimeout = time.Second * 15
 
-var DefaultXClient = NewXClient()
-
 func GetClient() Client {
-	return DefaultXClient.clone()
-}
-
-// SetTimeout updated `DefaultXClient` default timeout (15s).
-func SetTimeout(duration time.Duration) *XClient {
-	DefaultXClient.Timeout = duration
-	return DefaultXClient
+	return NewXClient()
 }
 
 // PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
@@ -109,45 +89,45 @@ func SetTimeout(duration time.Duration) *XClient {
 // See the Client.Do method documentation for details on how redirects
 // are handled.
 func PostJSON(url string, body interface{}, headers map[string]string) (*http.Response, error) {
-	return GetClient().RequestJSON(http.MethodPost, url, body, headers)
+	return NewXClient().RequestJSON(http.MethodPost, url, body, headers)
 }
 
 // PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
 func PutJSON(url string, body interface{}, headers map[string]string) (*http.Response, error) {
-	return GetClient().RequestJSON(http.MethodPut, url, body, headers)
+	return NewXClient().RequestJSON(http.MethodPut, url, body, headers)
 }
 
 // GetJSON, sets passed `headers` and executes RequestJSON with GET method.
 func GetJSON(url string, headers map[string]string) (*http.Response, error) {
-	return GetClient().RequestJSON(http.MethodGet, url, nil, headers)
+	return NewXClient().RequestJSON(http.MethodGet, url, nil, headers)
 }
 
 // DeleteJSON, sets passed `headers` and executes RequestJSON with DELETE method.
 func DeleteJSON(url string, headers map[string]string) (*http.Response, error) {
-	return GetClient().RequestJSON(http.MethodDelete, url, nil, headers)
+	return NewXClient().RequestJSON(http.MethodDelete, url, nil, headers)
 }
 
 // RequestJSON creates and executes new request with JSON content type.
 func RequestJSON(method string, url string, data interface{}, headers map[string]string) (*http.Response, error) {
-	return GetClient().RequestJSON(method, url, data, headers)
+	return NewXClient().RequestJSON(method, url, data, headers)
 }
 
 // ParseJSONBody decodes `json` body from the `http.Request`.
 func ParseJSONBody(r *http.Request, dest interface{}) error {
-	return GetClient().ParseJSONBody(r, dest)
+	return json.NewDecoder(r.Body).Decode(dest)
 }
 
 // ParseJSONResult decodes `json` body from the `http.Response`.
 func ParseJSONResult(httpResp *http.Response, dest interface{}) error {
-	return GetClient().ParseJSONResult(httpResp, dest)
+	return json.NewDecoder(httpResp.Body).Decode(dest)
 }
 
 // WithCookies returns default client with cookies.
 func WithCookies(cookies []*http.Cookie) Client {
-	return GetClient().WithCookies(cookies)
+	return NewXClient().WithCookies(cookies)
 }
 
-// WithAuth returns default client with set auth data.
-func WithAuth(service string, kp crypto.KP) Client {
-	return GetClient().SetAuth(service, kp)
+// WithHeaders append headers to the client and return new instance.
+func WithHeaders(headers Headers) Client {
+	return NewXClient().WithHeaders(headers)
 }
