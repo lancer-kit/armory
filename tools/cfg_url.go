@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 type requiredRule struct {
@@ -59,7 +59,7 @@ func (j *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return err
 }
 
-func (j *URL) Validate() error {
+func (j URL) Validate() error {
 	return validation.Validate(j.Str, validation.Required)
 }
 

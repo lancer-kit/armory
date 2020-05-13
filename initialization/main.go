@@ -39,7 +39,6 @@ func (modules Modules) InitAll() {
 	for i := range modules {
 		close(locks[modules[i].Name])
 	}
-	return
 }
 
 func (modules Modules) validate() error {

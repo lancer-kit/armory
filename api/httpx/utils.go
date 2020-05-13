@@ -21,9 +21,9 @@ func addCookies(r *http.Request, cookies []*http.Cookie) *http.Request {
 	return r
 }
 
-//headersForSigning concatenates passed keys from headers map
+// headersForSigning concatenates passed keys from headers map
 func headersForSigning(headers map[string]string) string {
-	var keys []string
+	keys := make([]string, 0, len(headers))
 	for key := range headers {
 		keys = append(keys, key)
 	}

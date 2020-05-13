@@ -25,7 +25,7 @@ func TestVerifySignature(t *testing.T) {
 }
 
 func TestBase64EncodeNP(t *testing.T) {
-	key := "this is key"
+	const key = "this is key"
 	out := Base64EncodeNP([]byte(key))
 	println(out)
 	in, err := Base64DecodeNP(out)

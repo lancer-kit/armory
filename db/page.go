@@ -3,10 +3,10 @@ package db
 import (
 	"fmt"
 	"net/url"
-	"strconv"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/gorilla/schema"
 	"github.com/pkg/errors"
 )
 
@@ -31,9 +31,10 @@ var (
 // PageQuery is the structure for
 // building query with pagination.
 type PageQuery struct {
-	Order    string `json:"order"`
-	Page     uint64 `json:"page"`
-	PageSize uint64 `json:"pageSize"`
+	Order    string `json:"order" schema:"order"`
+	Page     uint64 `json:"page" schema:"page"`
+	PageSize uint64 `json:"pageSize" schema:"pageSize"`
+	OrderBy  string `json:"orderBy" schema:"orderBy"`
 }
 
 // ParsePageQuery extracts `PageQuery` from the url Query Values.
@@ -42,34 +43,21 @@ func ParsePageQuery(values url.Values) (pq PageQuery, err error) {
 	return
 }
 
-// FromRQuery extracts `PageQuery` from the url Query Values and validate.
+// FromRQuery extracts `PageQuery` from the url Query Values and validates.
 func (pq *PageQuery) FromRQuery(query url.Values) error {
-	page := query.Get("page")
-	if page == "" {
-		page = "0"
-	}
-	var err error
-	pq.Page, err = strconv.ParseUint(page, 10, 64)
+	urlValuesEncoder := schema.NewDecoder()
+	urlValuesEncoder.IgnoreUnknownKeys(true)
+	err := urlValuesEncoder.Decode(pq, query)
 	if err != nil {
-		return errors.Wrap(err, "page")
+		return errors.Wrap(err, "failed to decode PageQuery from url.Values")
 	}
-
-	pageSize := query.Get("pageSize")
-	if pageSize == "" {
-		pageSize = "0"
-	}
-
-	pq.PageSize, err = strconv.ParseUint(pageSize, 10, 64)
-	if err != nil {
-		return errors.Wrap(err, "pageSize")
-	}
-
-	pq.Order = query.Get("order")
 
 	return pq.Validate()
 }
 
-// Validate checks is correct values and set default values if `PageQuery` empty.
+// Validate checks is correct values and
+// sets default values if `PageQuery` empty.
+// WARN: the receiver MUST be a pointer so that the default values works
 func (pq *PageQuery) Validate() error {
 	switch strings.ToLower(pq.Order) {
 	case "":
@@ -100,11 +88,23 @@ func (pq *PageQuery) Offset() uint64 {
 	return (pq.Page - 1) * pq.PageSize
 }
 
+// DEPRECATED
+// use ApplyByOrderColumn instead
 // Apply sets limit and ordering params to SelectBuilder.
 func (pq *PageQuery) Apply(query sq.SelectBuilder, orderColumn string) sq.SelectBuilder {
 	query = query.Limit(pq.PageSize).Offset(pq.Offset())
 	if pq.Order != "" && orderColumn != "" {
 		query = query.OrderBy(orderColumn + " " + pq.Order)
+	}
+
+	return query
+}
+
+// ApplyByOrderColumn sets limit and ordering params to SelectBuilder.
+func (pq *PageQuery) ApplyByOrderColumn(query sq.SelectBuilder) sq.SelectBuilder {
+	query = query.Limit(pq.PageSize).Offset(pq.Offset())
+	if pq.Order != "" && pq.OrderBy != "" {
+		query = query.OrderBy(pq.OrderBy + " " + pq.Order)
 	}
 
 	return query

@@ -17,8 +17,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestXClient_Auth(t *testing.T) {
-	client := XClient{}
+func TestSXClient_Auth(t *testing.T) {
+	client := SXClient{}
 
 	client.auth = false
 	assert.Equal(t, false, client.Auth(), "XClient.Auth() must return actual value")
@@ -30,8 +30,8 @@ func TestXClient_Auth(t *testing.T) {
 
 }
 
-func TestXClient_OffAuth(t *testing.T) {
-	client := NewXClient()
+func TestSXClient_OffAuth(t *testing.T) {
+	client := NewSXClient()
 	assert.False(t, client.Auth(), "XClient.Auth() disabled by default")
 
 	client.auth = true
@@ -39,30 +39,29 @@ func TestXClient_OffAuth(t *testing.T) {
 	assert.False(t, client.Auth(), "XClient.Auth() must be disabled")
 }
 
-func TestXClient_OnAuth(t *testing.T) {
-	client := NewXClient()
+func TestSXClient_OnAuth(t *testing.T) {
+	client := NewSXClient()
 	assert.False(t, client.Auth(), "XClient.Auth() disabled by default")
 
 	client.OnAuth()
 	assert.True(t, client.Auth(), "XClient.Auth() must be enabled")
 }
 
-func TestXClient_SetAuth(t *testing.T) {
-	client := NewXClient()
+func TestSXClient_SetAuth(t *testing.T) {
+	client := NewSXClient()
 	const service = "test_service"
 	kp := crypto.RandomKP()
-	client.SetAuth(service, kp)
+	client = client.SetAuth(service, kp).(*SXClient)
 
 	assert.True(t, client.Auth(), "XClient.Auth() must be enabled after XClient.SetAuth()")
 	assert.Equal(t, kp, client.kp)
 	assert.Equal(t, kp.Public, client.PublicKey())
 }
 
-func TestXClient_SignRequest(t *testing.T) {
-	client := NewXClient()
+func TestSXClient_SignRequest(t *testing.T) {
 	const service = "test_service"
-	kp := crypto.RandomKP()
-	client.SetAuth(service, kp)
+	var kp = crypto.RandomKP()
+	client := NewSXClient().SetAuth(service, kp)
 
 	req, err := http.NewRequest(http.MethodGet, "http://example.com/test?user=foo", nil)
 	assert.Nil(t, err)
@@ -99,7 +98,7 @@ func TestXClient_SignRequest(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestXClient(t *testing.T) {
+func TestSXClient(t *testing.T) {
 	type fakeData struct {
 		dat string
 	}
@@ -133,17 +132,16 @@ func TestXClient(t *testing.T) {
 
 }
 
-func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, *XClient) {
-	require := require.New(t)
+func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, SecuredClient) {
+	assertions := require.New(t)
 
 	r := chi.NewRouter()
-	client := NewXClient()
-	client.SetAuth(name, kp)
+	client := NewSXClient().SetAuth(name, kp)
 	r.Route("/test", func(r chi.Router) {
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			ok, err := client.VerifyRequest(r, kp.Public.String())
-			require.NoErrorf(err, "Wrong auth headers in GET request")
+			assertions.NoErrorf(err, "Wrong auth headers in GET request")
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
@@ -159,7 +157,7 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, *XCli
 
 		r.Get("/bad", func(w http.ResponseWriter, r *http.Request) {
 			_, err := client.VerifyRequest(r, kp.Public.String())
-			require.Errorf(err, "Error with bad header OK ")
+			assertions.Errorf(err, "Error with bad header OK ")
 
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Error evoked, success"))
@@ -168,7 +166,7 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, *XCli
 
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
 			ok, err := client.VerifyRequest(r, kp.Public.String())
-			require.NoErrorf(err, "Wrong auth headers in POST request")
+			assertions.NoErrorf(err, "Wrong auth headers in POST request")
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
@@ -188,7 +186,7 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, *XCli
 	return r, client
 }
 
-func sendCorrectRequests(t *testing.T, client *XClient, port int, data interface{}) {
+func sendCorrectRequests(t *testing.T, client SecuredClient, port int, data interface{}) {
 	require := require.New(t)
 
 	url := fmt.Sprintf("http://127.0.0.1:%d/test", port)
@@ -215,8 +213,9 @@ func sendCorrectRequests(t *testing.T, client *XClient, port int, data interface
 	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
 }
 
-func sendBadRequests(t *testing.T, client *XClient, port int, data interface{}) {
-	require := require.New(t)
+func sendBadRequests(t *testing.T, iClient SecuredClient, port int, data interface{}) {
+	client := iClient.(*SXClient)
+	assertions := require.New(t)
 	var body io.Reader = nil
 	var err error
 	var rawData []byte
@@ -241,23 +240,23 @@ func sendBadRequests(t *testing.T, client *XClient, port int, data interface{}) 
 	assert.Nil(t, err)
 
 	req, err = client.SignRequest(req, nil, nil)
-	require.NoErrorf(err, "Error when trying to sign GET request")
+	assertions.NoErrorf(err, "Error when trying to sign GET request")
 	req.Header.Set(HeaderSignature, "bad sign")
 
 	res, err := client.Do(req)
-	require.NoErrorf(err, "Error when trying to send GET request")
+	assertions.NoErrorf(err, "Error when trying to send GET request")
 	resBody, _ := ioutil.ReadAll(res.Body)
 	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
 
 	req, err = http.NewRequest(http.MethodPost, url, body)
-	require.NoErrorf(err, "Error when trying to create POST request")
+	assertions.NoErrorf(err, "Error when trying to create POST request")
 
 	req, err = client.SignRequest(req, rawData, nil)
-	require.NoErrorf(err, "Error when trying to sign POST request")
+	assertions.NoErrorf(err, "Error when trying to sign POST request")
 	req.Header.Set(HeaderBodyHash, "bad body hash")
 
 	res, err = client.Do(req)
-	require.NoErrorf(err, "Error when trying to send POST request")
+	assertions.NoErrorf(err, "Error when trying to send POST request")
 	resBody, _ = ioutil.ReadAll(res.Body)
 	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
 }
