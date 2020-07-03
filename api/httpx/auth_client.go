@@ -227,7 +227,8 @@ func (client *SXClient) VerifyRequest(r *http.Request, publicKey string) (bool, 
 }
 
 // PostSignedWithHeaders create new POST signed request with headers
-func (client *SXClient) PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+func (client *SXClient) PostSignedWithHeaders(
+	url string, data interface{}, headers map[string]string) (*http.Response, error) {
 	rawData, err := json.Marshal(data)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to marshal body")

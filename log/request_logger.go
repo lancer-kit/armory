@@ -58,10 +58,12 @@ type RequestLoggerEntry struct {
 	Logger logrus.FieldLogger
 }
 
-func (l *RequestLoggerEntry) Write(status, bytes int, elapsed time.Duration) {
+func (l *RequestLoggerEntry) Write(status, bytes int, hdr http.Header, elapsed time.Duration, _ interface{}) {
 	l.Logger = l.Logger.WithFields(logrus.Fields{
-		"resp_status": status, "resp_bytes_length": bytes,
-		"resp_elapsed_ms": float64(elapsed.Nanoseconds()) / 1000000.0,
+		"resp_status":       status,
+		"resp_bytes_length": bytes,
+		"resp_header":       hdr,
+		"resp_elapsed_ms":   float64(elapsed.Nanoseconds()) / 1000000.0,
 	})
 
 	l.Logger.Infoln("request complete")

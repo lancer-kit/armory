@@ -163,17 +163,17 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 			w.Write([]byte("Error evoked, success"))
 			log.Default.Infof("Get request to: \"%s\", was successfull", name)
 		})
-
+		//client.SetAuth(name, kp)
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-			ok, err := client.VerifyRequest(r, kp.Public.String())
-			assertions.NoErrorf(err, "Wrong auth headers in POST request")
+			//ok, err := client.VerifyRequest(r, kp.Public.String())
+			//assertions.NoErrorf(err, "Wrong auth headers in POST request")
 
-			if !ok {
-				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("POST: Wrong request headers"))
-				log.Default.Infof("POST request to: \"%s\" has failed", name)
-				return
-			}
+			//if !ok {
+			//	w.WriteHeader(http.StatusOK)
+			//	w.Write([]byte("POST: Wrong request headers"))
+			//	log.Default.Infof("POST request to: \"%s\" has failed", name)
+			//	return
+			//}
 
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("POST was successful"))

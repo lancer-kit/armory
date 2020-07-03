@@ -6,11 +6,11 @@ require (
 	github.com/Masterminds/squirrel v1.1.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
 	github.com/getsentry/sentry-go v0.1.1 // indirect
-	github.com/go-chi/chi v4.0.2+incompatible
+	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/gobuffalo/packr v1.30.1 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
-	github.com/gorilla/schema v1.1.0 // indirect
+	github.com/gorilla/schema v1.1.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/lib/pq v1.0.0
