@@ -17,6 +17,7 @@ type RequestLogger struct {
 	Logger *logrus.Logger
 }
 
+// NewRequestLogger returns new RequestLogger middleware.
 func NewRequestLogger(logger *logrus.Logger) func(next http.Handler) http.Handler {
 	if logger == nil {
 		logger = Get().Logger
@@ -24,6 +25,7 @@ func NewRequestLogger(logger *logrus.Logger) func(next http.Handler) http.Handle
 	return middleware.RequestLogger(&RequestLogger{logger})
 }
 
+// NewLogEntry sets log fields for http.Request.
 func (l *RequestLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
 	entry := &RequestLoggerEntry{Logger: logrus.NewEntry(l.Logger)}
 	logFields := logrus.Fields{}
@@ -49,11 +51,12 @@ func (l *RequestLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
 
 	entry.Logger = entry.Logger.WithFields(logFields)
 
-	entry.Logger.Infoln("request started")
+	entry.Logger.Debug("http request started")
 
 	return entry
 }
 
+// RequestLoggerEntry is an implementation http.Request logger baked with logrus.
 type RequestLoggerEntry struct {
 	Logger logrus.FieldLogger
 }
@@ -64,7 +67,7 @@ func (l *RequestLoggerEntry) Write(status, bytes int, elapsed time.Duration) {
 		"resp_elapsed_ms": float64(elapsed.Nanoseconds()) / 1000000.0,
 	})
 
-	l.Logger.Infoln("request complete")
+	l.Logger.Debug("request complete")
 }
 
 func (l *RequestLoggerEntry) Panic(v interface{}, stack []byte) {
@@ -86,12 +89,14 @@ func GetLogEntry(r *http.Request) logrus.FieldLogger {
 	return entry.Logger
 }
 
+// LogEntrySetField add field to logger in request context.
 func LogEntrySetField(r *http.Request, key string, value interface{}) {
 	if entry, ok := r.Context().Value(middleware.LogEntryCtxKey).(*RequestLoggerEntry); ok {
 		entry.Logger = entry.Logger.WithField(key, value)
 	}
 }
 
+// LogEntrySetField add fields to logger in request context.
 func LogEntrySetFields(r *http.Request, fields map[string]interface{}) {
 	if entry, ok := r.Context().Value(middleware.LogEntryCtxKey).(*RequestLoggerEntry); ok {
 		entry.Logger = entry.Logger.WithFields(fields)

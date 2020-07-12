@@ -1,17 +1,19 @@
 package initialization
 
 import (
-	"sync"
 	"time"
 
 	"github.com/lancer-kit/armory/log"
 	"github.com/lancer-kit/armory/tools"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 )
 
+// Modules is a set of modules for initialization.
 type Modules []Module
 
+// Add push new module to set.
 func (modules Modules) Add(m *Module) Modules {
 	if m == nil {
 		return modules
@@ -19,28 +21,34 @@ func (modules Modules) Add(m *Module) Modules {
 	return append(modules, *m)
 }
 
-func (modules Modules) InitAll() {
+// InitAll checks status and run initialization of all modules for the fist to last.
+func (modules Modules) InitAll() error {
 	if err := modules.validate(); err != nil {
-		log.Default.Fatal(err)
+		return errors.Wrap(err, "set is invalid")
 	}
-	wg := &sync.WaitGroup{}
 
 	locks := make(map[string]chan bool)
 	for i := range modules {
 		locks[modules[i].Name] = make(chan bool, 1)
 	}
 
+	eg := errgroup.Group{}
 	for i := range modules {
-		wg.Add(1)
-		go modules[i].Run(wg, locks)
+		eg.Go(func() error { return modules[i].Run(locks) })
 	}
 
-	wg.Wait()
+	err := eg.Wait()
+	if err != nil {
+		return errors.Wrap(err, "set is invalid")
+	}
+
 	for i := range modules {
 		close(locks[modules[i].Name])
 	}
+	return nil
 }
 
+// validate checks that is no duplicates and dependency cycle is set.
 func (modules Modules) validate() error {
 	if d, ok := modules.duplicates(); ok {
 		return errors.New("found duplicated modules: " + d)
@@ -86,19 +94,26 @@ func (modules Modules) cycle() (string, bool) {
 	return "", false
 }
 
+// Module is unit for initialization.
 type Module struct {
-	Name         string
-	DependsOn    string
-	Timeout      time.Duration
+	// Name unique identifier for module.
+	Name string
+	// DependsOn is a name of other module which should be initialized before this.
+	DependsOn string
+	// InitInterval is initial timeout before second attempt to perform initCall.
 	InitInterval time.Duration
-	Init         func(*logrus.Entry) error
+	// Timeout is a deadline for the initialization attempts.
+	Timeout time.Duration
+	// Init is a module init function.
+	Init func(*logrus.Entry) error
 }
 
-func (mod *Module) Run(wg *sync.WaitGroup, locks map[string]chan bool) {
+// Run tries to initialize the module, if the attempt failed, it will be repeated,
+// but with an incremental delay. So it will be until the maximum initialization timeout is reached.
+func (mod *Module) Run(locks map[string]chan bool) error {
 	if err := mod.validate(); err != nil {
-		log.Default.Fatal(err)
+		return errors.New("can't validate " + mod.Name)
 	}
-	defer wg.Done()
 
 	for {
 		if len(mod.DependsOn) == 0 {
@@ -116,16 +131,17 @@ func (mod *Module) Run(wg *sync.WaitGroup, locks map[string]chan bool) {
 		mod.initCall,
 	)
 	if !ok {
-		log.Default.Fatalf("Can't init %s", mod.Name)
+		return errors.New("can't init " + mod.Name)
 	}
 
 	locks[mod.Name] <- true
+	return nil
 }
 
 func (mod *Module) initCall() bool {
-	err := mod.Init(log.Default.WithField("init", mod.Name))
+	err := mod.Init(log.Get().WithField("init", mod.Name))
 	if err != nil {
-		log.Default.WithError(err).Error("Can't init " + mod.Name)
+		log.Get().WithError(err).Error("Can't init " + mod.Name)
 	}
 	return err == nil
 }

@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/lancer-kit/armory/api/render?status.png)](https://godoc.org/github.com/lancer-kit/armory/api/render)
+
 # Render
 
 `render` is a simple response render helper and prepared collection of the responses 

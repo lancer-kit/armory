@@ -140,24 +140,29 @@ func (conn *SQLConn) Insert(sqq sq.InsertBuilder) (id interface{}, err error) {
 	return id, errors.Wrap(err, "failed to insert")
 }
 
+// SetConnParams configures `MaxIdleConns`, `MaxOpenConns` and `ConnMaxLifetime` of the database connector.
 func (conn *SQLConn) SetConnParams(params *ConnectionParams) {
 	conn.db.SetMaxIdleConns(params.MaxOpenConns)
 	conn.db.SetMaxOpenConns(params.MaxOpenConns)
 	conn.db.SetConnMaxLifetime(time.Duration(params.MaxLifetime) * time.Millisecond)
 }
 
+// SetMaxIdleConns changes `MaxIdleConns` of the database connector.
 func (conn *SQLConn) SetMaxIdleConns(n int) {
 	conn.db.SetMaxIdleConns(n)
 }
 
+// SetMaxOpenConns changes `MaxOpenConns` of the database connector.
 func (conn *SQLConn) SetMaxOpenConns(n int) {
 	conn.db.SetMaxOpenConns(n)
 }
 
+// SetConnMaxLifetime changes `ConnMaxLifetime` of the database connector.
 func (conn *SQLConn) SetConnMaxLifetime(d int64) {
 	conn.db.SetConnMaxLifetime(time.Duration(d))
 }
 
+// Stats returns database stats.
 func (conn *SQLConn) Stats() sql.DBStats {
 	return conn.db.Stats()
 }

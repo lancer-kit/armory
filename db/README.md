@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/lancer-kit/armory/db?status.png)](https://godoc.org/github.com/lancer-kit/armory/db)
+
 # DB 
 
 DB  is a package with helpers and wrappers for interacting with PostgreSQL using the [`squirrel.Builder`](https://github.com/Masterminds/squirrel).
@@ -35,6 +37,7 @@ package main
 
 import (
     "log"
+
     "github.com/lancer-kit/armory/db"
 )
 
@@ -53,4 +56,4 @@ func main() {
 }
 ```
 
-- [Full Querier implementation](../internal/examples/db.go)
+- [Full Querier implementation](./connector_test.go)

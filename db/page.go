@@ -28,8 +28,7 @@ var (
 	}
 )
 
-// PageQuery is the structure for
-// building query with pagination.
+// PageQuery is the structure for building query with pagination.
 type PageQuery struct {
 	Order    string `json:"order" schema:"order"`
 	Page     uint64 `json:"page" schema:"page"`

@@ -61,7 +61,7 @@ natsx.SetConfig(&config)
 testMsg := []string {"1", "2"}
 err := natsx.PublishMessage("Topic", testMsg)
 if err != nil {
-    log.Default.Error(err)
+    log.Get().Error(err)
 }
 
 ```

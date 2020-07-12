@@ -20,6 +20,7 @@ const (
 	HeaderHeadersList = "X-Custom-Headers"
 )
 
+// XClient is an implementation of the Client.
 type XClient struct {
 	http.Client
 
@@ -28,6 +29,7 @@ type XClient struct {
 	logger         *logrus.Entry
 }
 
+// NewXClient returns new Client.
 func NewXClient() *XClient {
 	return &XClient{
 		Client:         http.Client{Timeout: defaultTimeout},
@@ -244,6 +246,7 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 	return nil
 }
 
+// Clone returns safe clone of Client.
 func (client *XClient) Clone() Client {
 	return client.clone()
 }

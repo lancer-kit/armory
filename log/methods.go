@@ -15,10 +15,10 @@ func AddSentryHook(dsn string) {
 	sentryHook, err := sentry.NewHook(sentry.Options{Dsn: dsn},
 		logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
 	if err != nil {
-		Default.WithError(err).Error("unable to create new hook")
+		Get().WithError(err).Error("unable to create new hook")
 		return
 	}
-	Default.Logger.AddHook(sentryHook)
+	Get().Logger.AddHook(sentryHook)
 }
 
 // AddFilenameHook adds hook that includes
@@ -26,7 +26,7 @@ func AddSentryHook(dsn string) {
 func AddFilenameHook() {
 	filenameHook := filename.NewHook()
 	filenameHook.Field = "file"
-	Default.Logger.AddHook(filenameHook)
+	Get().Logger.AddHook(filenameHook)
 }
 
 // DefaultForRequest returns default logger with included http.Request details.

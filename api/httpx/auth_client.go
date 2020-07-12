@@ -10,9 +10,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// SecuredClient is a extension of the Client that adds possibility to sign and verify request.
 type SecuredClient interface {
 	Client
-
+	// CloneWAuth returns a safe clone of SecuredClient.
 	CloneWAuth() SecuredClient
 
 	// Auth returns current state of authentication flag.
@@ -34,11 +35,13 @@ type SecuredClient interface {
 	VerifyBody(r *http.Request, body []byte) (bool, error)
 	// VerifyRequest checks the request auth headers.
 	VerifyRequest(r *http.Request, publicKey string) (bool, error)
-
+	// PostSignedWithHeaders signs request body and headers by set keys and sends it.
 	PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error)
+	// GetSignedWithHeaders signs request headers by set keys and sends it.
 	GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error)
 }
 
+// SXClient implementation of the SecuredClient.
 type SXClient struct {
 	XClient
 
@@ -47,6 +50,7 @@ type SXClient struct {
 	service string
 }
 
+// NewSXClient returns new SecuredClient.
 func NewSXClient() *SXClient {
 	xClient := NewXClient()
 	return &SXClient{
@@ -250,7 +254,7 @@ func (client *SXClient) PostSignedWithHeaders(url string, data interface{}, head
 	return client.Do(rg)
 }
 
-// PostSignedWithHeaders create new signed GET request with headers
+// GetSignedWithHeaders create new signed GET request with headers
 func (client *SXClient) GetSignedWithHeaders(url string, headers map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -268,6 +272,7 @@ func (client *SXClient) GetSignedWithHeaders(url string, headers map[string]stri
 	return client.Do(rq)
 }
 
+// CloneWAuth returns a safe clone of SecuredClient.
 func (client *SXClient) CloneWAuth() SecuredClient {
 	return client.clone()
 }

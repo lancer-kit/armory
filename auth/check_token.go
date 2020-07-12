@@ -84,9 +84,9 @@ func Is2PassValid(r *http.Request) bool {
 }
 
 // CheckToken checks `Authorization` token if it valid return nil.
-func CheckToken(authtoken string) (int, []byte, error) {
+func CheckToken(authToken string) (int, []byte, error) {
 	if userAPILink == "" {
-		log.Default.Error("auth didn't init")
+		log.Get().Error("auth didn't init")
 	}
 	client := http.DefaultClient
 	path := userAPILink + "/v1/auth"
@@ -97,7 +97,7 @@ func CheckToken(authtoken string) (int, []byte, error) {
 			nil, errors.Wrap(err, "failed to create auth check request")
 	}
 
-	req.Header.Set(HeaderAuthorization, authtoken)
+	req.Header.Set(HeaderAuthorization, authToken)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -113,7 +113,7 @@ func CheckToken(authtoken string) (int, []byte, error) {
 
 	_, err = resp.Body.Read(respBody)
 	if err != nil {
-		log.Default.WithError(err).Error("unable to read response body")
+		log.Get().WithError(err).Error("unable to read response body")
 		return http.StatusInternalServerError,
 			nil, errors.Wrap(err, "failed read auth response body")
 	}
@@ -140,7 +140,7 @@ func ValidateAuthHeader(required bool) func(http.Handler) http.Handler {
 			}
 
 			if err != nil {
-				log.Default.WithError(err).Error("unable to check auth token")
+				log.Get().WithError(err).Error("unable to check auth token")
 			}
 
 			w.WriteHeader(statusCode)

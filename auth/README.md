@@ -1,6 +1,10 @@
+[![GoDoc](https://godoc.org/github.com/lancer-kit/armory/auth?status.png)](https://godoc.org/github.com/lancer-kit/armory/auth)
+
 # auth
---
+
+```
     import "github.com/lancer-kit/armory/auth"
+```
 
 
 ## Usage
