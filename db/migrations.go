@@ -81,6 +81,7 @@ func migrateMultiSetDown(connStr, driver string, sets ...Migrations) (int, error
 	return total, nil
 }
 
+// Migrations is a configuration of migration set.
 type Migrations struct {
 	// Table name of the table used to store migration info.
 	Table string
@@ -92,10 +93,15 @@ type Migrations struct {
 	// IgnoreUnknown skips the check to see if there is a migration
 	// ran in the database that is not in MigrationSource.
 	IgnoreUnknown bool
-	// Assets is bindata asset set.
-	Assets *migrate.AssetMigrationSource
+	// Assets is sql-migrate.MigrationSource assets. Ex.:
+	// 	- migrate.HttpFileSystemMigrationSource
+	// 	- migrate.FileMigrationSource
+	// 	- migrate.AssetMigrationSource
+	// 	- migrate.PackrMigrationSource
+	Assets migrate.MigrationSource
 }
 
+// MigrationsExecutor is a helper that initializes database connection and applies migrations to the database.
 type MigrationsExecutor struct {
 	Migrations
 
@@ -104,6 +110,7 @@ type MigrationsExecutor struct {
 	db      *sqlx.DB
 }
 
+// NewExecutor returns new MigrationsExecutor.
 func NewExecutor(connStr, driver string) (*MigrationsExecutor, error) {
 	if driver == "" {
 		driver = "postgres"
@@ -116,6 +123,7 @@ func NewExecutor(connStr, driver string) (*MigrationsExecutor, error) {
 	return &MigrationsExecutor{connStr: connStr, db: conn, driver: driver}, nil
 }
 
+// SetMigrations sets Migrations for executor.
 func (executor *MigrationsExecutor) SetMigrations(set Migrations) *MigrationsExecutor {
 	executor.Migrations = set
 	return executor
