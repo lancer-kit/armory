@@ -16,7 +16,7 @@ type Page struct {
 	// Total is total count of pages.
 	Total int64 `json:"total"`
 	// Total is total count of rows.
-	TotalRows int64 `json:"total"`
+	TotalRows int64 `json:"total_rows"`
 	// Records is an array of rows.
 	Records interface{} `json:"records"`
 }

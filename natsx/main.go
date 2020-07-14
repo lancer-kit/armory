@@ -8,14 +8,16 @@ import (
 )
 
 var (
-	cfg      *Config
-	natsConn *nats.Conn
+	cfg      *Config    // nolint:gochecknoglobals
+	natsConn *nats.Conn // nolint:gochecknoglobals
 )
 
+// SetConfig sets NATS configuration singleton.
 func SetConfig(config *Config) {
 	cfg = config
 }
 
+// GetConn returns nats.Conn singleton.
 func GetConn() (*nats.Conn, error) {
 	if natsConn != nil {
 		return natsConn, nil
@@ -24,19 +26,13 @@ func GetConn() (*nats.Conn, error) {
 	if cfg == nil {
 		return nil, errors.New("Nats config didn't set")
 	}
+
 	var err error
-	natsConn, err = nats.Connect(
-		cfg.ToURL(),
-		nats.UserInfo(
-			cfg.User,
-			cfg.Password),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return natsConn, nil
+	natsConn, err = nats.Connect(cfg.ToURL(), nats.UserInfo(cfg.User, cfg.Password))
+	return natsConn, err
 }
 
+// PublishMessage serializes the message in JSON and sends to the topic.
 func PublishMessage(topic string, msg interface{}) error {
 	rawMsg, err := json.Marshal(msg)
 	if err != nil {
@@ -57,6 +53,7 @@ func PublishMessage(topic string, msg interface{}) error {
 	return nil
 }
 
+// Subscribe initiates chan subscription for topic.
 func Subscribe(topic string, msgs chan *nats.Msg) (*nats.Subscription, error) {
 	_, err := GetConn()
 	if err != nil {

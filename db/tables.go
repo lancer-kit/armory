@@ -90,7 +90,7 @@ func (t *Table) GetCount(sqlConn *SQLConn) (int64, error) {
 // - apply paging parameters to SQL query with given `PageQuery` and `orderColumn`;
 // - make a request to the database without fetching data, only get the total number of records for the passed request;
 // - make a selection of all records with the specified filters, limit and offset (i.e. the necessary page).
-func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderColumn string, query *PageQuery) (int64, error) {
+func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderCol string, query *PageQuery) (int64, error) {
 	count, err := t.GetCount(sqlConn)
 	if err != nil {
 		return 0, errors.Wrap(err, "can not GET count")
@@ -100,7 +100,7 @@ func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderColumn 
 		t.Page = query
 	}
 
-	t.ApplyPage(orderColumn)
+	t.ApplyPage(orderCol)
 	err = sqlConn.Select(t.QBuilder, dest)
 	return count, err
 }

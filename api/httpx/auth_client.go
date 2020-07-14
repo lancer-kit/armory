@@ -126,7 +126,8 @@ func (client *SXClient) DeleteJSON(url string, headers Headers) (*http.Response,
 }
 
 // RequestJSON creates and executes new request with JSON content type.
-func (client *SXClient) RequestJSON(method string, url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
+func (client *SXClient) RequestJSON(method string, url string, bodyStruct interface{},
+	headers Headers) (*http.Response, error) {
 	var rawData []byte
 
 	switch v := bodyStruct.(type) {
@@ -231,7 +232,8 @@ func (client *SXClient) VerifyRequest(r *http.Request, publicKey string) (bool, 
 }
 
 // PostSignedWithHeaders create new POST signed request with headers
-func (client *SXClient) PostSignedWithHeaders(url string, data interface{}, headers map[string]string) (*http.Response, error) {
+func (client *SXClient) PostSignedWithHeaders(url string, data interface{},
+	headers map[string]string) (*http.Response, error) {
 	rawData, err := json.Marshal(data)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to marshal body")

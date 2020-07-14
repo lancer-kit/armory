@@ -20,22 +20,20 @@ func (conn *SQLConn) Transaction(fn func() error) (err error) {
 	if err = conn.Begin(); err != nil {
 		return errors.Wrap(err, "failed to begin tx")
 	}
-	defer func() {
-		if err != nil {
-			// swallowing rollback err,
-			// should not affect data consistency
-			conn.Rollback()
+
+	if err = fn(); err == nil {
+		if err = conn.Commit(); err == nil {
+			return nil
 		}
-	}()
-
-	if err = fn(); err != nil {
-		return errors.Wrap(err, "failed to execute statements")
+		err = errors.Wrap(err, "failed to commit tx")
+	} else {
+		err = errors.Wrap(err, "failed to execute statements")
 	}
 
-	if err = conn.Commit(); err != nil {
-		return errors.Wrap(err, "failed to commit tx")
+	nErr := conn.Rollback()
+	if nErr != nil {
+		err = errors.Wrapf(err, "rollback failed also(%s)", nErr.Error())
 	}
-
 	return
 }
 

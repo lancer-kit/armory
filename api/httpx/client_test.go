@@ -145,13 +145,13 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("GET: Wrong request headers"))
+				_, _ = w.Write([]byte("GET: Wrong request headers"))
 				log.Get().Infof("Get request to: \"%s\" has failed", name)
 				return
 			}
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("GET was successful"))
+			_, _ = w.Write([]byte("GET was successful"))
 			log.Get().Infof("Get request to: \"%s\" was successful", name)
 		})
 
@@ -160,7 +160,7 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 			assertions.Errorf(err, "Error with bad header OK ")
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Error evoked, success"))
+			_, _ = w.Write([]byte("Error evoked, success"))
 			log.Get().Infof("Get request to: \"%s\", was successful", name)
 		})
 
@@ -170,13 +170,13 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("POST: Wrong request headers"))
+				_, _ = w.Write([]byte("POST: Wrong request headers"))
 				log.Get().Infof("POST request to: \"%s\" has failed", name)
 				return
 			}
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("POST was successful"))
+			_, _ = w.Write([]byte("POST was successful"))
 
 			log.Get().Infof("POST request to: \"%s\" was successful", name)
 		})

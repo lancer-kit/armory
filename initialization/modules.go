@@ -34,7 +34,8 @@ func (modules Modules) InitAll() error {
 
 	eg := errgroup.Group{}
 	for i := range modules {
-		eg.Go(func() error { return modules[i].Run(locks) })
+		m := modules[i]
+		eg.Go(func() error { return m.Run(locks) })
 	}
 
 	err := eg.Wait()

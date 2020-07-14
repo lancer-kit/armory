@@ -83,9 +83,8 @@ func (j URL) Validate() error {
 	return validation.Validate(j.Str, validation.Required, is.URL)
 }
 
-// nolint:gochecknoglobals
 // Required is a ozzo-validation rule
-var Required = &requiredRule{message: "url cannot be blank", skipNil: false}
+var Required = &requiredRule{message: "url cannot be blank", skipNil: false} // nolint:gochecknoglobals
 
 type requiredRule struct {
 	message string

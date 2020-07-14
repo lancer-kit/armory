@@ -3,7 +3,6 @@ package httpx
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -150,7 +149,8 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 }
 
 // RequestJSON creates and executes new request with JSON content type.
-func (client *XClient) RequestJSON(method string, url string, body interface{}, headers Headers) (*http.Response, error) {
+func (client *XClient) RequestJSON(method string, url string, body interface{},
+	headers Headers) (*http.Response, error) {
 	var rawData []byte
 	switch v := body.(type) {
 	case []byte:
@@ -172,10 +172,7 @@ func (client *XClient) RequestJSON(method string, url string, body interface{}, 
 		}).Trace("do json request")
 	}
 
-	var bodyBuf io.Reader
-	bodyBuf = bytes.NewBuffer(rawData)
-
-	req, err := http.NewRequest(method, url, bodyBuf)
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(rawData))
 	if err != nil {
 		return nil, err
 	}

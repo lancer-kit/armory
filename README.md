@@ -3,7 +3,7 @@
 
 # Armory Service Kit
 
-Common libraries for building go services:
+Common libraries for building go services. Armory provides set of packages to work with RDBMS (mostly PostgreSQL), RESTfull APIs, logging helpers. 
 
 ## Install
 
@@ -16,12 +16,15 @@ go get -u github.com/go-chi/chi
 - **Api**
     - [Render](./api/render/README.md) - response helper, base responses
     - [HTTPX](./api/httpx) - wrapper for `http.Client` with additional helpers the for RESTfull APIs. 
-- [DB](./db/README.md) - connector for the ORMless interaction with the PostgreSQL databases.
+- [DB](./db/README.md) - connector for the ORMless interaction with the RDBMS (mostly PostgreSQL), schema migration helpers and paginated selects.
+
 - [Log](./log/README.md) - simple wrapper for logrus with some useful perks.
 
-- [Auth](./auth/README.md) - methods for the service authorization.
 - [Crypto](./crypto/README.md) - wrappers for hashing, signing, random values generation etc.
+
 - [natsx](./natsx/README.md) - simple wrapper for NATS.
+
+- [tools](./tools) - set of miscellaneous helpers.
 
 
 ## Usage 
@@ -30,7 +33,6 @@ For details and documentation please check the [godoc.org](https://godoc.org/git
  
 - [api/httpx](https://godoc.org/github.com/lancer-kit/armory/api/httpx)
 - [api/render](https://godoc.org/github.com/lancer-kit/armory/api/render)
-- [auth](https://godoc.org/github.com/lancer-kit/armory/auth)
 - [crypto](https://godoc.org/github.com/lancer-kit/armory/crypto)
 - [db](https://godoc.org/github.com/lancer-kit/armory/db)
 - [db/test](https://godoc.org/github.com/lancer-kit/armory/db/test)
@@ -40,9 +42,10 @@ For details and documentation please check the [godoc.org](https://godoc.org/git
 - [tools](https://godoc.org/github.com/lancer-kit/armory/tools)
 - [tools/queue](https://godoc.org/github.com/lancer-kit/armory/tools/queue)
 
-## Tools
+## Tools and Related Projects
 
 - [Forge](https://github.com/lancer-kit/forge) — a common tool for code-generation and projects bootstrap, includes templates oriented for **Armory** usage.
+- [UWE](https://github.com/lancer-kit/uwe) — is an application runtime, provides instruments to compose, run and manage execution cycle of app. 
 
 ## Examples
 

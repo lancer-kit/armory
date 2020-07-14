@@ -7,6 +7,11 @@ import (
 	"github.com/lancer-kit/noble"
 )
 
+const (
+	DriverPostgres = "postgres"
+	DriverMySQL    = "mysql"
+)
+
 type Config struct {
 	ConnURL     string            `json:"conn_url" yaml:"conn_url"` // The database connection string.
 	InitTimeout int               `json:"dbInitTimeout" yaml:"init_timeout"`
@@ -35,6 +40,7 @@ type ConnectionParams struct {
 }
 
 // SecureConfig configuration with secrets support
+// nolint:maligned
 type SecureConfig struct {
 	Driver      string            `yaml:"driver" json:"driver"`
 	Name        string            `yaml:"name" json:"name"`
@@ -58,14 +64,14 @@ func (d SecureConfig) ConnectionString() string {
 	}
 
 	switch d.Driver {
-	case "postgres":
+	case DriverPostgres:
 		mode := ""
 		if !d.SSL {
 			mode = "?sslmode=disable"
 		}
 		DSN := `postgres://%s:%s@%s%s/%s%s`
 		return fmt.Sprintf(DSN, d.User.Get(), d.Password.Get(), d.Host, port, d.Name, mode)
-	case "mysql":
+	case DriverMySQL:
 		// [username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]
 		params := ""
 		if d.MySQLParams != "" {
