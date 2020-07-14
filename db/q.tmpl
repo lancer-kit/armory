@@ -29,7 +29,7 @@ type {{.TypeName}}QI interface {
 	// Select returns all records of the result of query execution.
 	Select() ([]{{.TypeName}}, error)
 	// SelectPage returns records according to given PageQuery params and the total count for the whole query.
-	SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64 error) {
+	SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64, error) {
 }
 
 const table{{.TypeName}}s = "{{.TypeString}}s"
@@ -114,7 +114,7 @@ func (q *{{.TypeString}}Q) Select() ([]{{.TypeName}}, error) {
 }
 
 // SelectPage returns records according to given PageQuery params and the total count for the whole query.
-func (q *{{.TypeString}}Q) SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64 error) {
+func (q *{{.TypeString}}Q) SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64, error) {
 	res := make([]{{.TypeName}}, 0, 1)
 	q.table.ApplyPage("id")
 
