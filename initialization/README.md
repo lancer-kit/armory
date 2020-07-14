@@ -14,8 +14,8 @@ import (
 	"errors"
 	"log"
 	"time"
-    
-    "github.com/lancer-kit/armory/initialization"
+
+	"github.com/lancer-kit/armory/initialization"
 	"github.com/sirupsen/logrus"
 )
 

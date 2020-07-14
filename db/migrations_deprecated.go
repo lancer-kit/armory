@@ -7,11 +7,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-// nolint:gochecknoglobals
 // DEPRECATED
-var directions = map[MigrateDir]migrate.MigrationDirection{
-	MigrateUp:   migrate.Up,
-	MigrateDown: migrate.Down,
+func directions() map[MigrateDir]migrate.MigrationDirection {
+	return map[MigrateDir]migrate.MigrationDirection{
+		MigrateUp:   migrate.Up,
+		MigrateDown: migrate.Down,
+	}
 }
 
 // nolint:gochecknoglobals
@@ -35,5 +36,5 @@ func Migrate(connStr string, dir MigrateDir) (int, error) {
 		return 0, errors.Wrap(err, "unable to connect to the database")
 	}
 
-	return migrate.Exec(db, "postgres", migrations, directions[dir])
+	return migrate.Exec(db, "postgres", migrations, directions()[dir])
 }

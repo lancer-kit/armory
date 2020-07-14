@@ -87,8 +87,7 @@ func (pq *PageQuery) Offset() uint64 {
 	return (pq.Page - 1) * pq.PageSize
 }
 
-// DEPRECATED
-// use ApplyByOrderColumn instead
+// DEPRECATED: use ApplyByOrderColumn instead
 // Apply sets limit and ordering params to SelectBuilder.
 func (pq *PageQuery) Apply(query sq.SelectBuilder, orderColumn string) sq.SelectBuilder {
 	query = query.Limit(pq.PageSize).Offset(pq.Offset())
