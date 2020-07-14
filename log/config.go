@@ -20,15 +20,16 @@ type Config struct {
 	JSON bool `json:"json" yaml:"json"`
 }
 
-// Config is a options for the initialization
+// NConfig is a options for the initialization
 // of the default logrus.Entry.
-type LogConfig struct {
+// N stands for Noble.
+type NConfig struct {
 	// AppName identifier of the app.
 	AppName string `yaml:"app_name"`
 	// Level is a string representation of the `lorgus.Level`.
 	Level noble.Secret `yaml:"level"`
 	// Sentry is a DSN string for sentry hook.
-	Sentry string `yaml:"sentry"`
+	Sentry noble.Secret `yaml:"sentry"`
 	// AddTrace enable adding of the filename field into log.
 	AddTrace bool `yaml:"add_trace"`
 	// JSON enable json formatted output.
@@ -36,7 +37,7 @@ type LogConfig struct {
 }
 
 // Validate is an implementation of Validatable interface from ozzo-validation.
-func (cfg LogConfig) Validate() error {
+func (cfg NConfig) Validate() error {
 	return validation.ValidateStruct(&cfg,
 		validation.Field(&cfg.AppName, validation.Required),
 		validation.Field(&cfg.Level, validation.Required, noble.RequiredSecret),

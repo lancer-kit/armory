@@ -7,11 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Entry is a type alias for `*logrus.Entry`,
-// can be used to avoid direct import of the `logrus` package.
-// DEPRECATED
-type Entry = *logrus.Entry
-
 // Default is a log.Entry singleton.
 // DEPRECATED
 var Default *logrus.Entry // nolint:gochecknoglobals
