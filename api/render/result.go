@@ -6,9 +6,9 @@ import (
 
 // R is a default struct for json responses.
 
-//Example:
+// Example:
 //
-//``` go
+// ``` go
 //	func MyHandler(w http.ResponseWriter, r *http.Request) {
 //		// some code ...
 //		// ...
@@ -19,18 +19,20 @@ import (
 //		res.Render(w)
 //		return
 //	}
-//```
+// ```
 // Usage of predefined response:
-//``` go
+// ``` go
 //	func MyHandler(w http.ResponseWriter, r *http.Request) {
 //		// some code ...
 //		// ...
 //		render.ResultBadRequest.SetError("Invalid email").Render(w)
 //		return
 //	}
-//```
+// ```
+
+// R is a structure for the http responses.
 type R struct {
-	Code    int         `json:"errcode"`
+	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 	Error   interface{} `json:"errmsg,omitempty"`

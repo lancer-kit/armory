@@ -3,7 +3,6 @@ package httpx
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -20,6 +19,7 @@ const (
 	HeaderHeadersList = "X-Custom-Headers"
 )
 
+// XClient is an implementation of the Client.
 type XClient struct {
 	http.Client
 
@@ -28,6 +28,7 @@ type XClient struct {
 	logger         *logrus.Entry
 }
 
+// NewXClient returns new Client.
 func NewXClient() *XClient {
 	return &XClient{
 		Client:         http.Client{Timeout: defaultTimeout},
@@ -148,7 +149,8 @@ func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, 
 }
 
 // RequestJSON creates and executes new request with JSON content type.
-func (client *XClient) RequestJSON(method string, url string, body interface{}, headers Headers) (*http.Response, error) {
+func (client *XClient) RequestJSON(method string, url string, body interface{},
+	headers Headers) (*http.Response, error) {
 	var rawData []byte
 	switch v := body.(type) {
 	case []byte:
@@ -170,10 +172,7 @@ func (client *XClient) RequestJSON(method string, url string, body interface{}, 
 		}).Trace("do json request")
 	}
 
-	var bodyBuf io.Reader
-	bodyBuf = bytes.NewBuffer(rawData)
-
-	req, err := http.NewRequest(method, url, bodyBuf)
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(rawData))
 	if err != nil {
 		return nil, err
 	}
@@ -244,6 +243,7 @@ func (client *XClient) ParseJSONResult(httpResp *http.Response, dest interface{}
 	return nil
 }
 
+// Clone returns safe clone of Client.
 func (client *XClient) Clone() Client {
 	return client.clone()
 }

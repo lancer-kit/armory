@@ -109,16 +109,16 @@ func TestSXClient(t *testing.T) {
 	server2, _ := createFakeService(t, "test server 2", kp)
 
 	go func() {
-		log.Default.Info("Starting test server 1")
+		log.Get().Info("Starting test server 1")
 		if err := http.ListenAndServe(":3030", server1); err != nil {
-			log.Default.WithError(err).Error("Unable to start test server 1")
+			log.Get().WithError(err).Error("Unable to start test server 1")
 		}
 	}()
 
 	go func() {
-		log.Default.Info("Starting test server 2")
+		log.Get().Info("Starting test server 2")
 		if err := http.ListenAndServe(":4040", server2); err != nil {
-			log.Default.WithError(err).Error("Unable to start test server 1")
+			log.Get().WithError(err).Error("Unable to start test server 1")
 		}
 	}()
 
@@ -145,14 +145,14 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("GET: Wrong request headers"))
-				log.Default.Infof("Get request to: \"%s\" has failed", name)
+				_, _ = w.Write([]byte("GET: Wrong request headers"))
+				log.Get().Infof("Get request to: \"%s\" has failed", name)
 				return
 			}
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("GET was successful"))
-			log.Default.Infof("Get request to: \"%s\" was successfull", name)
+			_, _ = w.Write([]byte("GET was successful"))
+			log.Get().Infof("Get request to: \"%s\" was successful", name)
 		})
 
 		r.Get("/bad", func(w http.ResponseWriter, r *http.Request) {
@@ -160,8 +160,8 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 			assertions.Errorf(err, "Error with bad header OK ")
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Error evoked, success"))
-			log.Default.Infof("Get request to: \"%s\", was successfull", name)
+			_, _ = w.Write([]byte("Error evoked, success"))
+			log.Get().Infof("Get request to: \"%s\", was successful", name)
 		})
 
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
@@ -170,15 +170,15 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 
 			if !ok {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("POST: Wrong request headers"))
-				log.Default.Infof("POST request to: \"%s\" has failed", name)
+				_, _ = w.Write([]byte("POST: Wrong request headers"))
+				log.Get().Infof("POST request to: \"%s\" has failed", name)
 				return
 			}
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("POST was successful"))
+			_, _ = w.Write([]byte("POST was successful"))
 
-			log.Default.Infof("POST request to: \"%s\" was successfull", name)
+			log.Get().Infof("POST request to: \"%s\" was successful", name)
 		})
 
 	})
@@ -187,30 +187,30 @@ func createFakeService(t *testing.T, name string, kp crypto.KP) (*chi.Mux, Secur
 }
 
 func sendCorrectRequests(t *testing.T, client SecuredClient, port int, data interface{}) {
-	require := require.New(t)
+	assertions := require.New(t)
 
 	url := fmt.Sprintf("http://127.0.0.1:%d/test", port)
 
 	if data != nil {
-		log.Default.WithField("Testing client requests with data", data).Info("Happy flow")
+		log.Get().WithField("Testing client requests with data", data).Info("Happy flow")
 	} else {
-		log.Default.Infof("%s Testing client requests without data", "Happy flow")
+		log.Get().Infof("%s Testing client requests without data", "Happy flow")
 	}
 
 	res, err := client.GetJSON(url, nil)
-	require.NoErrorf(err, "Error when trying to send GET request")
+	assertions.NoErrorf(err, "Error when trying to send GET request")
 	resBody, _ := ioutil.ReadAll(res.Body)
-	log.Default.WithField("GET response: ", string(resBody)).Info("Happy flow")
+	log.Get().WithField("GET response: ", string(resBody)).Info("Happy flow")
 
 	res, err = client.PostJSON(url, data, nil)
-	require.NoErrorf(err, "Error when trying to send POST request")
+	assertions.NoErrorf(err, "Error when trying to send POST request")
 	resBody, _ = ioutil.ReadAll(res.Body)
-	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
+	log.Get().WithField("POST response: ", string(resBody)).Info("Happy flow")
 
 	res, err = client.WithCookies([]*http.Cookie{}).PostJSON(url, data, nil)
-	require.NoErrorf(err, "Error when trying to send POST request")
+	assertions.NoErrorf(err, "Error when trying to send POST request")
 	resBody, _ = ioutil.ReadAll(res.Body)
-	log.Default.WithField("POST response: ", string(resBody)).Info("Happy flow")
+	log.Get().WithField("POST response: ", string(resBody)).Info("Happy flow")
 }
 
 func sendBadRequests(t *testing.T, iClient SecuredClient, port int, data interface{}) {
@@ -221,9 +221,9 @@ func sendBadRequests(t *testing.T, iClient SecuredClient, port int, data interfa
 	var rawData []byte
 
 	if data != nil {
-		log.Default.WithField("Testing client requests with data", data).Info("Bad flow")
+		log.Get().WithField("Testing client requests with data", data).Info("Bad flow")
 	} else {
-		log.Default.Infof("%s Testing client requests without data", "Bad flow")
+		log.Get().Infof("%s Testing client requests without data", "Bad flow")
 	}
 
 	if data != nil {
@@ -246,7 +246,7 @@ func sendBadRequests(t *testing.T, iClient SecuredClient, port int, data interfa
 	res, err := client.Do(req)
 	assertions.NoErrorf(err, "Error when trying to send GET request")
 	resBody, _ := ioutil.ReadAll(res.Body)
-	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
+	log.Get().WithField("GET response: ", string(resBody)).Info("Bad flow")
 
 	req, err = http.NewRequest(http.MethodPost, url, body)
 	assertions.NoErrorf(err, "Error when trying to create POST request")
@@ -258,5 +258,5 @@ func sendBadRequests(t *testing.T, iClient SecuredClient, port int, data interfa
 	res, err = client.Do(req)
 	assertions.NoErrorf(err, "Error when trying to send POST request")
 	resBody, _ = ioutil.ReadAll(res.Body)
-	log.Default.WithField("GET response: ", string(resBody)).Info("Bad flow")
+	log.Get().WithField("GET response: ", string(resBody)).Info("Bad flow")
 }

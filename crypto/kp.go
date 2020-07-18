@@ -2,7 +2,6 @@ package crypto
 
 import (
 	"crypto/rand"
-
 	"encoding/json"
 
 	"github.com/pkg/errors"
@@ -34,7 +33,7 @@ func GenKeyPair() (privateKey, publicKey string) {
 	return
 }
 
-//SetPubKeyFromString - set public key from string
+// SetPubKeyFromString - set public key from string
 func (kp *KP) SetPubKeyFromString(publicKey string) (err error) {
 	pbKey, err := FromString(publicKey)
 	if err != nil {
@@ -44,7 +43,7 @@ func (kp *KP) SetPubKeyFromString(publicKey string) (err error) {
 	return
 }
 
-//SetPrivKeyFromString - set private key from string
+// SetPrivKeyFromString - set private key from string
 func (kp *KP) SetPrivKeyFromString(privateKey string) (err error) {
 	prKey, err := FromString(privateKey)
 	if err != nil {

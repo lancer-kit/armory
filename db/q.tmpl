@@ -18,28 +18,26 @@ type {{.TypeName}}QI interface {
 	{{range .Fields}}// With{{.Name}} adds filter by `{{.Name}}` column.
 	With{{.Name}}({{.Name}} {{.FType}}) {{$self.TypeName}}QI
 	{{end}}
-	// Get returns first row of the result of query execution.
-	Get() (*{{.TypeName}}, error)
-	// Select returns all records of the result of query execution.
-	Select() ([]{{.TypeName}}, error)
-	// GetByID returns one row with passed `id`.
-	GetByID(id int64) (*{{.TypeName}}, error)
-
-  // Until sets lower time bound.
+	// Until sets lower time bound.
 	Since(timestamp int64) {{$self.TypeName}}QI
 	// Until sets upper time bound.
 	Until(timestamp int64) {{$self.TypeName}}QI
-	// SetPage applies pagination parameters.
-	SetPage(pq *db.PageQuery) {{$self.TypeName}}QI
+	// Get returns first row of the result of query execution.
+	Get() (*{{.TypeName}}, error)
+	// GetByID returns one row with passed `id`.
+	GetByID(id int64) (*{{.TypeName}}, error)
+	// Select returns all records of the result of query execution.
+	Select() ([]{{.TypeName}}, error)
+	// SelectPage returns records according to given PageQuery params and the total count for the whole query.
+	SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64, error) {
 }
 
 const table{{.TypeName}}s = "{{.TypeString}}s"
 
 type {{.TypeString}}Q struct {
 	parent *Q
- 	table  db.Table
-
- 	Err    error
+	table  db.Table
+	Err    error
 }
 
 func (q *Q) {{.TypeName}}() {{.TypeName}}QI {
@@ -113,6 +111,19 @@ func (q *{{.TypeString}}Q) Select() ([]{{.TypeName}}, error) {
 	}
 
 	return res, err
+}
+
+// SelectPage returns records according to given PageQuery params and the total count for the whole query.
+func (q *{{.TypeString}}Q) SelectPage(pq *db.PageQuery) ([]{{.TypeName}}, int64, error) {
+	res := make([]{{.TypeName}}, 0, 1)
+	q.table.ApplyPage("id")
+
+	totalCount, err := q.table.SelectWithCount(q.parent.SQLConn, &res, pq.OrderBy, pq)
+	if err == sql.ErrNoRows {
+		return res, 0, nil
+	}
+
+	return res, totalCount, err
 }
 
 // Get returns first row of the result of query execution.

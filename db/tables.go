@@ -8,7 +8,7 @@ import (
 )
 
 // Table is the basis for implementing
-// Querier for some model or table.
+// QueryModel for some model or table.
 type Table struct {
 	Name    string
 	Alias   string
@@ -23,6 +23,7 @@ type Table struct {
 	Page      *PageQuery
 }
 
+// NewTable initializes new table query helper.
 func NewTable(table, alias, columns string) Table {
 	return Table{
 		Name:    table,
@@ -57,6 +58,8 @@ func (t *Table) ApplyPage(orderColumn string) {
 	t.QBuilder = t.QBuilder.OrderBy(orderColumn)
 }
 
+// CountQuery sanitizes query and replaces regular select to count select.
+// Returns SQL statement and arguments for query.
 func (t *Table) CountQuery() (string, []interface{}, error) {
 	rawSQL, args, err := t.QBuilder.RemoveLimit().ToSql()
 	if err != nil {
@@ -67,6 +70,8 @@ func (t *Table) CountQuery() (string, []interface{}, error) {
 	return countQuery, args, nil
 }
 
+// CountQuery sanitizes query, replaces regular select to count select and run it.
+// Returns total number of records for query.
 func (t *Table) GetCount(sqlConn *SQLConn) (int64, error) {
 	rawSQL, args, err := t.QBuilder.RemoveLimit().ToSql()
 	if err != nil {
@@ -80,7 +85,12 @@ func (t *Table) GetCount(sqlConn *SQLConn) (int64, error) {
 	return dest.Count, err
 }
 
-func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderColumn string, query *PageQuery) (int64, error) {
+// SelectWithCount this method provides the ability to make a selection for a pagination request.
+// How it works:
+// - apply paging parameters to SQL query with given `PageQuery` and `orderColumn`;
+// - make a request to the database without fetching data, only get the total number of records for the passed request;
+// - make a selection of all records with the specified filters, limit and offset (i.e. the necessary page).
+func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderCol string, query *PageQuery) (int64, error) {
 	count, err := t.GetCount(sqlConn)
 	if err != nil {
 		return 0, errors.Wrap(err, "can not GET count")
@@ -90,20 +100,12 @@ func (t *Table) SelectWithCount(sqlConn *SQLConn, dest interface{}, orderColumn 
 		t.Page = query
 	}
 
-	t.ApplyPage(orderColumn)
+	t.ApplyPage(orderCol)
 	err = sqlConn.Select(t.QBuilder, dest)
 	return count, err
 }
 
-// DEPRECATED
-// Do not use this method for counting,
-// because it very slow and does count for each row,
-// WithCount adds a column with the total number of records.
-// ATTENTION! The model must have a destination for this `row_count` column.
-func (t *Table) WithCount() {
-	t.QBuilder = t.QBuilder.Column("count(*) OVER() AS row_count")
-}
-
+// Count is a model for the count select.
 type Count struct {
 	Count int64 `db:"count"`
 }

@@ -11,14 +11,13 @@ import (
 // Headers is a type for request headers.
 type Headers map[string]string
 
-// Client is a interface of extended http.Client which support signed request.
+// Client is a interface of extended http.Client.
 type Client interface {
 	JSONClient
 	CookiesSupport
 	CustomHeadersSupport
-
+	// Clone returns safe clone of Client.
 	Clone() Client
-
 	// SetHTTP - Set customized instance of http.Client
 	SetHTTP(hc http.Client) Client
 	// SetLogger - Set logger to enable log requests
@@ -70,6 +69,7 @@ type JSONClient interface {
 
 const defaultTimeout = time.Second * 15
 
+// GetClient returns new Client.
 func GetClient() Client {
 	return NewXClient()
 }

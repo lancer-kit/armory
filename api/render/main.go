@@ -7,9 +7,8 @@ import (
 	"github.com/lancer-kit/armory/db"
 )
 
-// nolint:gochecknoglobals
-// PrettyMarshal is a flag that enable marshalling with indent
-var PrettyMarshal bool
+// PrettyMarshal is a flag that enable marshalling with indent.
+var PrettyMarshal bool // nolint:gochecknoglobals
 
 // ServerError renders default http.StatusInternalServerError.
 func ServerError(w http.ResponseWriter) {
@@ -64,17 +63,17 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
-	w.Write(marshaled)
+	_, _ = w.Write(marshaled)
 }
 
+// RenderListWithPages
 func RenderListWithPages(w http.ResponseWriter, pageQuery db.PageQuery, total int64, list interface{}) {
 	result := Page{
 		Page:     pageQuery.Page,
 		PageSize: pageQuery.PageSize,
 		Order:    pageQuery.Order,
-		Total:    total,
 		Records:  list,
 	}
-
+	result.SetTotal(uint64(total), pageQuery.PageSize)
 	result.Render(w)
 }

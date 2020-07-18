@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/lancer-kit/armory/log?status.png)](https://godoc.org/github.com/lancer-kit/armory/log)
+
 # log
 
 `log` is a  simple wrapper for [logrus](https://github.com/sirupsen/logrus). 

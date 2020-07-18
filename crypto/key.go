@@ -31,7 +31,7 @@ func (key Key) String() string {
 	return Base32Encode(key)
 }
 
-//FromString initialize type from string key
+// FromString initialize type from string key
 func FromString(keyS string) (*Key, error) {
 	keyBytes, err := Base32Decode(keyS)
 	if err != nil {

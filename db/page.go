@@ -11,25 +11,31 @@ import (
 )
 
 const (
+	// DefaultPageSize - the standard number of records per page
 	DefaultPageSize uint64 = 20
-	MaxPageSize     uint64 = 500
-
-	OrderAscending  = "asc"
+	// MaxPageSize - the maximum number of records per page,
+	// if you need more, then use selection without a page.
+	MaxPageSize uint64 = 1000
+	// OrderAscending specifies the sort order in ascending direction.
+	OrderAscending = "asc"
+	// OrderDescending specifies the sort order in descending direction.
 	OrderDescending = "desc"
 )
 
-var (
-	ErrInvalidOrder = func(val string) error {
-		return fmt.Errorf("order(%s): accept only %s|%s",
-			val, OrderAscending, OrderDescending)
-	}
-	ErrTooBigPage = func(val uint64) error {
-		return fmt.Errorf("pageSize(%d): shoud be less or equal %d", val, MaxPageSize)
-	}
-)
+type ErrInvalidOrder string
 
-// PageQuery is the structure for
-// building query with pagination.
+func (e ErrInvalidOrder) Error() string {
+	return fmt.Sprintf("order(%v): accept only %v|%v",
+		string(e), OrderAscending, OrderDescending)
+}
+
+type ErrTooBigPage uint64
+
+func (e ErrTooBigPage) Error() string {
+	return fmt.Sprintf("pageSize(%d): shoud be less or equal %d", e, MaxPageSize)
+}
+
+// PageQuery is the structure for building query with pagination.
 type PageQuery struct {
 	Order    string `json:"order" schema:"order"`
 	Page     uint64 `json:"page" schema:"page"`
@@ -88,9 +94,8 @@ func (pq *PageQuery) Offset() uint64 {
 	return (pq.Page - 1) * pq.PageSize
 }
 
-// DEPRECATED
-// use ApplyByOrderColumn instead
 // Apply sets limit and ordering params to SelectBuilder.
+// DEPRECATED: use ApplyByOrderColumn instead
 func (pq *PageQuery) Apply(query sq.SelectBuilder, orderColumn string) sq.SelectBuilder {
 	query = query.Limit(pq.PageSize).Offset(pq.Offset())
 	if pq.Order != "" && orderColumn != "" {

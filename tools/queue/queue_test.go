@@ -7,6 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// nolint:funlen
 func TestQueue(t *testing.T) {
 	testCases := map[string]struct {
 		UID   string

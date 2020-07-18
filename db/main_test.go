@@ -1,10 +1,9 @@
-package examples
+package db
 
 import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/lancer-kit/armory/db"
 )
 
 type User struct {
@@ -19,15 +18,15 @@ type User struct {
 // UserQ is a interface for
 // interacting with the `users` table.
 type UserQ struct {
-	*db.SQLConn
-	db.Table
+	*SQLConn
+	Table
 }
 
 // NewUserQ returns the new instance of the `UserQ`.
-func NewUserQ(conn *db.SQLConn) *UserQ {
+func NewUserQ(conn *SQLConn) *UserQ {
 	return &UserQ{
 		SQLConn: conn.Clone(),
-		Table: db.Table{
+		Table: Table{
 			Name:     "users",
 			QBuilder: sq.Select("*").From("users"),
 		},
@@ -54,8 +53,8 @@ func (q *UserQ) ByAge(age int) *UserQ {
 }
 
 // SetPage sets the limitation of select
-// by the parameters from `db.PageQuery`.
-func (q *UserQ) SetPage(pq *db.PageQuery) *UserQ {
+// by the parameters from `PageQuery`.
+func (q *UserQ) SetPage(pq *PageQuery) *UserQ {
 	q.Table.SetPage(pq)
 	return q
 }
@@ -73,14 +72,14 @@ func (q *UserQ) Select() ([]User, error) {
 	return dest, err
 }
 
-func main() {
-	// initialize SQLConn singleton
-	err := db.Init("postgres://postgres:postgres@localhost/postgres?sslmode=disable", nil)
+func Example() {
+	// initialize SQLConn
+	sqlConn, err := NewConnector(
+		Config{ConnURL: "postgres://postgres:postgres@localhost/postgres?sslmode=disable"}, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	sqlConn := db.GetConnector()
 	err = sqlConn.ExecRaw(`CREATE TABLE IF NOT EXIST users(
     id SERIAL, name VARCHAR(64), email VARCHAR(64), age INTEGER)`, nil)
 	if err != nil {
@@ -91,6 +90,7 @@ func main() {
 		Email: "mike@example.com",
 		Age:   42,
 	}
+
 	q := NewUserQ(sqlConn)
 	err = q.Insert(user)
 	if err != nil {
