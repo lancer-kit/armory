@@ -8,8 +8,7 @@ import (
 )
 
 // Default is a log.Entry singleton.
-// DEPRECATED
-var Default *logrus.Entry // nolint:gochecknoglobals
+var defaultLog *logrus.Entry // nolint:gochecknoglobals
 
 // nolint:gochecknoinits
 func init() {
@@ -19,7 +18,7 @@ func init() {
 	if err != nil {
 		logrus.Error(err)
 	}
-	Default = logrus.NewEntry(l).WithField("hostname", host)
+	defaultLog = logrus.NewEntry(l).WithField("hostname", host)
 }
 
 // Init initializes a default logger configuration by passed configuration.
@@ -28,25 +27,21 @@ func Init(config Config) (*logrus.Entry, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse log level - "+config.Level)
 	}
-	Default.Logger.SetLevel(level)
-	Default = Default.WithField("app", config.AppName)
+	defaultLog.Logger.SetLevel(level)
+	defaultLog = defaultLog.WithField("app", config.AppName)
 
 	if config.JSON {
-		Default.Logger.Formatter = &logrus.JSONFormatter{}
-	}
-
-	if config.AddTrace {
-		AddFilenameHook()
+		defaultLog.Logger.Formatter = &logrus.JSONFormatter{}
 	}
 
 	if config.Sentry != "" {
 		AddSentryHook(config.Sentry)
 	}
 
-	return Default, nil
+	return defaultLog, nil
 }
 
 // Get is a getter for the `logrus.Entry` singleton.
 func Get() *logrus.Entry {
-	return Default
+	return defaultLog
 }

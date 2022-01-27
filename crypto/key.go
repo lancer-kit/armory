@@ -13,7 +13,7 @@ type Key []byte
 
 // ToBytes cast `key` to `[]byte `.
 func (key Key) ToBytes() []byte {
-	return []byte(key)
+	return key
 }
 
 // ToPrivate cast `key` to `ed25519.PrivateKey`.
@@ -52,7 +52,7 @@ func (key *Key) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "can not to decode Key")
 	}
-	*key = Key(rawKey)
+	*key = rawKey
 	return nil
 }
 

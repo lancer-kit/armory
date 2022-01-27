@@ -11,7 +11,7 @@ import (
 // Headers is a type for request headers.
 type Headers map[string]string
 
-// Client is a interface of extended http.Client.
+// Client is an interface of extended http.Client.
 type Client interface {
 	JSONClient
 	CookiesSupport
@@ -27,7 +27,7 @@ type Client interface {
 type CookiesSupport interface {
 	// DefaultCookies returns a client's default cookies.
 	DefaultCookies() []*http.Cookie
-	// SetCookies sets a default cookies to a client.
+	// SetDefaultCookies sets a default cookies to a client.
 	SetDefaultCookies(cookies []*http.Cookie) Client
 	// RemoveDefaultCookies removes a default client's cookies.
 	RemoveDefaultCookies() Client
@@ -49,15 +49,15 @@ type CustomHeadersSupport interface {
 }
 
 type JSONClient interface {
-	// PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
+	// PostJSON sets passed `headers` and `body` and executes RequestJSON with POST method.
 	PostJSON(url string, body interface{}, headers Headers) (*http.Response, error)
-	// PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
+	// PatchJSON sets passed `headers` and `body` and executes RequestJSON with PATCH method.
 	PatchJSON(url string, body interface{}, headers Headers) (*http.Response, error)
-	// PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
+	// PutJSON sets passed `headers` and `body` and executes RequestJSON with PUT method.
 	PutJSON(url string, body interface{}, headers Headers) (*http.Response, error)
-	// GetJSON, sets passed `headers` and executes RequestJSON with GET method.
+	// GetJSON sets passed `headers` and executes RequestJSON with GET method.
 	GetJSON(url string, headers Headers) (*http.Response, error)
-	// DeleteJSON, sets passed `headers` and executes RequestJSON with DELETE method.
+	// DeleteJSON sets passed `headers` and executes RequestJSON with DELETE method.
 	DeleteJSON(url string, headers Headers) (*http.Response, error)
 	// RequestJSON creates and executes new request with JSON content type.
 	RequestJSON(method string, url string, data interface{}, headers Headers) (*http.Response, error)
@@ -74,7 +74,7 @@ func GetClient() Client {
 	return NewXClient()
 }
 
-// PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
+// PostJSON sets passed `headers` and `body` and executes RequestJSON with POST method.
 // Post issues a POST to the specified URL.
 //
 // Caller should close resp.Body when done reading from it.
@@ -92,17 +92,17 @@ func PostJSON(url string, body interface{}, headers map[string]string) (*http.Re
 	return NewXClient().RequestJSON(http.MethodPost, url, body, headers)
 }
 
-// PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
+// PutJSON sets passed `headers` and `body` and executes RequestJSON with PUT method.
 func PutJSON(url string, body interface{}, headers map[string]string) (*http.Response, error) {
 	return NewXClient().RequestJSON(http.MethodPut, url, body, headers)
 }
 
-// GetJSON, sets passed `headers` and executes RequestJSON with GET method.
+// GetJSON sets passed `headers` and executes RequestJSON with GET method.
 func GetJSON(url string, headers map[string]string) (*http.Response, error) {
 	return NewXClient().RequestJSON(http.MethodGet, url, nil, headers)
 }
 
-// DeleteJSON, sets passed `headers` and executes RequestJSON with DELETE method.
+// DeleteJSON sets passed `headers` and executes RequestJSON with DELETE method.
 func DeleteJSON(url string, headers map[string]string) (*http.Response, error) {
 	return NewXClient().RequestJSON(http.MethodDelete, url, nil, headers)
 }

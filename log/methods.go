@@ -4,34 +4,32 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
-	"github.com/onrik/logrus/filename"
-	"github.com/onrik/logrus/sentry"
 	"github.com/sirupsen/logrus"
 )
 
 // AddSentryHook adds hook that sends all error,
 // fatal and panic log lines to the sentry service.
 func AddSentryHook(dsn string) {
-	sentryHook, err := sentry.NewHook(sentry.Options{Dsn: dsn},
+	sentryHook, err := NewSentryHook(SentryOptions{Dsn: dsn},
 		logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel)
 	if err != nil {
 		Get().WithError(err).Error("unable to create new hook")
 		return
 	}
-	Get().Logger.AddHook(sentryHook)
+	defaultLog.Logger.AddHook(sentryHook)
 }
 
-// AddFilenameHook adds hook that includes
-// filename and line number into the log.
-func AddFilenameHook() {
-	filenameHook := filename.NewHook()
-	filenameHook.Field = "file"
-	Get().Logger.AddHook(filenameHook)
-}
+// // AddFilenameHook adds hook that includes
+// // filename and line number into the log.
+// func AddFilenameHook() {
+// 	filenameHook := filename.NewHook()
+// 	filenameHook.Field = "file"
+// 	Get().Logger.AddHook(filenameHook)
+// }
 
 // DefaultForRequest returns default logger with included http.Request details.
 func DefaultForRequest(r *http.Request) *logrus.Entry {
-	return IncludeRequest(Default, r)
+	return IncludeRequest(defaultLog, r)
 }
 
 // IncludeRequest includes http.Request details into the log.Entry.

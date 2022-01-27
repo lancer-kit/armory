@@ -85,7 +85,7 @@ func migrateMultiSetDown(connStr, driver string, sets ...Migrations) (int, error
 type Migrations struct {
 	// Table name of the table used to store migration info.
 	Table string
-	// Schema schema that the migration table be referenced.
+	// Schema that the migration table be referenced.
 	Schema string
 	// EnablePatchMode enables patch mode for migrations
 	// Now it requires a new migration name format: 0001_00_name.sql and new table structure for save migrations
@@ -93,7 +93,7 @@ type Migrations struct {
 	// IgnoreUnknown skips the check to see if there is a migration
 	// ran in the database that is not in MigrationSource.
 	IgnoreUnknown bool
-	// Assets is sql-migrate.MigrationSource assets. Ex.:
+	// Assets are sql-migrate.MigrationSource assets. Ex.:
 	// 	- migrate.HttpFileSystemMigrationSource
 	// 	- migrate.FileMigrationSource
 	// 	- migrate.AssetMigrationSource

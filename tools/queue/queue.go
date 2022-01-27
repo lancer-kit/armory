@@ -88,7 +88,7 @@ func (q *Queue) GetByID(uid string) interface{} {
 	return el.Value
 }
 
-// GetFirst checks is element with given uid in Queue.
+// IsInQueue checks is element with given uid in Queue.
 func (q *Queue) IsInQueue(uid string) bool {
 	q.rwMutex.RLock()
 	defer q.rwMutex.RUnlock()

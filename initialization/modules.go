@@ -49,7 +49,7 @@ func (modules Modules) InitAll() error {
 	return nil
 }
 
-// validate checks that is no duplicates and dependency cycle is set.
+// validate checks that there are no duplicates and dependency cycle is set.
 func (modules Modules) validate() error {
 	if d, ok := modules.duplicates(); ok {
 		return errors.New("found duplicated modules: " + d)

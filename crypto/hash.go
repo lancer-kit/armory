@@ -27,7 +27,7 @@ func HashStrings(strs ...string) string {
 	return base64.URLEncoding.EncodeToString(rawHash[:])
 }
 
-// HashData serializes `data` and generate hash.
+// HashDataRaw serializes `data` and generate hash.
 func HashDataRaw(data interface{}) (string, error) {
 	str, err := json.Marshal(data)
 	if err != nil {
@@ -38,7 +38,7 @@ func HashDataRaw(data interface{}) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(rawHash[:]), nil
 }
 
-// HashStrings joins passed strings and hash it.
+// HashStringsRaw joins passed strings and hash it.
 func HashStringsRaw(strs ...string) string {
 	str := strings.Join(strs, "|")
 	rawHash := sha256.Sum256([]byte(str))

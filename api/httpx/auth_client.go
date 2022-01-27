@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SecuredClient is a extension of the Client that adds possibility to sign and verify request.
+// SecuredClient is an extension of the Client that adds possibility to sign and verify request.
 type SecuredClient interface {
 	Client
 	// CloneWAuth returns a safe clone of SecuredClient.
@@ -18,7 +18,7 @@ type SecuredClient interface {
 
 	// Auth returns current state of authentication flag.
 	Auth() bool
-	// OnAuth disables request authentication.
+	// OffAuth disables request authentication.
 	OffAuth() SecuredClient
 	// OnAuth enables request authentication.
 	OnAuth() SecuredClient
@@ -100,27 +100,27 @@ func (client *SXClient) SetAuth(service string, kp crypto.KP) SecuredClient {
 	return newClient
 }
 
-// PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
+// PostJSON sets passed `headers` and `body` and executes RequestJSON with POST method.
 func (client *SXClient) PostJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPost, url, bodyStruct, headers)
 }
 
-// PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
+// PutJSON sets passed `headers` and `body` and executes RequestJSON with PUT method.
 func (client *SXClient) PutJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPut, url, bodyStruct, headers)
 }
 
-// PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
+// PatchJSON sets passed `headers` and `body` and executes RequestJSON with PATCH method.
 func (client *SXClient) PatchJSON(url string, bodyStruct interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPatch, url, bodyStruct, headers)
 }
 
-// GetJSON, sets passed `headers` and executes RequestJSON with GET method.
+// GetJSON sets passed `headers` and executes RequestJSON with GET method.
 func (client *SXClient) GetJSON(url string, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodGet, url, nil, headers)
 }
 
-// DeleteJSON, sets passed `headers` and executes RequestJSON with DELETE method.
+// DeleteJSON sets passed `headers` and executes RequestJSON with DELETE method.
 func (client *SXClient) DeleteJSON(url string, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodDelete, url, nil, headers)
 }

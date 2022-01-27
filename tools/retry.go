@@ -3,7 +3,7 @@ package tools
 import "time"
 
 // RetryIn retries passed function `call`
-// until it end with success, else repeat again.
+// until it end with success, else repeat.
 func RetryIn(interval time.Duration, call func() bool) {
 	for {
 		if ok := call(); ok {
@@ -14,7 +14,7 @@ func RetryIn(interval time.Duration, call func() bool) {
 }
 
 // RetryIncrementally retries passed function `call` until it end with success,
-// else repeat again and increments retrying interval up to 2 hour.
+// else repeat and increments retrying interval up to 2 hour.
 func RetryIncrementally(interval time.Duration, call func() bool) {
 	var counter int64
 
@@ -28,7 +28,7 @@ func RetryIncrementally(interval time.Duration, call func() bool) {
 }
 
 // RetryIncrementallyUntil retries passed function `call` until it end with
-// success (returns true), else repeat again and increments retrying interval
+// success (returns true), else repeat and increments retrying interval
 // up to 2 hour until function `call` succeeded (returns true) or until `until`
 // time reached (returns false).
 func RetryIncrementallyUntil(interval time.Duration, until time.Duration, call func() bool) bool {

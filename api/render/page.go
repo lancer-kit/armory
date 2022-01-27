@@ -32,8 +32,8 @@ func (page *Page) SetTotal(rowCount, pageSize uint64) {
 	page.TotalRows = int64(rowCount)
 }
 
-// DEPRECATED
 // BaseRow is a helper struct.
+// DEPRECATED
 type BaseRow struct {
 	RowCount int64 `db:"row_count" json:"-"`
 }

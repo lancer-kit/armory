@@ -96,7 +96,7 @@ func LogEntrySetField(r *http.Request, key string, value interface{}) {
 	}
 }
 
-// LogEntrySetField add fields to logger in request context.
+// LogEntrySetFields add fields to logger in request context.
 func LogEntrySetFields(r *http.Request, fields map[string]interface{}) {
 	if entry, ok := r.Context().Value(middleware.LogEntryCtxKey).(*RequestLoggerEntry); ok {
 		entry.Logger = entry.Logger.WithFields(fields)

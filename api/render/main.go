@@ -20,7 +20,7 @@ func Success(w http.ResponseWriter, result interface{}) {
 	WriteJSON(w, http.StatusOK, result)
 }
 
-// InProgress renders `ResultAccepted` with `reason` as an message.
+// InProgress renders `ResultAccepted` with `reason` as a message.
 func InProgress(w http.ResponseWriter, result interface{}) {
 	WriteJSON(w, http.StatusAccepted, result)
 }
@@ -66,7 +66,7 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 	_, _ = w.Write(marshaled)
 }
 
-// RenderListWithPages
+// RenderListWithPages ...
 func RenderListWithPages(w http.ResponseWriter, pageQuery db.PageQuery, total int64, list interface{}) {
 	result := Page{
 		Page:     pageQuery.Page,

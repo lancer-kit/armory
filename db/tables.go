@@ -70,7 +70,7 @@ func (t *Table) CountQuery() (string, []interface{}, error) {
 	return countQuery, args, nil
 }
 
-// CountQuery sanitizes query, replaces regular select to count select and run it.
+// GetCount sanitizes query, replaces regular select to count select and run it.
 // Returns total number of records for query.
 func (t *Table) GetCount(sqlConn *SQLConn) (int64, error) {
 	rawSQL, args, err := t.QBuilder.RemoveLimit().ToSql()

@@ -41,7 +41,7 @@ func GetConnector() *SQLConn {
 	return conn.Clone()
 }
 
-// NewConnector returns an new instance of the SQLConn.
+// NewConnector returns a new instance of the SQLConn.
 func NewConnector(cfg Config, logger *logrus.Entry) (*SQLConn, error) {
 	conn, err := sqlx.Connect("postgres", cfg.URL())
 	if err != nil {

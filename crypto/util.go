@@ -30,14 +30,14 @@ func Base64Encode(data []byte) string {
 		EncodeToString(data)
 }
 
-// No padding decode base 64
+// Base64DecodeNP - no padding decode base 64
 func Base64DecodeNP(str string) ([]byte, error) {
 	return base64.StdEncoding.
 		WithPadding(base64.NoPadding).
 		DecodeString(str)
 }
 
-// No padding encode base 64
+// Base64EncodeNP - no padding encode base 64
 func Base64EncodeNP(data []byte) string {
 	return base64.StdEncoding.
 		WithPadding(base64.NoPadding).

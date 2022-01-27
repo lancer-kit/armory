@@ -1,8 +1,8 @@
 # Natswrap
 
-`natsx` is a  simple wrapper for [nats.io](nats-io/go-nats) client. 
+`natsx` is a simple wrapper for [nats.io](nats-io/go-nats) client.
 
-## Usage 
+## Usage
 
 To start use the `natsx` package add import:
 
@@ -16,20 +16,21 @@ import (
 
 - Fill config structure:
 
-| Field | Type | Required |
-| ----- | ---- | ---- |
-| Host | string | + |
-| Port | int | + |
-| User | string |   |
+| Field    | Type   | Required |
+|----------|--------|----------|
+| Host     | string | +        |
+| Port     | int    | +        |
+| User     | string |          |
 | Password | string |
 
-- Set config: 
+- Set config:
 
 ``` go
 natsx.SetCfg(cfg)
 ```
 
 Connect will be initialized at first try to push or subscribe a message
+
 ``` go
 err := PublishMessage(topic, obj)
 ```

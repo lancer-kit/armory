@@ -18,13 +18,13 @@ import (
 
 - Fill config structure:
 
-| Field | Type | Description |
-| ----- | ---- | ----------- |
-| AppName | string | identifier of the app |
-| Level | string | level of the logging output |
-| Sentry | string | dsn string for the sentry hook |
-| AddTrace | bool | enable the inclusion of the file name and line number in the log |
-| JSON | bool | enable json formatted output |
+| Field    | Type   | Description                                                      |
+|----------|--------|------------------------------------------------------------------|
+| AppName  | string | identifier of the app                                            |
+| Level    | string | level of the logging output                                      |
+| Sentry   | string | dsn string for the sentry hook                                   |
+| AddTrace | bool   | enable the inclusion of the file name and line number in the log |
+| JSON     | bool   | enable json formatted output                                     |
 
 - Call init function: 
 

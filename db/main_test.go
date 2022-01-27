@@ -15,7 +15,7 @@ type User struct {
 	RowCount int64 `db:"row_count" json:"-"`
 }
 
-// UserQ is a interface for
+// UserQ is an interface for
 // interacting with the `users` table.
 type UserQ struct {
 	*SQLConn

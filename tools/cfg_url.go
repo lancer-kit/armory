@@ -32,7 +32,7 @@ func (j *URL) WithPath(path string) string {
 	return ur.String()
 }
 
-// WithPath returns URL with sanitized and saved path-suffix.
+// WithPathURL returns URL with sanitized and saved path-suffix.
 func (j *URL) WithPathURL(path string) url.URL {
 	ur := *j.URL
 	ur.Path = j.basePath + slash + strings.TrimPrefix(path, slash)

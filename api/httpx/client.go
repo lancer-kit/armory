@@ -56,7 +56,7 @@ func (client *XClient) DefaultCookies() []*http.Cookie {
 	return client.cookies
 }
 
-// SetCookies sets a default cookies to the client.
+// SetDefaultCookies sets a default cookies to the client.
 func (client *XClient) SetDefaultCookies(cookies []*http.Cookie) Client {
 	newClient := client.clone()
 	newClient.cookies = append(newClient.cookies, cookies...)
@@ -123,27 +123,27 @@ func (client *XClient) WithHeaders(headers Headers) Client {
 	return newClient
 }
 
-// PostJSON, sets passed `headers` and `body` and executes RequestJSON with POST method.
+// PostJSON sets passed `headers` and `body` and executes RequestJSON with POST method.
 func (client *XClient) PostJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPost, url, body, headers)
 }
 
-// PutJSON, sets passed `headers` and `body` and executes RequestJSON with PUT method.
+// PutJSON sets passed `headers` and `body` and executes RequestJSON with PUT method.
 func (client *XClient) PutJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPut, url, body, headers)
 }
 
-// PatchJSON, sets passed `headers` and `body` and executes RequestJSON with PATCH method.
+// PatchJSON sets passed `headers` and `body` and executes RequestJSON with PATCH method.
 func (client *XClient) PatchJSON(url string, body interface{}, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodPatch, url, body, headers)
 }
 
-// GetJSON, sets passed `headers` and executes RequestJSON with GET method.
+// GetJSON sets passed `headers` and executes RequestJSON with GET method.
 func (client *XClient) GetJSON(url string, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodGet, url, nil, headers)
 }
 
-// DeleteJSON, sets passed `headers` and executes RequestJSON with DELETE method.
+// DeleteJSON sets passed `headers` and executes RequestJSON with DELETE method.
 func (client *XClient) DeleteJSON(url string, headers Headers) (*http.Response, error) {
 	return client.RequestJSON(http.MethodDelete, url, nil, headers)
 }
