@@ -7,7 +7,7 @@ require (
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/gorilla/schema v1.2.0
+	github.com/gorilla/schema v1.4.1
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lancer-kit/noble v1.10.10
 	github.com/lancer-kit/sql-migrate v0.1.5
